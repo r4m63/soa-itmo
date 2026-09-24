@@ -33,7 +33,7 @@ paths:
     post:
       tags: [ Movies service ]
       summary: Добавить фильм
-      description: Создаёт фильм. `id` и `creationDate` генерируются сервером.
+      description: Создаёт фильм.
       operationId: createMovie
       requestBody:
         required: true
@@ -87,8 +87,8 @@ paths:
         '404':
           description: Коллекция пуста.
           content:
-            application/problem+json:
-              schema: { $ref: '#/components/schemas/Problem' }
+            application/json:
+              schema: { $ref: '#/components/schemas/NotFoundError' }
         '500': { $ref: '#/components/responses/InternalError' }
 
   /movies/name-starts-with:
@@ -364,27 +364,107 @@ components:
         targetMovies: { type: integer, minimum: 1 }
         transferredOscars: { type: integer, format: int64, minimum: 0 }
       additionalProperties: false
-    Problem:
+    ValidationError:
       type: object
-      description: Единый ответ об ошибке в стиле RFC 9457 Problem Details.
-      required: [ type, title, status, detail, instance, timestamp ]
+      description: Краткое описание ошибки валидации.
+      required: [ code, message, timestamp ]
       properties:
-        type: { type: string, format: uri-reference, description: Идентификатор типа ошибки. }
-        title: { type: string, description: Краткое название ошибки. }
-        status: { type: integer, minimum: 400, maximum: 599 }
-        detail: { type: string, description: Понятное человеку объяснение. }
-        instance: { type: string, format: uri-reference, description: URL конкретного запроса. }
-        timestamp: { type: string, format: date-time }
-        errors:
-          type: array
-          description: Детали ошибок валидации, если применимо.
-          items:
-            type: object
-            required: [ field, message ]
-            properties:
-              field: { type: string, examples: [ oscarsCount ] }
-              message: { type: string, examples: [ must be greater than 0 ] }
-            additionalProperties: false
+        code:
+          type: string
+          description: Стабильный машинный код ошибки.
+          examples: [ VALIDATION_ERROR ]
+        message:
+          type: string
+          description: Понятное описание ошибки.
+        timestamp:
+          type: string
+          format: date-time
+          description: Время возникновения ошибки.
+      additionalProperties: false
+    BadRequestError:
+      type: object
+      description: Краткое описание ошибки в запросе.
+      required: [ code, message, timestamp ]
+      properties:
+        code:
+          type: string
+          description: Стабильный машинный код ошибки.
+          examples: [ INVALID_FILTER ]
+        message:
+          type: string
+          description: Понятное описание ошибки.
+        timestamp:
+          type: string
+          format: date-time
+          description: Время возникновения ошибки.
+      additionalProperties: false
+    InternalServerError:
+      type: object
+      description: Краткое описание внутренней ошибки сервера.
+      required: [ code, message, timestamp ]
+      properties:
+        code:
+          type: string
+          description: Стабильный машинный код ошибки.
+          examples: [ INTERNAL_SERVER_ERROR ]
+        message:
+          type: string
+          description: Понятное описание ошибки.
+        timestamp:
+          type: string
+          format: date-time
+          description: Время возникновения ошибки.
+      additionalProperties: false
+    NotFoundError:
+      type: object
+      description: Краткое описание ошибки отсутствия ресурса.
+      required: [ code, message, timestamp ]
+      properties:
+        code:
+          type: string
+          description: Стабильный машинный код ошибки.
+          examples: [ NOT_FOUND ]
+        message:
+          type: string
+          description: Понятное описание ошибки.
+        timestamp:
+          type: string
+          format: date-time
+          description: Время возникновения ошибки.
+      additionalProperties: false
+    ConflictError:
+      type: object
+      description: Краткое описание конфликта с текущим состоянием данных.
+      required: [ code, message, timestamp ]
+      properties:
+        code:
+          type: string
+          description: Стабильный машинный код ошибки.
+          examples: [ CONFLICT ]
+        message:
+          type: string
+          description: Понятное описание ошибки.
+        timestamp:
+          type: string
+          format: date-time
+          description: Время возникновения ошибки.
+      additionalProperties: false
+    UpstreamServiceError:
+      type: object
+      description: Краткое описание ошибки внешнего сервиса.
+      required: [ code, message, timestamp ]
+      properties:
+        code:
+          type: string
+          description: Стабильный машинный код ошибки.
+          examples: [ UPSTREAM_SERVICE_ERROR ]
+        message:
+          type: string
+          description: Понятное описание ошибки.
+        timestamp:
+          type: string
+          format: date-time
+          description: Время возникновения ошибки.
       additionalProperties: false
 
   parameters:
@@ -521,30 +601,30 @@ components:
     BadRequest:
       description: Некорректный синтаксис запроса, параметр URL или JSON.
       content:
-        application/problem+json:
-          schema: { $ref: '#/components/schemas/Problem' }
+        application/json:
+          schema: { $ref: '#/components/schemas/BadRequestError' }
     ValidationError:
       description: JSON корректен синтаксически, но нарушает ограничения модели.
       content:
-        application/problem+json:
-          schema: { $ref: '#/components/schemas/Problem' }
+        application/json:
+          schema: { $ref: '#/components/schemas/ValidationError' }
     NotFound:
       description: Фильм с указанным идентификатором не найден.
       content:
-        application/problem+json:
-          schema: { $ref: '#/components/schemas/Problem' }
+        application/json:
+          schema: { $ref: '#/components/schemas/NotFoundError' }
     Conflict:
       description: Операция конфликтует с текущим состоянием данных.
       content:
-        application/problem+json:
-          schema: { $ref: '#/components/schemas/Problem' }
+        application/json:
+          schema: { $ref: '#/components/schemas/ConflictError' }
     UpstreamError:
       description: Oscar Service не смог получить корректный ответ от Movie Service.
       content:
-        application/problem+json:
-          schema: { $ref: '#/components/schemas/Problem' }
+        application/json:
+          schema: { $ref: '#/components/schemas/UpstreamServiceError' }
     InternalError:
       description: Непредвиденная внутренняя ошибка сервера.
       content:
-        application/problem+json:
-          schema: { $ref: '#/components/schemas/Problem' }
+        application/json:
+          schema: { $ref: '#/components/schemas/InternalServerError' }
