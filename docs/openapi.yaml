@@ -23,7 +23,7 @@ paths:
         - $ref: '#/components/parameters/Size'
       responses:
         '200':
-          description: Страница фильмов; `items` может быть пустым массивом.
+          description: Страница фильмов `items` может быть пустым массивом.
           content:
             application/json:
               schema:
@@ -75,7 +75,7 @@ paths:
       summary: Получить фильм с минимальным именем
       description: |
         Возвращает любой один фильм, чьё `name` лексикографически минимально
-        среди коллекции. Сравнение выполняется по правилам сортировки хранилища;
+        среди коллекции. Сравнение выполняется по правилам сортировки хранилища
         при равенстве нескольких имён выбирается фильм с минимальным `id`.
       operationId: getMovieWithMinimumName
       responses:
@@ -106,7 +106,7 @@ paths:
           example: The
       responses:
         '200':
-          description: Найденные фильмы; при отсутствии совпадений возвращается пустой массив.
+          description: Найденные фильмы при отсутствии совпадений возвращается пустой массив.
           content:
             application/json:
               schema:
@@ -151,7 +151,7 @@ paths:
         '400': { $ref: '#/components/responses/BadRequest' }
         '404': { $ref: '#/components/responses/NotFound' }
         '500': { $ref: '#/components/responses/InternalError' }
-    put:
+    patch:
       tags: [ Movies service ]
       summary: Полностью обновить фильм
       description: |
@@ -180,7 +180,7 @@ paths:
       description: Безвозвратно удаляет объект с указанным идентификатором.
       operationId: deleteMovie
       responses:
-        '204': { description: Фильм удалён; тело ответа отсутствует. }
+        '204': { description: Фильм удалён тело ответа отсутствует. }
         '400': { $ref: '#/components/responses/BadRequest' }
         '404': { $ref: '#/components/responses/NotFound' }
         '500': { $ref: '#/components/responses/InternalError' }
@@ -254,15 +254,15 @@ components:
           readOnly: true
           description: Дата создания записи, автоматически заданная сервером.
           examples: [ '2026-09-20' ]
-        oscarsCount: { type: integer, format: int32, minimum: 1, description: Число наград; строго больше нуля., examples: [ 2 ] }
+        oscarsCount: { type: integer, format: int32, minimum: 1, description: Число наград строго больше нуля., examples: [ 2 ] }
         genre:
-          description: Жанр фильма; может отсутствовать или быть null.
+          description: Жанр фильма может отсутствовать или быть null.
           oneOf:
             - $ref: '#/components/schemas/MovieGenre'
             - type: 'null'
         mpaaRating: { $ref: '#/components/schemas/MpaaRating' }
         screenwriter:
-          description: Сценарист; по условию поле не обязательно и может быть null.
+          description: Сценарист по условию поле не обязательно и может быть null.
           oneOf:
             - $ref: '#/components/schemas/Person'
             - type: 'null'
@@ -298,13 +298,13 @@ components:
       properties:
         name: { type: string, minLength: 1, description: Непустое имя сценариста. }
         passportID:
-          description: Идентификатор паспорта длиной не менее 5 символов; может быть null.
+          description: Идентификатор паспорта длиной не менее 5 символов может быть null.
           oneOf:
             - type: string
               minLength: 5
             - type: 'null'
         hairColor:
-          description: Цвет волос; может быть null.
+          description: Цвет волос может быть null.
           oneOf:
             - $ref: '#/components/schemas/Color'
             - type: 'null'
@@ -480,7 +480,7 @@ components:
         Параметр может быть указан несколько раз.
         Все переданные фильтры объединяются через AND.
         
-        Формат: `field;operator;value`. Если operator = `isNull` или `notNull`, то: `field;operator`.
+        Формат: `fieldoperatorvalue`. Если operator = `isNull` или `notNull`, то: `fieldoperator`.
         
         field и operator:
         
@@ -516,7 +516,7 @@ components:
         - isNull - is null - значение равно null
         - notNull - not null - значение не равно null
         
-        Пример: `?filter=genre;eq;DRAMA&filter=oscarsCount;gte;3&filter=name;contains;Star`
+        Пример: `?filter=genreeqDRAMA&filter=oscarsCountgte3&filter=namecontainsStar`
       style: form
       explode: true
       schema:
@@ -527,9 +527,9 @@ components:
         multipleFilters:
           summary: Несколько одновременных фильтров
           value:
-            - genre;eq;DRAMA
-            - oscarsCount;gte;3
-            - name;contains;Star
+            - genreeqDRAMA
+            - oscarsCountgte3
+            - namecontainsStar
 
     Sort:
       name: sort
@@ -540,7 +540,7 @@ components:
         Параметр может быть указан несколько раз.
         Порядок параметров в URL определяет приоритет сортировки.
         
-        Формат: `field;direction`
+        Формат: `fielddirection`
         
         field:
         `id`, `name`, `coordinates.x`, `coordinates.y`, `creationDate`,
@@ -550,21 +550,21 @@ components:
         
         direction: `asc` или `desc`
         
-        Пример: `?sort=genre;asc&sort=oscarsCount;desc&sort=name;asc`
+        Пример: `?sort=genreasc&sort=oscarsCountdesc&sort=nameasc`
       style: form
       explode: true
       schema:
         type: array
         items:
           type: string
-          pattern: '^(id|name|coordinates\.(x|y)|creationDate|oscarsCount|genre|mpaaRating|screenwriter\.(name|passportID|hairColor|nationality));(asc|desc)$'
+          pattern: '^(id|name|coordinates\.(x|y)|creationDate|oscarsCount|genre|mpaaRating|screenwriter\.(name|passportID|hairColor|nationality))(asc|desc)$'
       examples:
         multipleSort:
           summary: Многоуровневая сортировка
           value:
-            - genre;asc
-            - oscarsCount;desc
-            - name;asc
+            - genreasc
+            - oscarsCountdesc
+            - nameasc
 
     Page:
       name: page
