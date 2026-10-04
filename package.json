@@ -1,0 +1,12 @@
+{
+  "name": "soa-itmo-docs",
+  "private": true,
+  "description": "Локальный Swagger UI для docs/*.yaml с автообновлением",
+  "scripts": {
+    "swagger": "browser-sync start --config bs-config.js"
+  },
+  "devDependencies": {
+    "browser-sync": "^3.0.4",
+    "swagger-ui-dist": "^5.33.1"
+  }
+}

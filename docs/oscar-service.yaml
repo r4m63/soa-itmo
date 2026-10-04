@@ -1,0 +1,193 @@
+openapi: 3.1.0
+
+info:
+  title: Oscar Service
+  version: 1.0.0
+  description: |
+    Операции с наградами. Сервис не хранит фильмы сам — читает и изменяет их через Movie Service.
+
+tags:
+  - name: Oscars
+
+paths:
+
+  /oscar/movies/reward-r:
+    post:
+      tags: [ Oscars ]
+      summary: Наградить фильмы рейтинга R
+      description: |
+        Увеличивает `oscarsCount` на 1 у каждого фильма с `mpaaRating = R`.
+        Если таких фильмов нет — операция успешна, `affectedMovies: 0`.
+      operationId: rewardRRatedMovies
+      responses:
+        '200':
+          description: Награды начислены.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/BulkOperationResult' }
+              example:
+                affectedMovies: 5
+        '503': { $ref: '#/components/responses/MovieServiceUnavailable' }
+
+  /oscar/genres/redistribute-rewards/{from-genre}/{to-genre}:
+    post:
+      tags: [ Oscars ]
+      summary: Перераспределить Оскары между жанрами
+      description: |
+        У каждого фильма жанра `from-genre` изымаются все награды сверх одной
+        (`oscarsCount` не может быть меньше 1) и равномерно распределяются
+        между фильмами жанра `to-genre`; остаток от деления достаётся фильмам
+        с наименьшими `id`.
+      operationId: redistributeOscarRewards
+      parameters:
+        - name: from-genre
+          in: path
+          required: true
+          description: Жанр, у фильмов которого изымаются награды.
+          schema: { $ref: '#/components/schemas/MovieGenre' }
+          example: DRAMA
+        - name: to-genre
+          in: path
+          required: true
+          description: Жанр, между фильмами которого распределяются награды.
+          schema: { $ref: '#/components/schemas/MovieGenre' }
+          example: MUSICAL
+      responses:
+        '200':
+          description: Награды перераспределены.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/RedistributionResult' }
+              examples:
+                redistributed:
+                  summary: 3 драмы отдали 10 наград двум мюзиклам (по 5 каждому)
+                  value:
+                    sourceMovies: 3
+                    targetMovies: 2
+                    transferredOscars: 10
+                nothingToTransfer:
+                  summary: У фильмов исходного жанра нет наград сверх одной
+                  value:
+                    sourceMovies: 2
+                    targetMovies: 4
+                    transferredOscars: 0
+        '400':
+          description: Неизвестный жанр или `from-genre` совпадает с `to-genre`.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ValidationError' }
+              examples:
+                unknownGenre:
+                  summary: Неизвестный жанр
+                  value:
+                    message: Некорректные параметры запроса
+                    timestamp: '2026-10-02T14:30:00Z'
+                    errors:
+                      - location: path
+                        field: to-genre
+                        rejectedValue: THRILLER
+                        message: 'Допустимые значения: ACTION, DRAMA, COMEDY, MUSICAL, HORROR'
+                sameGenre:
+                  summary: Одинаковые жанры
+                  value:
+                    message: Некорректные параметры запроса
+                    timestamp: '2026-10-02T14:30:00Z'
+                    errors:
+                      - location: path
+                        field: to-genre
+                        rejectedValue: DRAMA
+                        message: 'Жанр назначения должен отличаться от исходного'
+        '409':
+          description: В жанре `to-genre` нет фильмов — награды некому передать, ничего не изменено.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+              example:
+                message: В жанре MUSICAL нет фильмов для получения наград
+                timestamp: '2026-10-02T14:30:00Z'
+        '503': { $ref: '#/components/responses/MovieServiceUnavailable' }
+
+components:
+
+  schemas:
+
+    MovieGenre:
+      type: string
+      enum: [ ACTION, DRAMA, COMEDY, MUSICAL, HORROR ]
+
+    BulkOperationResult:
+      type: object
+      required: [ affectedMovies ]
+      properties:
+        affectedMovies:
+          type: integer
+          minimum: 0
+          description: Число фильмов, получивших награду.
+          examples: [ 5 ]
+
+    RedistributionResult:
+      type: object
+      required: [ sourceMovies, targetMovies, transferredOscars ]
+      properties:
+        sourceMovies:
+          type: integer
+          minimum: 0
+          description: Число фильмов жанра `from-genre`.
+          examples: [ 3 ]
+        targetMovies:
+          type: integer
+          minimum: 1
+          description: Число фильмов жанра `to-genre`.
+          examples: [ 2 ]
+        transferredOscars:
+          type: integer
+          minimum: 0
+          description: Сколько наград передано.
+          examples: [ 10 ]
+
+    Error:
+      type: object
+      required: [ message, timestamp ]
+      properties:
+        message: { type: string, examples: [ Movie Service недоступен ] }
+        timestamp: { type: string, format: date-time, examples: [ '2026-10-02T14:30:00Z' ] }
+
+    ValidationError:
+      description: Ошибка валидации запроса со списком всех найденных нарушений.
+      allOf:
+        - $ref: '#/components/schemas/Error'
+        - type: object
+          required: [ errors ]
+          properties:
+            errors:
+              type: array
+              minItems: 1
+              items: { $ref: '#/components/schemas/FieldError' }
+
+    FieldError:
+      type: object
+      required: [ location, message ]
+      properties:
+        location:
+          type: string
+          enum: [ path, query, body ]
+          description: Где находится ошибочное значение.
+        field:
+          type: string
+          description: Имя параметра с ошибкой.
+          examples: [ to-genre ]
+        rejectedValue:
+          description: Переданное значение.
+          examples: [ THRILLER ]
+        message: { type: string, examples: [ 'Допустимые значения: ACTION, DRAMA, COMEDY, MUSICAL, HORROR' ] }
+
+  responses:
+
+    MovieServiceUnavailable:
+      description: Movie Service недоступен или не ответил вовремя; операция не выполнена.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+          example:
+            message: Movie Service недоступен, повторите запрос позже
+            timestamp: '2026-10-02T14:30:00Z'

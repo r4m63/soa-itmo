@@ -1,0 +1,811 @@
+openapi: 3.1.0
+
+info:
+  title: Movie Service
+  version: 1
+
+tags:
+  - name: Movies
+
+paths:
+
+  /movies:
+    get:
+      tags: [ Movies ]
+      summary: Получить страницу фильмов с фильтрацией, сортировкой и пагинацией.
+      operationId: listMovies
+      parameters:
+        - $ref: '#/components/parameters/Filter'
+        - $ref: '#/components/parameters/Sort'
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Size'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/MoviePage' }
+              examples:
+                page:
+                  summary: Первая страница
+                  value:
+                    items:
+                      - id: 1
+                        name: Film name 1
+                        coordinates: { x: 51, y: -120 }
+                        creationDate: '2026-09-20'
+                        oscarsCount: 4
+                        genre: DRAMA
+                        mpaaRating: R
+                        screenwriter:
+                          name: Author 1
+                          passportID: ABC123456
+                          hairColor: WHITE
+                          nationality: UNITED_KINGDOM
+                      - id: 2
+                        name: Film name 2
+                        coordinates: { x: -14, y: 260 }
+                        creationDate: '2026-09-21'
+                        oscarsCount: 8
+                        genre: DRAMA
+                        mpaaRating: R
+                        screenwriter:
+                          name: Author 2
+                          passportID: DEF78901
+                          hairColor: null
+                          nationality: UNITED_KINGDOM
+                    page: 0
+                    size: 20
+                    totalElements: 2
+                    totalPages: 1
+                empty:
+                  summary: Ничего не найдено
+                  value:
+                    items: [ ]
+                    page: 0
+                    size: 20
+                    totalElements: 0
+                    totalPages: 0
+        '400':
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ValidationError' }
+              examples:
+                invalidQuery: { $ref: '#/components/examples/InvalidQuery' }
+
+    post:
+      tags: [ Movies ]
+      summary: Добавить фильм
+      operationId: createMovie
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/MovieInput' }
+            examples:
+              full:
+                summary: Все поля
+                value:
+                  name: Film name 1
+                  coordinates: { x: 51, y: -120 }
+                  oscarsCount: 4
+                  genre: DRAMA
+                  mpaaRating: R
+                  screenwriter:
+                    name: Author 1
+                    passportID: ABC123456
+                    hairColor: WHITE
+                    nationality: UNITED_KINGDOM
+              minimal:
+                summary: Только обязательные поля
+                value:
+                  name: Film name 2
+                  coordinates: { x: 7, y: 35 }
+                  oscarsCount: 1
+                  mpaaRating: R
+      responses:
+        '201':
+          headers:
+            Location:
+              description: URL созданного фильма.
+              schema: { type: string, format: uri-reference }
+              example: /movies/1
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Movie' }
+              examples:
+                created: { $ref: '#/components/examples/Movie1', summary: Фильм создан }
+        '400': { $ref: '#/components/responses/InvalidMovieBody' }
+
+  /movies/by-genre/{genre}:
+    delete:
+      tags: [ Movies ]
+      summary: Удалить все фильмы заданного жанра
+      operationId: deleteMoviesByGenre
+      parameters:
+        - name: genre
+          in: path
+          required: true
+          schema: { type: string }
+          example: DRAMA
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DeletionResult' }
+              examples:
+                deleted:
+                  summary: Фильмы удалены
+                  value:
+                    deletedCount: 3
+        '400':
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ValidationError' }
+              examples:
+                unknownGenre:
+                  summary: Неизвестный жанр
+                  value:
+                    message: Некорректные параметры запроса
+                    timestamp: '2026-10-02T14:30:00Z'
+                    errors:
+                      - location: path
+                        field: genre
+                        rejectedValue: THRILLER
+                        message: 'Допустимые значения: ACTION, DRAMA, COMEDY, MUSICAL, HORROR'
+
+  /movies/genres:
+    get:
+      tags: [ Movies ]
+      summary: Получить жанры
+      operationId: searchGenres
+      parameters:
+        - $ref: '#/components/parameters/EnumSearch'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/MovieGenre' }
+              examples:
+                all:
+                  summary: 'Без search - все значения'
+                  value: [ ACTION, DRAMA, COMEDY, MUSICAL, HORROR ]
+                dra:
+                  summary: '?search=dra'
+                  value: [ DRAMA ]
+                o:
+                  summary: '?search=o'
+                  value: [ ACTION, COMEDY, HORROR ]
+                empty:
+                  summary: '?search=abcdef - ничего не найдено'
+                  value: [ ]
+
+  /movies/mpaa-ratings:
+    get:
+      tags: [ Movies ]
+      summary: Получить рейтинги MPAA
+      operationId: searchMpaaRatings
+      parameters:
+        - $ref: '#/components/parameters/EnumSearch'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/MpaaRating' }
+              examples:
+                all:
+                  summary: 'Без search - все значения'
+                  value: [ G, PG, PG_13, R, NC_17 ]
+                pg:
+                  summary: '?search=pg'
+                  value: [ PG, PG_13 ]
+                nc17:
+                  summary: '?search=17'
+                  value: [ NC_17 ]
+                empty:
+                  summary: '?search=abcdef - ничего не найдено'
+                  value: [ ]
+
+  /movies/colors:
+    get:
+      tags: [ Movies ]
+      summary: Получить цвета волос
+      operationId: searchColors
+      parameters:
+        - $ref: '#/components/parameters/EnumSearch'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Color' }
+              examples:
+                all:
+                  summary: 'Без search - все значения'
+                  value: [ RED, BLUE, ORANGE, WHITE ]
+                r:
+                  summary: '?search=r'
+                  value: [ RED, ORANGE ]
+                wh:
+                  summary: '?search=wh'
+                  value: [ WHITE ]
+                empty:
+                  summary: '?search=abcdef - ничего не найдено'
+                  value: [ ]
+
+  /movies/countries:
+    get:
+      tags: [ Movies ]
+      summary: Получить страны
+      operationId: searchCountries
+      parameters:
+        - $ref: '#/components/parameters/EnumSearch'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Country' }
+              examples:
+                all:
+                  summary: 'Без search - все значения'
+                  value: [ RUSSIA, UNITED_KINGDOM, FRANCE, SPAIN, NORTH_KOREA ]
+                king:
+                  summary: '?search=king'
+                  value: [ UNITED_KINGDOM ]
+                r:
+                  summary: '?search=r'
+                  value: [ RUSSIA, FRANCE, NORTH_KOREA ]
+                empty:
+                  summary: '?search=abcdef - ничего не найдено'
+                  value: [ ]
+
+  /movies/{id}:
+    parameters:
+      - $ref: '#/components/parameters/MovieId'
+
+    get:
+      tags: [ Movies ]
+      summary: Получить фильм по идентификатору
+      operationId: getMovieById
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Movie' }
+              examples:
+                found: { $ref: '#/components/examples/Movie1', summary: Фильм найден }
+        '400': { $ref: '#/components/responses/InvalidMovieId' }
+        '404': { $ref: '#/components/responses/MovieNotFound' }
+
+    patch:
+      tags: [ Movies ]
+      summary: Частично обновить фильм
+      operationId: updateMovie
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/MoviePatch' }
+            examples:
+              oscars:
+                summary: Изменить число наград
+                value:
+                  oscarsCount: 5
+              resetGenre:
+                summary: Сменить рейтинг и сбросить жанр
+                value:
+                  mpaaRating: PG_13
+                  genre: null
+              allFields:
+                summary: Сменить все возможные поля
+                value:
+                  name: Film name 3
+                  coordinates: { x: 10, y: 20 }
+                  oscarsCount: 6
+                  genre: COMEDY
+                  mpaaRating: PG_13
+                  screenwriter:
+                    name: Author 3
+                    passportID: XYZ98765
+                    hairColor: RED
+                    nationality: FRANCE
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Movie' }
+              examples:
+                updated: { $ref: '#/components/examples/Movie1Updated' }
+        '400':
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ValidationError' }
+              examples:
+                invalidFields: { $ref: '#/components/examples/InvalidMovieFields' }
+                readOnlyFields: { $ref: '#/components/examples/ReadOnlyFields' }
+        '404': { $ref: '#/components/responses/MovieNotFound' }
+
+    delete:
+      tags: [ Movies ]
+      summary: Удалить фильм
+      operationId: deleteMovie
+      responses:
+        '204': { description: Фильм удалён, тело ответа отсутствует. }
+        '400': { $ref: '#/components/responses/InvalidMovieId' }
+        '404': { $ref: '#/components/responses/MovieNotFound' }
+
+components:
+
+  schemas:
+
+    Movie:
+      type: object
+      required: [ id, name, coordinates, creationDate, oscarsCount, mpaaRating ]
+      properties:
+        id:
+          type: integer
+          format: int32
+          minimum: 1
+          readOnly: true
+          description: Уникальный идентификатор, генерируется сервером.
+          examples: [ 1 ]
+        name:
+          type: string
+          minLength: 1
+          examples: [ Film name 1 ]
+        coordinates: { $ref: '#/components/schemas/Coordinates' }
+        creationDate:
+          type: string
+          format: date
+          readOnly: true
+          description: Дата создания записи, задаётся сервером.
+          examples: [ '2026-09-20' ]
+        oscarsCount:
+          type: integer
+          format: int32
+          minimum: 1
+          examples: [ 4 ]
+        genre:
+          description: Может отсутствовать или быть null.
+          oneOf:
+            - $ref: '#/components/schemas/MovieGenre'
+            - type: 'null'
+        mpaaRating: { $ref: '#/components/schemas/MpaaRating' }
+        screenwriter:
+          description: Может отсутствовать или быть null.
+          oneOf:
+            - $ref: '#/components/schemas/Person'
+            - type: 'null'
+
+    MovieInput:
+      type: object
+      description: Данные для создания фильма.
+      required: [ name, coordinates, oscarsCount, mpaaRating ]
+      properties:
+        name: { type: string, minLength: 1, examples: [ Film name 1 ] }
+        coordinates: { $ref: '#/components/schemas/Coordinates' }
+        oscarsCount: { type: integer, format: int32, minimum: 1, examples: [ 4 ] }
+        genre:
+          oneOf:
+            - $ref: '#/components/schemas/MovieGenre'
+            - type: 'null'
+        mpaaRating: { $ref: '#/components/schemas/MpaaRating' }
+        screenwriter:
+          oneOf:
+            - $ref: '#/components/schemas/Person'
+            - type: 'null'
+      additionalProperties: false
+
+    MoviePatch:
+      type: object
+      description: Частичное обновление фильма, хотя бы одно поле обязательно.
+      minProperties: 1
+      properties:
+        name: { type: string, minLength: 1, examples: [ Film name 1 ] }
+        coordinates: { $ref: '#/components/schemas/Coordinates' }
+        oscarsCount: { type: integer, format: int32, minimum: 1, examples: [ 5 ] }
+        genre:
+          oneOf:
+            - $ref: '#/components/schemas/MovieGenre'
+            - type: 'null'
+        mpaaRating: { $ref: '#/components/schemas/MpaaRating' }
+        screenwriter:
+          oneOf:
+            - $ref: '#/components/schemas/Person'
+            - type: 'null'
+      additionalProperties: false
+
+    Coordinates:
+      type: object
+      required: [ x, y ]
+      properties:
+        x: { type: integer, format: int32, examples: [ 51 ] }
+        y: { type: integer, format: int64, examples: [ -120 ] }
+
+    Person:
+      type: object
+      required: [ name, nationality ]
+      properties:
+        name: { type: string, minLength: 1, examples: [ Author 1 ] }
+        passportID:
+          description: Не короче 5 символов, может быть null.
+          oneOf:
+            - type: string
+              minLength: 5
+              examples: [ ABC123456 ]
+            - type: 'null'
+        hairColor:
+          description: Может быть null.
+          oneOf:
+            - $ref: '#/components/schemas/Color'
+            - type: 'null'
+        nationality: { $ref: '#/components/schemas/Country' }
+
+    MovieGenre:
+      type: string
+      enum: [ ACTION, DRAMA, COMEDY, MUSICAL, HORROR ]
+
+    MpaaRating:
+      type: string
+      enum: [ G, PG, PG_13, R, NC_17 ]
+
+    Color:
+      type: string
+      enum: [ RED, BLUE, ORANGE, WHITE ]
+
+    Country:
+      type: string
+      enum: [ RUSSIA, UNITED_KINGDOM, FRANCE, SPAIN, NORTH_KOREA ]
+
+    MoviePage:
+      type: object
+      required: [ items, page, size, totalElements, totalPages ]
+      properties:
+        items:
+          type: array
+          items: { $ref: '#/components/schemas/Movie' }
+        page: { type: integer, minimum: 0, description: 'Номер страницы, начиная с 0.', examples: [ 0 ] }
+        size: { type: integer, minimum: 1, maximum: 100, description: Запрошенный размер страницы., examples: [ 20 ] }
+        totalElements: { type: integer, format: int64, minimum: 0, examples: [ 2 ] }
+        totalPages: { type: integer, minimum: 0, examples: [ 1 ] }
+
+    DeletionResult:
+      type: object
+      required: [ deletedCount ]
+      properties:
+        deletedCount: { type: integer, minimum: 0, description: Число удалённых фильмов., examples: [ 3 ] }
+
+    Error:
+      type: object
+      required: [ message, timestamp ]
+      properties:
+        message: { type: string, examples: [ Фильм с id=42 не найден ] }
+        timestamp: { type: string, format: date-time, examples: [ '2026-10-02T14:30:00Z' ] }
+
+    ValidationError:
+      description: Ошибка валидации запроса со списком всех найденных нарушений.
+      allOf:
+        - $ref: '#/components/schemas/Error'
+        - type: object
+          required: [ errors ]
+          properties:
+            errors:
+              type: array
+              minItems: 1
+              items: { $ref: '#/components/schemas/FieldError' }
+
+    FieldError:
+      type: object
+      required: [ location, message ]
+      properties:
+        location:
+          type: string
+          enum: [ path, query, body ]
+          description: Где находится ошибочное значение.
+        field:
+          type: string
+          description: |
+            Параметр или поле с ошибкой:
+            - query - имя параметра, для повторяющихся `filter`/`sort` с индексом: `filter[1]`
+            - body - путь к полю JSON: `coordinates.x`, `screenwriter.passportID`
+            - отсутствует, если ошибка относится ко всему телу (например, невалидный JSON).
+          examples: [ 'filter[1]' ]
+        rejectedValue:
+          description: Переданное значение (если было передано).
+          examples: [ 'oscarsCount;gte;abc' ]
+        message: { type: string, examples: [ Значение должно быть целым числом ] }
+
+  parameters:
+
+    MovieId:
+      name: id
+      in: path
+      required: true
+      schema: { type: integer, format: int32, minimum: 1 }
+
+    Filter:
+      name: filter
+      in: query
+      required: false
+      description: |
+        Параметр можно указать несколько раз.
+
+        Формат: `field;operator;value`, для операторов `isNull/notNull` -- `field;operator`.
+
+        **Операторы**
+
+        | operator | значение |
+        |---|---|
+        | `eq` / `ne` | равно / не равно |
+        | `gt` / `gte` | больше / больше или равно |
+        | `lt` / `lte` | меньше / меньше или равно |
+        | `contains` | содержит подстроку |
+        | `startsWith` / `endsWith` | начинается / заканчивается подстрокой |
+        | `isNull` / `notNull` | значение равно / не равно null (без value) |
+
+        **Поля и допустимые операторы**
+
+        | field | тип | operator |
+        |---|---|---|
+        | `id` | integer | eq, ne, gt, gte, lt, lte |
+        | `name` | string | eq, ne, gt, gte, lt, lte, contains, startsWith, endsWith |
+        | `coordinates.x` | integer | eq, ne, gt, gte, lt, lte |
+        | `coordinates.y` | integer | eq, ne, gt, gte, lt, lte |
+        | `creationDate` | date | eq, ne, gt, gte, lt, lte |
+        | `oscarsCount` | integer | eq, ne, gt, gte, lt, lte |
+        | `genre` | enum, nullable | eq, ne, gt, gte, lt, lte, isNull, notNull |
+        | `mpaaRating` | enum | eq, ne, gt, gte, lt, lte |
+        | `screenwriter` | object, nullable | isNull, notNull |
+        | `screenwriter.name` | string, nullable* | eq, ne, gt, gte, lt, lte, contains, startsWith, endsWith, isNull, notNull |
+        | `screenwriter.passportID` | string, nullable | eq, ne, gt, gte, lt, lte, contains, startsWith, endsWith, isNull, notNull |
+        | `screenwriter.hairColor` | enum, nullable | eq, ne, gt, gte, lt, lte, isNull, notNull |
+        | `screenwriter.nationality` | enum, nullable* | eq, ne, gt, gte, lt, lte, isNull, notNull |
+
+        Пример: `?filter=genre;eq;DRAMA&filter=oscarsCount;gte;3&filter=name;startsWith;The`
+
+      style: form
+      explode: true
+      schema:
+        type: array
+        items: { type: string }
+      examples:
+        multipleFilters:
+          summary: Драмы с 3+ наградами, имя начинается с "A"
+          value:
+            - genre;eq;DRAMA
+            - oscarsCount;gte;3
+            - name;startsWith;A
+        nullCheck:
+          summary: Фильмы без сценариста
+          value:
+            - screenwriter;isNull
+        ranges:
+          summary: Рейтинг от PG_13 и выше, созданы в сентябре 2026, имя заканчивается на "Z"
+          value:
+            - mpaaRating;gte;PG_13
+            - creationDate;gte;2026-09-01
+            - creationDate;lte;2026-09-30
+            - name;endsWith;Z
+
+    Sort:
+      name: sort
+      in: query
+      required: false
+      description: |
+        Параметр можно указать несколько раз. Порядок параметров в URL задаёт приоритет.
+
+        Формат: `field;operator`.
+
+        **Операторы**
+
+        | operator | значение |
+        |---|---|
+        | `asc` | по возрастанию |
+        | `desc` | по убыванию |
+
+        **Поля и допустимые операторы**
+
+        | field | тип | operator |
+        |---|---|---|
+        | `id` | integer | asc, desc |
+        | `name` | string | asc, desc |
+        | `coordinates.x` | integer | asc, desc |
+        | `coordinates.y` | integer | asc, desc |
+        | `creationDate` | date | asc, desc |
+        | `oscarsCount` | integer | asc, desc |
+        | `genre` | enum, nullable | asc, desc |
+        | `mpaaRating` | enum | asc, desc |
+        | `screenwriter.name` | string, nullable* | asc, desc |
+        | `screenwriter.passportID` | string, nullable | asc, desc |
+        | `screenwriter.hairColor` | enum, nullable | asc, desc |
+        | `screenwriter.nationality` | enum, nullable* | asc, desc |
+
+        Пример: `?sort=genre;asc&sort=oscarsCount;desc`
+      style: form
+      explode: true
+      schema:
+        type: array
+        items:
+          type: string
+          pattern: '^(id|name|coordinates\.(x|y)|creationDate|oscarsCount|genre|mpaaRating|screenwriter\.(name|passportID|hairColor|nationality));(asc|desc)$'
+      examples:
+        multipleSort:
+          summary: По жанру, затем по меньшему числу наград
+          value:
+            - genre;asc
+            - oscarsCount;desc
+
+    Page:
+      name: page
+      in: query
+      required: false
+      description: Номер страницы пагинации, начиная с 0.
+      schema: { type: integer, minimum: 0, default: 0 }
+
+    Size:
+      name: size
+      in: query
+      required: false
+      description: Количество элементов на странице пагинации.
+      schema: { type: integer, minimum: 1, maximum: 100, default: 20 }
+
+    EnumSearch:
+      name: search
+      in: query
+      required: false
+      schema: { type: string }
+
+  responses:
+
+    InvalidMovieId:
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ValidationError' }
+          examples:
+            invalidId: { $ref: '#/components/examples/InvalidMovieId' }
+
+    InvalidMovieBody:
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ValidationError' }
+          examples:
+            invalidFields: { $ref: '#/components/examples/InvalidMovieFields' }
+
+    MovieNotFound:
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+          examples:
+            notFound:
+              summary: Фильм не найден
+              value:
+                message: Фильм с id=42 не найден
+                timestamp: '2026-10-02T14:30:00Z'
+
+  examples:
+
+    Movie1:
+      summary: Фильм
+      value:
+        id: 1
+        name: Film name 1
+        coordinates: { x: 51, y: -120 }
+        creationDate: '2026-09-20'
+        oscarsCount: 4
+        genre: DRAMA
+        mpaaRating: R
+        screenwriter:
+          name: Author 1
+          passportID: ABC123456
+          hairColor: WHITE
+          nationality: UNITED_KINGDOM
+
+    Movie1Updated:
+      summary: 'Фильм после PATCH { "oscarsCount": 5 }'
+      value:
+        id: 1
+        name: Film name 1
+        coordinates: { x: 51, y: -120 }
+        creationDate: '2026-09-20'
+        oscarsCount: 5
+        genre: DRAMA
+        mpaaRating: R
+        screenwriter:
+          name: Author 1
+          passportID: ABC123456
+          hairColor: WHITE
+          nationality: UNITED_KINGDOM
+
+    Movie2:
+      summary: Фильм
+      value:
+        id: 2
+        name: Film name 2
+        coordinates: { x: 7, y: 35 }
+        creationDate: '2026-09-18'
+        oscarsCount: 1
+        genre: null
+        mpaaRating: R
+        screenwriter: null
+
+    InvalidQuery:
+      summary: Несколько ошибок в параметрах
+      value:
+        message: Некорректные параметры запроса
+        timestamp: '2026-10-02T14:30:00Z'
+        errors:
+          - location: query
+            field: 'filter[0]'
+            rejectedValue: 'oscarsCount;gte;abc'
+            message: 'Значение для oscarsCount должно быть целым числом'
+          - location: query
+            field: 'filter[1]'
+            rejectedValue: 'budget;eq;100'
+            message: 'Неизвестное поле budget'
+          - location: query
+            field: 'filter[2]'
+            rejectedValue: 'mpaaRating;contains;PG'
+            message: 'Оператор contains недопустим для mpaaRating, допустимы: eq, ne, gt, gte, lt, lte'
+          - location: query
+            field: 'sort[0]'
+            rejectedValue: 'rating;asc'
+            message: 'Неизвестное поле rating'
+          - location: query
+            field: size
+            rejectedValue: '500'
+            message: 'Значение должно быть от 1 до 100'
+
+    InvalidMovieId:
+      summary: Неверный id
+      value:
+        message: Некорректные параметры запроса
+        timestamp: '2026-10-02T14:30:00Z'
+        errors:
+          - location: path
+            field: id
+            rejectedValue: abc
+            message: 'id должен быть положительным целым числом'
+
+    InvalidMovieFields:
+      summary: Нарушены ограничения полей
+      value:
+        message: Некорректное тело запроса
+        timestamp: '2026-10-02T14:30:00Z'
+        errors:
+          - location: body
+            field: name
+            rejectedValue: ''
+            message: 'Название не может быть пустым'
+          - location: body
+            field: oscarsCount
+            rejectedValue: 0
+            message: 'Значение должно быть больше 0'
+          - location: body
+            field: screenwriter.passportID
+            rejectedValue: AB12
+            message: 'Длина должна быть не меньше 5 символов'
+          - location: body
+            field: mpaaRating
+            rejectedValue: PG13
+            message: 'Допустимые значения: G, PG, PG_13, R, NC_17'
+
+    ReadOnlyFields:
+      summary: Попытка изменить id или creationDate
+      value:
+        message: Некорректное тело запроса
+        timestamp: '2026-10-02T14:30:00Z'
+        errors:
+          - location: body
+            field: id
+            rejectedValue: 5
+            message: 'Поле id нельзя изменить'
+          - location: body
+            field: creationDate
+            rejectedValue: '2026-01-01'
+            message: 'Поле creationDate нельзя изменить'
