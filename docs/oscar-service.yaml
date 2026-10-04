@@ -2,9 +2,7 @@ openapi: 3.1.0
 
 info:
   title: Oscar Service
-  version: 1.0.0
-  description: |
-    Операции с наградами. Сервис не хранит фильмы сам — читает и изменяет их через Movie Service.
+  version: 1
 
 tags:
   - name: Oscars
@@ -15,46 +13,37 @@ paths:
     post:
       tags: [ Oscars ]
       summary: Наградить фильмы рейтинга R
-      description: |
-        Увеличивает `oscarsCount` на 1 у каждого фильма с `mpaaRating = R`.
-        Если таких фильмов нет — операция успешна, `affectedMovies: 0`.
       operationId: rewardRRatedMovies
       responses:
         '200':
-          description: Награды начислены.
           content:
             application/json:
               schema: { $ref: '#/components/schemas/BulkOperationResult' }
-              example:
-                affectedMovies: 5
+              examples:
+                rewarded:
+                  summary: Награды начислены
+                  value:
+                    affectedMovies: 5
         '503': { $ref: '#/components/responses/MovieServiceUnavailable' }
 
   /oscar/genres/redistribute-rewards/{from-genre}/{to-genre}:
     post:
       tags: [ Oscars ]
       summary: Перераспределить Оскары между жанрами
-      description: |
-        У каждого фильма жанра `from-genre` изымаются все награды сверх одной
-        (`oscarsCount` не может быть меньше 1) и равномерно распределяются
-        между фильмами жанра `to-genre`; остаток от деления достаётся фильмам
-        с наименьшими `id`.
       operationId: redistributeOscarRewards
       parameters:
         - name: from-genre
           in: path
           required: true
-          description: Жанр, у фильмов которого изымаются награды.
-          schema: { $ref: '#/components/schemas/MovieGenre' }
+          schema: { type: string }
           example: DRAMA
         - name: to-genre
           in: path
           required: true
-          description: Жанр, между фильмами которого распределяются награды.
-          schema: { $ref: '#/components/schemas/MovieGenre' }
+          schema: { type: string }
           example: MUSICAL
       responses:
         '200':
-          description: Награды перераспределены.
           content:
             application/json:
               schema: { $ref: '#/components/schemas/RedistributionResult' }
@@ -72,7 +61,6 @@ paths:
                     targetMovies: 4
                     transferredOscars: 0
         '400':
-          description: Неизвестный жанр или `from-genre` совпадает с `to-genre`.
           content:
             application/json:
               schema: { $ref: '#/components/schemas/ValidationError' }
@@ -98,13 +86,15 @@ paths:
                         rejectedValue: DRAMA
                         message: 'Жанр назначения должен отличаться от исходного'
         '409':
-          description: В жанре `to-genre` нет фильмов — награды некому передать, ничего не изменено.
           content:
             application/json:
               schema: { $ref: '#/components/schemas/Error' }
-              example:
-                message: В жанре MUSICAL нет фильмов для получения наград
-                timestamp: '2026-10-02T14:30:00Z'
+              examples:
+                noTargetMovies:
+                  summary: Нет фильмов целевого жанра
+                  value:
+                    message: В жанре MUSICAL нет фильмов для получения наград
+                    timestamp: '2026-10-02T14:30:00Z'
         '503': { $ref: '#/components/responses/MovieServiceUnavailable' }
 
 components:
@@ -184,10 +174,12 @@ components:
   responses:
 
     MovieServiceUnavailable:
-      description: Movie Service недоступен или не ответил вовремя; операция не выполнена.
       content:
         application/json:
           schema: { $ref: '#/components/schemas/Error' }
-          example:
-            message: Movie Service недоступен, повторите запрос позже
-            timestamp: '2026-10-02T14:30:00Z'
+          examples:
+            unavailable:
+              summary: Movie Service недоступен
+              value:
+                message: Movie Service недоступен, повторите запрос позже
+                timestamp: '2026-10-02T14:30:00Z'
