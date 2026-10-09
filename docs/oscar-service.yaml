@@ -2,7 +2,7 @@ openapi: 3.1.0
 
 info:
   title: Oscar Service
-  version: 1
+  version: '1'
 
 tags:
   - name: Oscars
@@ -101,10 +101,6 @@ components:
 
   schemas:
 
-    MovieGenre:
-      type: string
-      enum: [ ACTION, DRAMA, COMEDY, MUSICAL, HORROR ]
-
     BulkOperationResult:
       type: object
       required: [ affectedMovies ]
@@ -181,5 +177,5 @@ components:
             unavailable:
               summary: Movie Service недоступен
               value:
-                message: Movie Service недоступен, повторите запрос позже
+                message: Movie Service недоступен
                 timestamp: '2026-10-02T14:30:00Z'

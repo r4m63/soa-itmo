@@ -2,7 +2,7 @@ openapi: 3.1.0
 
 info:
   title: Movie Service
-  version: 1
+  version: '1'
 
 tags:
   - name: Movies
@@ -336,7 +336,7 @@ paths:
       summary: Удалить фильм
       operationId: deleteMovie
       responses:
-        '204': { description: Фильм удалён, тело ответа отсутствует. }
+        '204': { }
         '400': { $ref: '#/components/responses/InvalidMovieId' }
         '404': { $ref: '#/components/responses/MovieNotFound' }
 
@@ -581,6 +581,12 @@ components:
             - genre;eq;DRAMA
             - oscarsCount;gte;3
             - name;startsWith;A
+        severalGenres:
+          summary: Драмы, комедии или без жанра
+          value:
+            - genre;eq;DRAMA
+            - genre;eq;COMEDY
+            - genre;isNull
         nullCheck:
           summary: Фильмы без сценариста
           value:
@@ -631,6 +637,7 @@ components:
       explode: true
       schema:
         type: array
+        default: [ 'creationDate;asc' ]
         items:
           type: string
           pattern: '^(id|name|coordinates\.(x|y)|creationDate|oscarsCount|genre|mpaaRating|screenwriter\.(name|passportID|hairColor|nationality));(asc|desc)$'
@@ -721,18 +728,6 @@ components:
           passportID: ABC123456
           hairColor: WHITE
           nationality: UNITED_KINGDOM
-
-    Movie2:
-      summary: Фильм
-      value:
-        id: 2
-        name: Film name 2
-        coordinates: { x: 7, y: 35 }
-        creationDate: '2026-09-18'
-        oscarsCount: 1
-        genre: null
-        mpaaRating: R
-        screenwriter: null
 
     InvalidQuery:
       summary: Несколько ошибок в параметрах
