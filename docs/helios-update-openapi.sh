@@ -1,4 +1,5 @@
-#!/bin/zsh
+#!/bin/sh
 
-set -euo pipefail
-scp "${0:A:h}"/*.yaml se:public_html/swagger/
+set -eu
+dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+scp "$dir"/*.yaml se:public_html/swagger/
