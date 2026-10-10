@@ -25,6 +25,7 @@ paths:
                   value:
                     affectedMovies: 5
         '503': { $ref: '#/components/responses/MovieServiceUnavailable' }
+        '500': { $ref: '#/components/responses/InternalError' }
 
   /oscar/genres/redistribute-rewards/{from-genre}/{to-genre}:
     post:
@@ -96,6 +97,7 @@ paths:
                     message: В жанре MUSICAL нет фильмов для получения наград
                     timestamp: '2026-10-02T14:30:00Z'
         '503': { $ref: '#/components/responses/MovieServiceUnavailable' }
+        '500': { $ref: '#/components/responses/InternalError' }
 
 components:
 
@@ -178,4 +180,15 @@ components:
               summary: Movie Service недоступен
               value:
                 message: Movie Service недоступен
+                timestamp: '2026-10-02T14:30:00Z'
+
+    InternalError:
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+          examples:
+            internalError:
+              summary: Внутренняя ошибка сервера
+              value:
+                message: Внутренняя ошибка сервера
                 timestamp: '2026-10-02T14:30:00Z'

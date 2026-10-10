@@ -71,6 +71,7 @@ paths:
               schema: { $ref: '#/components/schemas/ValidationError' }
               examples:
                 invalidQuery: { $ref: '#/components/examples/InvalidQuery' }
+        '500': { $ref: '#/components/responses/InternalError' }
 
     post:
       tags: [ Movies ]
@@ -115,6 +116,7 @@ paths:
               examples:
                 created: { $ref: '#/components/examples/Movie1', summary: Фильм создан }
         '400': { $ref: '#/components/responses/InvalidMovieBody' }
+        '500': { $ref: '#/components/responses/InternalError' }
 
   /movies/by-genre/{genre}:
     delete:
@@ -152,6 +154,7 @@ paths:
                         field: genre
                         rejectedValue: THRILLER
                         message: 'Допустимые значения: ACTION, DRAMA, COMEDY, MUSICAL, HORROR'
+        '500': { $ref: '#/components/responses/InternalError' }
 
   /movies/genres:
     get:
@@ -164,22 +167,25 @@ paths:
         '200':
           content:
             application/json:
-              schema:
-                type: array
-                items: { $ref: '#/components/schemas/MovieGenre' }
+              schema: { $ref: '#/components/schemas/MovieGenreList' }
               examples:
                 all:
                   summary: 'Без search - все значения'
-                  value: [ ACTION, DRAMA, COMEDY, MUSICAL, HORROR ]
+                  value:
+                    items: [ ACTION, DRAMA, COMEDY, MUSICAL, HORROR ]
                 dra:
                   summary: '?search=dra'
-                  value: [ DRAMA ]
+                  value:
+                    items: [ DRAMA ]
                 o:
                   summary: '?search=o'
-                  value: [ ACTION, COMEDY, HORROR ]
+                  value:
+                    items: [ ACTION, COMEDY, HORROR ]
                 empty:
                   summary: '?search=abcdef - ничего не найдено'
-                  value: [ ]
+                  value:
+                    items: [ ]
+        '500': { $ref: '#/components/responses/InternalError' }
 
   /movies/mpaa-ratings:
     get:
@@ -192,22 +198,25 @@ paths:
         '200':
           content:
             application/json:
-              schema:
-                type: array
-                items: { $ref: '#/components/schemas/MpaaRating' }
+              schema: { $ref: '#/components/schemas/MpaaRatingList' }
               examples:
                 all:
                   summary: 'Без search - все значения'
-                  value: [ G, PG, PG_13, R, NC_17 ]
+                  value:
+                    items: [ G, PG, PG_13, R, NC_17 ]
                 pg:
                   summary: '?search=pg'
-                  value: [ PG, PG_13 ]
+                  value:
+                    items: [ PG, PG_13 ]
                 nc17:
                   summary: '?search=17'
-                  value: [ NC_17 ]
+                  value:
+                    items: [ NC_17 ]
                 empty:
                   summary: '?search=abcdef - ничего не найдено'
-                  value: [ ]
+                  value:
+                    items: [ ]
+        '500': { $ref: '#/components/responses/InternalError' }
 
   /movies/colors:
     get:
@@ -220,22 +229,25 @@ paths:
         '200':
           content:
             application/json:
-              schema:
-                type: array
-                items: { $ref: '#/components/schemas/Color' }
+              schema: { $ref: '#/components/schemas/ColorList' }
               examples:
                 all:
                   summary: 'Без search - все значения'
-                  value: [ RED, BLUE, ORANGE, WHITE ]
+                  value:
+                    items: [ RED, BLUE, ORANGE, WHITE ]
                 r:
                   summary: '?search=r'
-                  value: [ RED, ORANGE ]
+                  value:
+                    items: [ RED, ORANGE ]
                 wh:
                   summary: '?search=wh'
-                  value: [ WHITE ]
+                  value:
+                    items: [ WHITE ]
                 empty:
                   summary: '?search=abcdef - ничего не найдено'
-                  value: [ ]
+                  value:
+                    items: [ ]
+        '500': { $ref: '#/components/responses/InternalError' }
 
   /movies/countries:
     get:
@@ -248,22 +260,25 @@ paths:
         '200':
           content:
             application/json:
-              schema:
-                type: array
-                items: { $ref: '#/components/schemas/Country' }
+              schema: { $ref: '#/components/schemas/CountryList' }
               examples:
                 all:
                   summary: 'Без search - все значения'
-                  value: [ RUSSIA, UNITED_KINGDOM, FRANCE, SPAIN, NORTH_KOREA ]
+                  value:
+                    items: [ RUSSIA, UNITED_KINGDOM, FRANCE, SPAIN, NORTH_KOREA ]
                 king:
                   summary: '?search=king'
-                  value: [ UNITED_KINGDOM ]
+                  value:
+                    items: [ UNITED_KINGDOM ]
                 r:
                   summary: '?search=r'
-                  value: [ RUSSIA, FRANCE, NORTH_KOREA ]
+                  value:
+                    items: [ RUSSIA, FRANCE, NORTH_KOREA ]
                 empty:
                   summary: '?search=abcdef - ничего не найдено'
-                  value: [ ]
+                  value:
+                    items: [ ]
+        '500': { $ref: '#/components/responses/InternalError' }
 
   /movies/{id}:
     parameters:
@@ -282,6 +297,7 @@ paths:
                 found: { $ref: '#/components/examples/Movie1', summary: Фильм найден }
         '400': { $ref: '#/components/responses/InvalidMovieId' }
         '404': { $ref: '#/components/responses/MovieNotFound' }
+        '500': { $ref: '#/components/responses/InternalError' }
 
     patch:
       tags: [ Movies ]
@@ -330,6 +346,7 @@ paths:
                 invalidFields: { $ref: '#/components/examples/InvalidMovieFields' }
                 readOnlyFields: { $ref: '#/components/examples/ReadOnlyFields' }
         '404': { $ref: '#/components/responses/MovieNotFound' }
+        '500': { $ref: '#/components/responses/InternalError' }
 
     delete:
       tags: [ Movies ]
@@ -339,6 +356,7 @@ paths:
         '204': { }
         '400': { $ref: '#/components/responses/InvalidMovieId' }
         '404': { $ref: '#/components/responses/MovieNotFound' }
+        '500': { $ref: '#/components/responses/InternalError' }
 
 components:
 
@@ -462,6 +480,38 @@ components:
     Country:
       type: string
       enum: [ RUSSIA, UNITED_KINGDOM, FRANCE, SPAIN, NORTH_KOREA ]
+
+    MovieGenreList:
+      type: object
+      required: [ items ]
+      properties:
+        items:
+          type: array
+          items: { $ref: '#/components/schemas/MovieGenre' }
+
+    MpaaRatingList:
+      type: object
+      required: [ items ]
+      properties:
+        items:
+          type: array
+          items: { $ref: '#/components/schemas/MpaaRating' }
+
+    ColorList:
+      type: object
+      required: [ items ]
+      properties:
+        items:
+          type: array
+          items: { $ref: '#/components/schemas/Color' }
+
+    CountryList:
+      type: object
+      required: [ items ]
+      properties:
+        items:
+          type: array
+          items: { $ref: '#/components/schemas/Country' }
 
     MoviePage:
       type: object
@@ -693,6 +743,17 @@ components:
               summary: Фильм не найден
               value:
                 message: Фильм с id=42 не найден
+                timestamp: '2026-10-02T14:30:00Z'
+
+    InternalError:
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+          examples:
+            internalError:
+              summary: Внутренняя ошибка сервера
+              value:
+                message: Внутренняя ошибка сервера
                 timestamp: '2026-10-02T14:30:00Z'
 
   examples:
