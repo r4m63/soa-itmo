@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react"
+import { useMemo } from "react"
 import { flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import { Columns3Icon, FilmIcon } from "lucide-react"
 
@@ -11,12 +11,18 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty"
 import { Skeleton } from "@/components/ui/skeleton"
+import { useStoredState } from "@/hooks/use-stored-state"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { toggleSort } from "@/lib/movie-query"
 import { cn } from "@/lib/utils"
 import { ColumnFilter } from "./column-filter"
 import { FloatingFilter } from "./floating-filter"
 import { movieColumns, SortableHeader } from "./movie-columns"
+
+function sanitizeVisibility(stored) {
+  if (!stored || typeof stored !== "object" || Array.isArray(stored)) return {}
+  return Object.fromEntries(Object.entries(stored).filter(([, visible]) => typeof visible === "boolean"))
+}
 
 /**
  * Таблица фильмов. Сортировка, фильтры и пагинация серверные: таблица только меняет sorts и filters,
@@ -29,7 +35,8 @@ export function MoviesTable({
   movies, loading, sorts, onSortsChange, filters, filterErrors, onFiltersChange, actions, emptyAction,
   toolbarStart, toolbarActions, toolbarEnd,
 }) {
-  const [columnVisibility, setColumnVisibility] = useState({})
+  // скрытые колонки тоже запоминаются; неизвестные id просто не на что применить
+  const [columnVisibility, setColumnVisibility] = useStoredState("movies:columns", {}, sanitizeVisibility)
   const columns = useMemo(() => movieColumns(actions), [actions])
 
   const table = useReactTable({
