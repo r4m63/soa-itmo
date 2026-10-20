@@ -1,0 +1,17 @@
+[versions]
+java = "21"
+jakartaee = "11.0.0"
+jakarta-persistence = "3.2.0"
+flyway = "13.10.3"
+spring-boot = "4.1.1"
+spring-dependency-management = "1.1.7"
+
+[libraries]
+jakartaee-api = { module = "jakarta.platform:jakarta.jakartaee-api", version.ref = "jakartaee" }
+jakarta-persistence-api = { module = "jakarta.persistence:jakarta.persistence-api", version.ref = "jakarta-persistence" }
+flyway-core = { module = "org.flywaydb:flyway-core", version.ref = "flyway" }
+flyway-postgresql = { module = "org.flywaydb:flyway-database-postgresql", version.ref = "flyway" }
+
+[plugins]
+spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }
+spring-dependency-management = { id = "io.spring.dependency-management", version.ref = "spring-dependency-management" }
