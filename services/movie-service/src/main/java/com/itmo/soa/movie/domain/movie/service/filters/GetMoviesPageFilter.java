@@ -1,15 +1,15 @@
 package com.itmo.soa.movie.domain.movie.service.filters;
 
-import com.itmo.soa.common.exception.InvalidDataException;
-import com.itmo.soa.common.query.Page;
-import com.itmo.soa.common.query.Query;
-import com.itmo.soa.common.query.QueryParser;
-import com.itmo.soa.common.query.QueryValidationException;
-import com.itmo.soa.contract.common.error.FieldError;
+import com.itmo.soa.contract.error.exception.InvalidDataException;
+import com.itmo.soa.contract.error.response.FieldError;
 import com.itmo.soa.movie.domain.movie.mapper.MovieEntityMapper;
 import com.itmo.soa.movie.domain.movie.model.Movie;
 import com.itmo.soa.movie.domain.movie.service.MovieQuerySchema;
 import com.itmo.soa.movie.infrastructure.storage.movie.JpaMovieRepository;
+import com.itmo.soa.query.Page;
+import com.itmo.soa.query.Query;
+import com.itmo.soa.query.QueryParser;
+import com.itmo.soa.query.QueryValidationException;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 

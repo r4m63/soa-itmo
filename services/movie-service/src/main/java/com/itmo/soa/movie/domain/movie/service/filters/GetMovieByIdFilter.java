@@ -1,6 +1,6 @@
 package com.itmo.soa.movie.domain.movie.service.filters;
 
-import com.itmo.soa.common.exception.NotFoundException;
+import com.itmo.soa.contract.error.exception.NotFoundException;
 import com.itmo.soa.movie.domain.movie.mapper.MovieEntityMapper;
 import com.itmo.soa.movie.domain.movie.model.Movie;
 import com.itmo.soa.movie.infrastructure.storage.movie.JpaMovieRepository;

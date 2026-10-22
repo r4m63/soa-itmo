@@ -1,7 +1,7 @@
 package com.itmo.soa.movie.domain.movie.model;
 
-import com.itmo.soa.common.exception.InvalidDataException;
-import com.itmo.soa.contract.common.error.FieldError;
+import com.itmo.soa.contract.error.exception.InvalidDataException;
+import com.itmo.soa.contract.error.response.FieldError;
 
 import java.util.Arrays;
 import java.util.List;

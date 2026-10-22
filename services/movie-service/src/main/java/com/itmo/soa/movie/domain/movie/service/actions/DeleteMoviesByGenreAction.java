@@ -1,6 +1,6 @@
 package com.itmo.soa.movie.domain.movie.service.actions;
 
-import com.itmo.soa.contract.common.error.FieldError;
+import com.itmo.soa.contract.error.response.FieldError;
 import com.itmo.soa.movie.domain.movie.model.EnumValues;
 import com.itmo.soa.movie.infrastructure.storage.movie.JpaMovieRepository;
 import com.itmo.soa.movie.infrastructure.storage.movie.model.MovieGenre;

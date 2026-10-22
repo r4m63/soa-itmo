@@ -1,6 +1,6 @@
 package com.itmo.soa.movie.domain.movie.service.actions;
 
-import com.itmo.soa.contract.movie.movie.request.CreateMovieRequest;
+import com.itmo.soa.contract.request.movie.CreateMovieRequest;
 import com.itmo.soa.movie.domain.movie.mapper.MovieEntityMapper;
 import com.itmo.soa.movie.domain.movie.model.Movie;
 import com.itmo.soa.movie.infrastructure.storage.movie.JpaMovieRepository;

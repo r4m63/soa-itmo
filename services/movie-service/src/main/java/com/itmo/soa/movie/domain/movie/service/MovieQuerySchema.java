@@ -1,12 +1,12 @@
 package com.itmo.soa.movie.domain.movie.service;
 
-import com.itmo.soa.common.query.Direction;
-import com.itmo.soa.common.query.QueryField;
-import com.itmo.soa.common.query.QuerySchema;
 import com.itmo.soa.movie.infrastructure.storage.movie.model.Color;
 import com.itmo.soa.movie.infrastructure.storage.movie.model.Country;
 import com.itmo.soa.movie.infrastructure.storage.movie.model.MovieGenre;
 import com.itmo.soa.movie.infrastructure.storage.movie.model.MpaaRating;
+import com.itmo.soa.query.Direction;
+import com.itmo.soa.query.QueryField;
+import com.itmo.soa.query.QuerySchema;
 
 /**
  * Поля filter и sort для GET /movies — как в таблицах спецификации.

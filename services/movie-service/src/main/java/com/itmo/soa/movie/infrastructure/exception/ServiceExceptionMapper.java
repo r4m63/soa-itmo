@@ -1,6 +1,6 @@
 package com.itmo.soa.movie.infrastructure.exception;
 
-import com.itmo.soa.common.exception.ServiceException;
+import com.itmo.soa.contract.error.exception.ServiceException;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;

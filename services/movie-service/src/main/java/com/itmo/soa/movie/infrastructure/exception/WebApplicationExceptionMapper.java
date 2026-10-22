@@ -1,6 +1,6 @@
 package com.itmo.soa.movie.infrastructure.exception;
 
-import com.itmo.soa.contract.common.error.FieldError;
+import com.itmo.soa.contract.error.response.FieldError;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.Response;

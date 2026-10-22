@@ -1,8 +1,8 @@
 package com.itmo.soa.movie.domain.movie.model;
 
-import com.itmo.soa.contract.common.error.FieldError;
-import com.itmo.soa.contract.movie.movie.request.CreateMovieRequest;
-import com.itmo.soa.contract.movie.movie.request.UpdateMovieRequest;
+import com.itmo.soa.contract.error.response.FieldError;
+import com.itmo.soa.contract.request.movie.CreateMovieRequest;
+import com.itmo.soa.contract.request.movie.UpdateMovieRequest;
 import com.itmo.soa.movie.infrastructure.storage.movie.model.MovieGenre;
 import com.itmo.soa.movie.infrastructure.storage.movie.model.MpaaRating;
 

@@ -1,8 +1,8 @@
 package com.itmo.soa.movie.infrastructure.exception;
 
-import com.itmo.soa.contract.common.error.ErrorResponse;
-import com.itmo.soa.contract.common.error.FieldError;
-import com.itmo.soa.contract.common.error.ValidationErrorResponse;
+import com.itmo.soa.contract.error.response.ErrorResponse;
+import com.itmo.soa.contract.error.response.FieldError;
+import com.itmo.soa.contract.error.response.ValidationErrorResponse;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 

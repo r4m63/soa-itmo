@@ -1,6 +1,6 @@
 package com.itmo.soa.movie.domain.movie.service.filters;
 
-import com.itmo.soa.common.query.EnumSearch;
+import com.itmo.soa.query.EnumSearch;
 import jakarta.enterprise.context.ApplicationScoped;
 
 import java.util.List;

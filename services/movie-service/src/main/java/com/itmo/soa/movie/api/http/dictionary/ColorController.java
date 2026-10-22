@@ -1,6 +1,6 @@
 package com.itmo.soa.movie.api.http.dictionary;
 
-import com.itmo.soa.contract.common.dictionary.DictionaryResponse;
+import com.itmo.soa.contract.response.movie.DictionaryResponse;
 import com.itmo.soa.movie.domain.movie.service.MovieService;
 import com.itmo.soa.movie.infrastructure.storage.movie.model.Color;
 import jakarta.enterprise.context.RequestScoped;

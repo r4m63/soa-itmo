@@ -1,12 +1,12 @@
 package com.itmo.soa.movie.api.http.movie;
 
-import com.itmo.soa.contract.movie.movie.request.CreateMovieRequest;
-import com.itmo.soa.contract.movie.movie.request.MovieGenrePathParams;
-import com.itmo.soa.contract.movie.movie.request.MovieIdPathParams;
-import com.itmo.soa.contract.movie.movie.request.UpdateMovieRequest;
-import com.itmo.soa.contract.movie.movie.response.DeleteMoviesByGenreResponse;
-import com.itmo.soa.contract.movie.movie.response.MoviePageResponse;
-import com.itmo.soa.contract.movie.movie.response.MovieResponse;
+import com.itmo.soa.contract.request.movie.CreateMovieRequest;
+import com.itmo.soa.contract.request.movie.MovieGenrePathParams;
+import com.itmo.soa.contract.request.movie.MovieIdPathParams;
+import com.itmo.soa.contract.request.movie.UpdateMovieRequest;
+import com.itmo.soa.contract.response.movie.DeleteMoviesByGenreResponse;
+import com.itmo.soa.contract.response.movie.MoviePageResponse;
+import com.itmo.soa.contract.response.movie.MovieResponse;
 import com.itmo.soa.movie.domain.movie.mapper.MovieResponseMapper;
 import com.itmo.soa.movie.domain.movie.service.MovieService;
 import jakarta.enterprise.context.RequestScoped;

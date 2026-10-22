@@ -1,7 +1,7 @@
 package com.itmo.soa.movie.domain.movie.model;
 
-import com.itmo.soa.contract.common.error.FieldError;
-import com.itmo.soa.contract.movie.movie.dto.PersonDto;
+import com.itmo.soa.contract.error.response.FieldError;
+import com.itmo.soa.contract.request.movie.PersonDto;
 import com.itmo.soa.movie.infrastructure.storage.movie.model.Color;
 import com.itmo.soa.movie.infrastructure.storage.movie.model.Country;
 

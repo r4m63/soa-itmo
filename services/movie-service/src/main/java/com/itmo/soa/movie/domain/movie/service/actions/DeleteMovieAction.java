@@ -1,6 +1,6 @@
 package com.itmo.soa.movie.domain.movie.service.actions;
 
-import com.itmo.soa.common.exception.NotFoundException;
+import com.itmo.soa.contract.error.exception.NotFoundException;
 import com.itmo.soa.movie.infrastructure.storage.movie.JpaMovieRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
