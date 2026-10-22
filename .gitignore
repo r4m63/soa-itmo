@@ -38,3 +38,6 @@ out/
 
 ### Node ###
 node_modules/
+
+### Payara (локальный дистрибутив) ###
+payara7/
