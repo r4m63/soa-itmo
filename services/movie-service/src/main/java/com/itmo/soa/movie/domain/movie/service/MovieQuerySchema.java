@@ -8,9 +8,7 @@ import com.itmo.soa.query.Direction;
 import com.itmo.soa.query.QueryField;
 import com.itmo.soa.query.QuerySchema;
 
-/**
- * Поля filter и sort для GET /movies — как в таблицах спецификации.
- */
+
 public final class MovieQuerySchema {
 
     public static final QuerySchema MOVIES = QuerySchema.builder()
