@@ -1,9 +1,9 @@
 package com.itmo.soa.movie.domain.movie.service.actions;
 
-import com.itmo.soa.contract.movie.MoviePatch;
+import com.itmo.soa.common.exception.NotFoundException;
+import com.itmo.soa.contract.movie.movie.request.UpdateMovieRequest;
 import com.itmo.soa.movie.domain.movie.mapper.MovieEntityMapper;
 import com.itmo.soa.movie.domain.movie.model.Movie;
-import com.itmo.soa.movie.domain.movie.model.MovieNotFoundException;
 import com.itmo.soa.movie.infrastructure.storage.movie.JpaMovieRepository;
 import com.itmo.soa.movie.infrastructure.storage.movie.model.MovieEntity;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -17,8 +17,8 @@ public class PatchMovieAction {
     JpaMovieRepository movieRepository;
 
     @Transactional
-    public Movie execute(int id, MoviePatch patch) {
-        MovieEntity entity = movieRepository.findById(id).orElseThrow(() -> new MovieNotFoundException(id));
+    public Movie execute(int id, UpdateMovieRequest patch) {
+        MovieEntity entity = movieRepository.findById(id).orElseThrow(() -> new NotFoundException("Фильм с id=" + id + " не найден"));
         Movie movie = MovieEntityMapper.toModel(entity);
         movie.apply(patch);
         MovieEntityMapper.copyTo(movie, entity);

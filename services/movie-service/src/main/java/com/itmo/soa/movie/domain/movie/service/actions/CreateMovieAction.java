@@ -1,6 +1,6 @@
 package com.itmo.soa.movie.domain.movie.service.actions;
 
-import com.itmo.soa.contract.movie.MovieInput;
+import com.itmo.soa.contract.movie.movie.request.CreateMovieRequest;
 import com.itmo.soa.movie.domain.movie.mapper.MovieEntityMapper;
 import com.itmo.soa.movie.domain.movie.model.Movie;
 import com.itmo.soa.movie.infrastructure.storage.movie.JpaMovieRepository;
@@ -21,7 +21,7 @@ public class CreateMovieAction {
     Clock clock;
 
     @Transactional
-    public Movie execute(MovieInput input) {
+    public Movie execute(CreateMovieRequest input) {
         Movie movie = Movie.create(input, LocalDate.now(clock));
         return MovieEntityMapper.toModel(movieRepository.insert(MovieEntityMapper.toNewEntity(movie)));
     }
