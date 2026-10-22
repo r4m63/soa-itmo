@@ -2,6 +2,7 @@ package com.itmo.soa.movie.domain.movie.service.actions;
 
 import com.itmo.soa.contract.request.movie.CreateMovieRequest;
 import com.itmo.soa.movie.domain.movie.mapper.MovieEntityMapper;
+import com.itmo.soa.movie.domain.movie.mapper.MovieRequestMapper;
 import com.itmo.soa.movie.domain.movie.model.Movie;
 import com.itmo.soa.movie.infrastructure.storage.movie.JpaMovieRepository;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -9,7 +10,6 @@ import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
 import java.time.Clock;
-import java.time.LocalDate;
 
 @ApplicationScoped
 public class CreateMovieAction {
@@ -22,7 +22,7 @@ public class CreateMovieAction {
 
     @Transactional
     public Movie execute(CreateMovieRequest input) {
-        Movie movie = Movie.create(input, LocalDate.now(clock));
+        Movie movie = MovieRequestMapper.toNewMovie(input, clock);
         return MovieEntityMapper.toModel(movieRepository.insert(MovieEntityMapper.toNewEntity(movie)));
     }
 }

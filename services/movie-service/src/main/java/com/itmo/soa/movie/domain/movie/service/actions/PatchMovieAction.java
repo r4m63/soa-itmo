@@ -3,6 +3,7 @@ package com.itmo.soa.movie.domain.movie.service.actions;
 import com.itmo.soa.contract.error.exception.NotFoundException;
 import com.itmo.soa.contract.request.movie.UpdateMovieRequest;
 import com.itmo.soa.movie.domain.movie.mapper.MovieEntityMapper;
+import com.itmo.soa.movie.domain.movie.mapper.MovieRequestMapper;
 import com.itmo.soa.movie.domain.movie.model.Movie;
 import com.itmo.soa.movie.infrastructure.storage.movie.JpaMovieRepository;
 import com.itmo.soa.movie.infrastructure.storage.movie.model.MovieEntity;
@@ -20,7 +21,7 @@ public class PatchMovieAction {
     public Movie execute(int id, UpdateMovieRequest patch) {
         MovieEntity entity = movieRepository.findById(id).orElseThrow(() -> new NotFoundException("Фильм с id=" + id + " не найден"));
         Movie movie = MovieEntityMapper.toModel(entity);
-        movie.apply(patch);
+        MovieRequestMapper.applyPatch(movie, patch);
         MovieEntityMapper.copyTo(movie, entity);
         movieRepository.update(entity);
         return movie;

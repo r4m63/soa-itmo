@@ -1,21 +1,20 @@
 package com.itmo.soa.movie.domain.movie.model;
 
-import com.itmo.soa.contract.error.response.FieldError;
-import com.itmo.soa.contract.request.movie.PersonDto;
-import com.itmo.soa.movie.infrastructure.storage.movie.model.Color;
-import com.itmo.soa.movie.infrastructure.storage.movie.model.Country;
-
-import java.util.List;
-
+/** Сценарист: имя не пустое, passportID — null или не короче 5 символов, nationality обязательна. */
 public record Person(String name, String passportID, Color hairColor, Country nationality) {
 
-    /** null — сценариста нет. Неизвестные hairColor / nationality — ошибки в errors. */
-    static Person from(PersonDto dto, List<FieldError> errors) {
-        if (dto == null) {
-            return null;
+    private static final int MIN_PASSPORT_ID_LENGTH = 5;
+
+    public Person {
+        if (name == null || name.isBlank()) {
+            throw new MovieRuleViolationException("screenwriter.name", name, "Имя не может быть пустым");
         }
-        return new Person(dto.getName(), dto.getPassportID(),
-                EnumValues.parse(Color.class, dto.getHairColor(), FieldError.BODY, "screenwriter.hairColor", errors),
-                EnumValues.parse(Country.class, dto.getNationality(), FieldError.BODY, "screenwriter.nationality", errors));
+        if (passportID != null && passportID.length() < MIN_PASSPORT_ID_LENGTH) {
+            throw new MovieRuleViolationException("screenwriter.passportID", passportID,
+                    "Длина должна быть не меньше " + MIN_PASSPORT_ID_LENGTH + " символов");
+        }
+        if (nationality == null) {
+            throw new MovieRuleViolationException("screenwriter.nationality", null, "Поле обязательно");
+        }
     }
 }

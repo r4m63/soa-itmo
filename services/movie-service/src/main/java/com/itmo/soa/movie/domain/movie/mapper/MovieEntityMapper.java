@@ -2,10 +2,13 @@ package com.itmo.soa.movie.domain.movie.mapper;
 
 import com.itmo.soa.movie.domain.movie.model.Coordinates;
 import com.itmo.soa.movie.domain.movie.model.Movie;
+import com.itmo.soa.movie.domain.movie.model.MovieName;
+import com.itmo.soa.movie.domain.movie.model.OscarsCount;
 import com.itmo.soa.movie.domain.movie.model.Person;
 import com.itmo.soa.movie.infrastructure.storage.movie.model.CoordinatesEmbeddable;
 import com.itmo.soa.movie.infrastructure.storage.movie.model.MovieEntity;
 import com.itmo.soa.movie.infrastructure.storage.movie.model.ScreenwriterEmbeddable;
+
 
 /**
  * MovieEntity ⇄ Movie. Лежит в domain: infrastructure о доменной модели не знает.
@@ -19,10 +22,10 @@ public final class MovieEntityMapper {
         CoordinatesEmbeddable coordinates = entity.getCoordinates();
         return Movie.restore(
                 entity.getId(),
-                entity.getName(),
-                new Coordinates(coordinates.getX(), coordinates.getY()),
                 entity.getCreationDate(),
-                entity.getOscarsCount(),
+                new MovieName(entity.getName()),
+                new Coordinates(coordinates.getX(), coordinates.getY()),
+                new OscarsCount(entity.getOscarsCount()),
                 entity.getGenre(),
                 entity.getMpaaRating(),
                 toModel(entity.getScreenwriter())
@@ -38,9 +41,9 @@ public final class MovieEntityMapper {
 
     /** Переносит изменяемые поля; id и creationDate не трогает. */
     public static void copyTo(Movie movie, MovieEntity entity) {
-        entity.setName(movie.name());
+        entity.setName(movie.name().value());
         entity.setCoordinates(toEmbeddable(movie.coordinates()));
-        entity.setOscarsCount(movie.oscarsCount());
+        entity.setOscarsCount(movie.oscarsCount().value());
         entity.setGenre(movie.genre());
         entity.setMpaaRating(movie.mpaaRating());
         entity.setScreenwriter(toEmbeddable(movie.screenwriter()));

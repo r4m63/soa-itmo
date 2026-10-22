@@ -1,91 +1,100 @@
 package com.itmo.soa.movie.domain.movie.model;
 
-import com.itmo.soa.contract.error.response.FieldError;
-import com.itmo.soa.contract.request.movie.CreateMovieRequest;
-import com.itmo.soa.contract.request.movie.UpdateMovieRequest;
-import com.itmo.soa.movie.infrastructure.storage.movie.model.MovieGenre;
-import com.itmo.soa.movie.infrastructure.storage.movie.model.MpaaRating;
-
+import java.time.Clock;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
- * Агрегат «Фильм». Ограничения полей проверяются на входе (аннотации CreateMovieRequest, UpdateMovieRequest).
- * id и creationDate задаются при создании и больше не меняются.
+ * Агрегат «Фильм». Меняется только своими методами, каждый держит ограничения задания:
+ * name, coordinates, oscarsCount, mpaaRating обязательны, creationDate ставит сам агрегат и больше не меняет.
+ * id назначает хранилище.
  */
 public final class Movie {
 
-    private static final String INVALID_BODY = "Некорректное тело запроса";
-
     private final Integer id;
     private final LocalDate creationDate;
-    private String name;
+    private MovieName name;
     private Coordinates coordinates;
-    private int oscarsCount;
+    private OscarsCount oscarsCount;
     private MovieGenre genre;
     private MpaaRating mpaaRating;
     private Person screenwriter;
 
-    private Movie(Integer id, String name, Coordinates coordinates, LocalDate creationDate, int oscarsCount,
-                  MovieGenre genre, MpaaRating mpaaRating, Person screenwriter) {
+    private Movie(Integer id, LocalDate creationDate) {
         this.id = id;
-        this.name = name;
-        this.coordinates = coordinates;
-        this.creationDate = creationDate;
-        this.oscarsCount = oscarsCount;
+        this.creationDate = required("creationDate", creationDate);
+    }
+
+    /** Новый фильм. Дата создания — сегодняшняя по clock. genre и screenwriter могут быть null. */
+    public static Movie create(MovieName name, Coordinates coordinates, OscarsCount oscarsCount, MovieGenre genre,
+                               MpaaRating mpaaRating, Person screenwriter, Clock clock) {
+        Movie movie = new Movie(null, LocalDate.now(clock));
+        movie.rename(name);
+        movie.moveTo(coordinates);
+        movie.changeOscars(oscarsCount);
+        movie.changeGenre(genre);
+        movie.rate(mpaaRating);
+        movie.screenwriter = screenwriter;
+        return movie;
+    }
+
+    /** Уже сохранённый фильм. */
+    public static Movie restore(Integer id, LocalDate creationDate, MovieName name, Coordinates coordinates,
+                                OscarsCount oscarsCount, MovieGenre genre, MpaaRating mpaaRating, Person screenwriter) {
+        Movie movie = new Movie(id, creationDate);
+        movie.rename(name);
+        movie.moveTo(coordinates);
+        movie.changeOscars(oscarsCount);
+        movie.changeGenre(genre);
+        movie.rate(mpaaRating);
+        movie.screenwriter = screenwriter;
+        return movie;
+    }
+
+    public void rename(MovieName name) {
+        this.name = required("name", name);
+    }
+
+    public void moveTo(Coordinates coordinates) {
+        this.coordinates = required("coordinates", coordinates);
+    }
+
+    public void changeOscars(OscarsCount oscarsCount) {
+        this.oscarsCount = required("oscarsCount", oscarsCount);
+    }
+
+    /** null — фильм без жанра. */
+    public void changeGenre(MovieGenre genre) {
         this.genre = genre;
-        this.mpaaRating = mpaaRating;
-        this.screenwriter = screenwriter;
     }
 
-    /** Новый фильм из запроса, уже проверенного по аннотациям CreateMovieRequest. id назначит хранилище. */
-    public static Movie create(CreateMovieRequest input, LocalDate creationDate) {
-        List<FieldError> errors = new ArrayList<>();
-        MovieGenre genre = EnumValues.parse(MovieGenre.class, input.getGenre(), FieldError.BODY, "genre", errors);
-        MpaaRating mpaaRating = EnumValues.parse(MpaaRating.class, input.getMpaaRating(), FieldError.BODY, "mpaaRating", errors);
-        Person screenwriter = Person.from(input.getScreenwriter(), errors);
-        EnumValues.throwIfAny(INVALID_BODY, errors);
-        return new Movie(null, input.getName(), Coordinates.from(input.getCoordinates()), creationDate,
-                input.getOscarsCount(), genre, mpaaRating, screenwriter);
+    public void rate(MpaaRating mpaaRating) {
+        this.mpaaRating = required("mpaaRating", mpaaRating);
     }
 
-    /** Восстановление уже сохранённого фильма. */
-    public static Movie restore(Integer id, String name, Coordinates coordinates, LocalDate creationDate,
-                                int oscarsCount, MovieGenre genre, MpaaRating mpaaRating, Person screenwriter) {
-        return new Movie(id, name, coordinates, creationDate, oscarsCount, genre, mpaaRating, screenwriter);
+    public void assignScreenwriter(Person screenwriter) {
+        this.screenwriter = required("screenwriter", screenwriter);
     }
 
-    /** Применяет частичное изменение: null — поле не передано; genre и screenwriter сбрасывает Optional.empty(). */
-    public void apply(UpdateMovieRequest patch) {
-        List<FieldError> errors = new ArrayList<>();
-        MovieGenre newGenre = patch.getGenre() == null ? genre
-                : EnumValues.parse(MovieGenre.class, patch.getGenre().orElse(null), FieldError.BODY, "genre", errors);
-        MpaaRating newMpaaRating = patch.getMpaaRating() == null ? mpaaRating
-                : EnumValues.parse(MpaaRating.class, patch.getMpaaRating(), FieldError.BODY, "mpaaRating", errors);
-        Person newScreenwriter = patch.getScreenwriter() == null ? screenwriter
-                : Person.from(patch.getScreenwriter().orElse(null), errors);
-        EnumValues.throwIfAny(INVALID_BODY, errors);
+    public void removeScreenwriter() {
+        this.screenwriter = null;
+    }
 
-        if (patch.getName() != null) {
-            name = patch.getName();
+    private static <T> T required(String field, T value) {
+        if (value == null) {
+            throw new MovieRuleViolationException(field, null, "Поле обязательно");
         }
-        if (patch.getCoordinates() != null) {
-            coordinates = Coordinates.from(patch.getCoordinates());
-        }
-        if (patch.getOscarsCount() != null) {
-            oscarsCount = patch.getOscarsCount();
-        }
-        genre = newGenre;
-        mpaaRating = newMpaaRating;
-        screenwriter = newScreenwriter;
+        return value;
     }
 
     public Integer id() {
         return id;
     }
 
-    public String name() {
+    public LocalDate creationDate() {
+        return creationDate;
+    }
+
+    public MovieName name() {
         return name;
     }
 
@@ -93,11 +102,7 @@ public final class Movie {
         return coordinates;
     }
 
-    public LocalDate creationDate() {
-        return creationDate;
-    }
-
-    public int oscarsCount() {
+    public OscarsCount oscarsCount() {
         return oscarsCount;
     }
 

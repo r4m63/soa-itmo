@@ -20,10 +20,10 @@ public final class MovieResponseMapper {
                 name(movie.screenwriter().nationality()));
         return new MovieResponse(
                 movie.id(),
-                movie.name(),
+                movie.name().value(),
                 new CoordinatesDto(movie.coordinates().x(), movie.coordinates().y()),
                 movie.creationDate(),
-                movie.oscarsCount(),
+                movie.oscarsCount().value(),
                 name(movie.genre()),
                 name(movie.mpaaRating()),
                 screenwriter);
