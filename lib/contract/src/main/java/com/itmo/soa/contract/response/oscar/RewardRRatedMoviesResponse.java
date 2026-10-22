@@ -1,0 +1,13 @@
+package com.itmo.soa.contract.response.oscar;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class RewardRRatedMoviesResponse {
+
+    private int affectedMovies;
+}
