@@ -2,42 +2,32 @@ package com.itmo.soa.movie.infrastructure.storage.movie;
 
 import com.itmo.soa.movie.infrastructure.storage.movie.model.MovieEntity;
 import com.itmo.soa.movie.infrastructure.storage.movie.model.MovieGenre;
-import com.itmo.soa.query.Page;
-import com.itmo.soa.query.Query;
-import com.itmo.soa.query.jpa.JpaQueryExecutor;
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
+import jakarta.data.repository.By;
+import jakarta.data.repository.DataRepository;
+import jakarta.data.repository.Delete;
+import jakarta.data.repository.Find;
+import jakarta.data.repository.Insert;
+import jakarta.data.repository.Repository;
+import jakarta.data.repository.Update;
 
 import java.util.Optional;
 
-@ApplicationScoped
-public class JpaMovieRepository {
 
-    @PersistenceContext(unitName = "movies")
-    private EntityManager em;
+@Repository(dataStore = "movies")
+public interface JpaMovieRepository extends DataRepository<MovieEntity, Integer> {
 
-    public MovieEntity insert(MovieEntity entity) {
-        em.persist(entity);
-        em.flush();
-        return entity;
-    }
+    @Insert
+    MovieEntity insert(MovieEntity entity);
 
-    public Optional<MovieEntity> findById(int id) {
-        return Optional.ofNullable(em.find(MovieEntity.class, id));
-    }
+    @Find
+    Optional<MovieEntity> findById(@By(By.ID) Integer id);
 
-    public void delete(MovieEntity entity) {
-        em.remove(entity);
-    }
+    @Update
+    MovieEntity update(MovieEntity entity);
 
-    public int deleteByGenre(MovieGenre genre) {
-        return em.createQuery("DELETE FROM MovieEntity m WHERE m.genre = :genre")
-                .setParameter("genre", genre)
-                .executeUpdate();
-    }
+    @Delete
+    void delete(MovieEntity entity);
 
-    public Page<MovieEntity> findPage(Query query) {
-        return JpaQueryExecutor.execute(em, MovieEntity.class, query);
-    }
+    @Delete
+    int deleteByGenre(@By("genre") MovieGenre genre);
 }

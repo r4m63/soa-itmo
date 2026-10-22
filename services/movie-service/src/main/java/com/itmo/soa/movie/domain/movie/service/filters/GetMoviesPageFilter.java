@@ -5,7 +5,7 @@ import com.itmo.soa.contract.error.response.FieldError;
 import com.itmo.soa.movie.domain.movie.mapper.MovieEntityMapper;
 import com.itmo.soa.movie.domain.movie.model.Movie;
 import com.itmo.soa.movie.domain.movie.service.MovieQuerySchema;
-import com.itmo.soa.movie.infrastructure.storage.movie.JpaMovieRepository;
+import com.itmo.soa.movie.infrastructure.storage.movie.MovieQueryRepository;
 import com.itmo.soa.query.Page;
 import com.itmo.soa.query.Query;
 import com.itmo.soa.query.QueryParser;
@@ -21,7 +21,7 @@ public class GetMoviesPageFilter {
     private static final QueryParser PARSER = new QueryParser(MovieQuerySchema.MOVIES);
 
     @Inject
-    JpaMovieRepository movieRepository;
+    MovieQueryRepository movieQueryRepository;
 
     /** Неверные параметры — InvalidDataException со всеми ошибками filter[i], sort[i], page, size. */
     public Page<Movie> execute(List<String> filters, List<String> sorts, String page, String size) {
@@ -33,6 +33,6 @@ public class GetMoviesPageFilter {
                     .map(error -> FieldError.query(error.parameter(), error.rejectedValue(), error.message()))
                     .toList());
         }
-        return movieRepository.findPage(query).map(MovieEntityMapper::toModel);
+        return movieQueryRepository.findPage(query).map(MovieEntityMapper::toModel);
     }
 }

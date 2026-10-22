@@ -22,6 +22,7 @@ public class PatchMovieAction {
         Movie movie = MovieEntityMapper.toModel(entity);
         movie.apply(patch);
         MovieEntityMapper.copyTo(movie, entity);
+        movieRepository.update(entity);
         return movie;
     }
 }
