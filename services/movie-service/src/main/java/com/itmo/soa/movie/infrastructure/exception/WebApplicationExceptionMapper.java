@@ -29,16 +29,19 @@ public class WebApplicationExceptionMapper implements ExceptionMapper<WebApplica
                     uriInfo.getPathParameters().getFirst(name), name + " должен быть положительным целым числом")));
         }
         Response.StatusType status = e.getResponse().getStatusInfo();
-        // 400 от JAX-RS — тело не удалось прочитать вовсе (например, его нет)
+        // тело не удалось прочитать вовсе: его нет (400) или оно не JSON (415); по спецификации это 400 ValidationError
         if (status.getStatusCode() == 400) {
             return ErrorResponses.validation("Некорректное тело запроса",
                     List.of(FieldError.body(null, null, "Тело запроса обязательно")));
+        }
+        if (status.getStatusCode() == 415) {
+            return ErrorResponses.validation("Некорректное тело запроса",
+                    List.of(FieldError.body(null, null, "Тело запроса должно быть application/json")));
         }
         String message = switch (status.getStatusCode()) {
             case 404 -> "Ресурс не найден";
             case 405 -> "Метод не поддерживается";
             case 406 -> "Ответ доступен только в application/json";
-            case 415 -> "Тело запроса должно быть application/json";
             default -> status.getReasonPhrase();
         };
         return ErrorResponses.error(status, message);
