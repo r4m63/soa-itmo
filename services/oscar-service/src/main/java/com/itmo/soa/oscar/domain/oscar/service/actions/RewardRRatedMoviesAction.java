@@ -1,7 +1,6 @@
 package com.itmo.soa.oscar.domain.oscar.service.actions;
 
-import com.itmo.soa.contract.movie.MpaaRating;
-import com.itmo.soa.contract.oscar.BulkOperationResult;
+import com.itmo.soa.contract.oscar.oscar.response.RewardRRatedMoviesResponse;
 import com.itmo.soa.oscar.domain.oscar.mapper.AwardedMovieMapper;
 import com.itmo.soa.oscar.domain.oscar.model.AwardedMovie;
 import com.itmo.soa.oscar.domain.oscar.model.OscarsChange;
@@ -14,6 +13,8 @@ import java.util.List;
 @Service
 public class RewardRRatedMoviesAction {
 
+    private static final String R_RATING = "R";
+
     private final MovieServiceClient movieServiceClient;
     private final OscarsChangeApplier oscarsChangeApplier;
 
@@ -23,11 +24,11 @@ public class RewardRRatedMoviesAction {
     }
 
     /** +1 Оскар каждому фильму рейтинга R. Удалённые во время операции фильмы не считаются. */
-    public BulkOperationResult execute() {
-        List<OscarsChange> changes = movieServiceClient.findAllByMpaaRating(MpaaRating.R).stream()
+    public RewardRRatedMoviesResponse execute() {
+        List<OscarsChange> changes = movieServiceClient.findAllByMpaaRating(R_RATING).stream()
                 .map(AwardedMovieMapper::toModel)
                 .map(AwardedMovie::rewarded)
                 .toList();
-        return new BulkOperationResult(oscarsChangeApplier.apply(changes, true));
+        return new RewardRRatedMoviesResponse(oscarsChangeApplier.apply(changes, true));
     }
 }

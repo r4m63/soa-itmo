@@ -1,10 +1,10 @@
 package com.itmo.soa.oscar.api.http.oscar;
 
-import com.itmo.soa.contract.oscar.BulkOperationResult;
-import com.itmo.soa.contract.oscar.RedistributionResult;
+import com.itmo.soa.contract.oscar.oscar.request.RedistributeOscarsPathParams;
+import com.itmo.soa.contract.oscar.oscar.response.RedistributeOscarsResponse;
+import com.itmo.soa.contract.oscar.oscar.response.RewardRRatedMoviesResponse;
 import com.itmo.soa.oscar.domain.oscar.service.OscarService;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,12 +20,12 @@ public class OscarController {
     }
 
     @PostMapping("/movies/reward-r")
-    public BulkOperationResult rewardRRatedMovies() {
+    public RewardRRatedMoviesResponse rewardRRatedMovies() {
         return oscarService.rewardRRatedMovies().execute();
     }
 
     @PostMapping("/genres/redistribute-rewards/{fromGenre}/{toGenre}")
-    public RedistributionResult redistributeOscars(@PathVariable String fromGenre, @PathVariable String toGenre) {
-        return oscarService.redistributeOscars().execute(fromGenre, toGenre);
+    public RedistributeOscarsResponse redistributeOscars(RedistributeOscarsPathParams params) {
+        return oscarService.redistributeOscars().execute(params.getFromGenre(), params.getToGenre());
     }
 }

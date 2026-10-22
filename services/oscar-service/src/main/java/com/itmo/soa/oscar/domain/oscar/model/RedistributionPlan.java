@@ -1,6 +1,7 @@
 package com.itmo.soa.oscar.domain.oscar.model;
 
-import com.itmo.soa.contract.movie.MovieGenre;
+
+import com.itmo.soa.common.exception.InvalidOperationException;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -18,10 +19,10 @@ import java.util.List;
 public record RedistributionPlan(List<OscarsChange> changes, int sourceMovies, int targetMovies,
                                  long transferredOscars) {
 
-    public static RedistributionPlan calculate(MovieGenre targetGenre, List<AwardedMovie> sources,
+    public static RedistributionPlan calculate(String targetGenre, List<AwardedMovie> sources,
                                                List<AwardedMovie> targets) {
         if (targets.isEmpty()) {
-            throw new NoTargetMoviesException(targetGenre);
+            throw new InvalidOperationException("В жанре " + targetGenre + " нет фильмов для получения наград");
         }
 
         List<OscarsChange> changes = new ArrayList<>();

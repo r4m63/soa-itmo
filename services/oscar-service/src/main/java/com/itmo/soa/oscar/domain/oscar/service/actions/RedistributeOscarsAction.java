@@ -1,20 +1,17 @@
 package com.itmo.soa.oscar.domain.oscar.service.actions;
 
-import com.itmo.soa.contract.error.FieldError;
-import com.itmo.soa.contract.movie.MovieGenre;
-import com.itmo.soa.contract.oscar.RedistributionResult;
+import com.itmo.soa.common.exception.InvalidDataException;
+import com.itmo.soa.contract.common.error.FieldError;
+import com.itmo.soa.contract.oscar.oscar.response.RedistributeOscarsResponse;
 import com.itmo.soa.oscar.domain.oscar.mapper.AwardedMovieMapper;
 import com.itmo.soa.oscar.domain.oscar.model.AwardedMovie;
-import com.itmo.soa.oscar.domain.oscar.model.InvalidGenreException;
 import com.itmo.soa.oscar.domain.oscar.model.RedistributionPlan;
 import com.itmo.soa.oscar.domain.oscar.service.OscarsChangeApplier;
 import com.itmo.soa.oscar.infrastructure.integration.movie.MovieServiceClient;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class RedistributeOscarsAction {
@@ -30,36 +27,32 @@ public class RedistributeOscarsAction {
     /**
      * Сначала всё проверяется и считается, потом применяется: 400 и 409 — до первого изменения.
      */
-    public RedistributionResult execute(String fromGenre, String toGenre) {
+    public RedistributeOscarsResponse execute(String from, String to) {
+        List<String> genres = movieServiceClient.findAllGenres();
         List<FieldError> errors = new ArrayList<>();
-        MovieGenre from = genre("from-genre", fromGenre, errors);
-        MovieGenre to = genre("to-genre", toGenre, errors);
-        if (errors.isEmpty() && from == to) {
-            errors.add(FieldError.path("to-genre", toGenre, "Жанр назначения должен отличаться от исходного"));
+        checkGenre("from-genre", from, genres, errors);
+        checkGenre("to-genre", to, genres, errors);
+        if (errors.isEmpty() && from.equals(to)) {
+            errors.add(FieldError.path("to-genre", to, "Жанр назначения должен отличаться от исходного"));
         }
         if (!errors.isEmpty()) {
-            throw new InvalidGenreException(errors);
+            throw new InvalidDataException("Некорректные параметры запроса", errors);
         }
 
         List<AwardedMovie> sources = movies(from);
         List<AwardedMovie> targets = movies(to);
         RedistributionPlan plan = RedistributionPlan.calculate(to, sources, targets);
         oscarsChangeApplier.apply(plan.changes(), false);
-        return new RedistributionResult(plan.sourceMovies(), plan.targetMovies(), plan.transferredOscars());
+        return new RedistributeOscarsResponse(plan.sourceMovies(), plan.targetMovies(), plan.transferredOscars());
     }
 
-    private List<AwardedMovie> movies(MovieGenre genre) {
+    private List<AwardedMovie> movies(String genre) {
         return movieServiceClient.findAllByGenre(genre).stream().map(AwardedMovieMapper::toModel).toList();
     }
 
-    private static MovieGenre genre(String parameter, String raw, List<FieldError> errors) {
-        for (MovieGenre genre : MovieGenre.values()) {
-            if (genre.name().equals(raw)) {
-                return genre;
-            }
+    private static void checkGenre(String parameter, String genre, List<String> genres, List<FieldError> errors) {
+        if (!genres.contains(genre)) {
+            errors.add(FieldError.path(parameter, genre, "Допустимые значения: " + String.join(", ", genres)));
         }
-        errors.add(FieldError.path(parameter, raw, "Допустимые значения: " + Arrays.stream(MovieGenre.values())
-                .map(Enum::name).collect(Collectors.joining(", "))));
-        return null;
     }
 }

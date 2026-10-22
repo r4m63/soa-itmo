@@ -11,8 +11,10 @@ dependencies {
     // аннотации Jackson берутся из Payara (там 2.22, совместимы с Jackson 3): своя копия в WAR конфликтует
     // с jackson-databind 2 из модулей Payara, который Spring тоже находит, — LinkageError при старте
     providedRuntime("com.fasterxml.jackson.core:jackson-annotations")
-    implementation(project(":lib:contract"))
-    implementation(project(":lib:query"))
+    implementation(project(":lib:contract:oscar"))
+    // клиент Movie Service
+    implementation(project(":lib:contract:movie"))
+    implementation(project(":lib:services-common"))
 }
 
 // деплоится обычный WAR в Payara; исполняемый bootWar не нужен и занимал бы то же имя файла

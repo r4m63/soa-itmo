@@ -1,13 +1,14 @@
 package com.itmo.soa.oscar.infrastructure.integration.movie;
 
-import com.itmo.soa.contract.movie.Movie;
-import com.itmo.soa.contract.movie.MovieGenre;
-import com.itmo.soa.contract.movie.MoviePage;
-import com.itmo.soa.contract.movie.MpaaRating;
-import com.itmo.soa.query.Direction;
-import com.itmo.soa.query.Filter;
-import com.itmo.soa.query.Operator;
-import com.itmo.soa.query.Sort;
+import com.itmo.soa.common.exception.DownstreamServiceUnavailableException;
+import com.itmo.soa.common.query.Direction;
+import com.itmo.soa.common.query.Filter;
+import com.itmo.soa.common.query.Operator;
+import com.itmo.soa.common.query.Sort;
+import com.itmo.soa.contract.common.dictionary.DictionaryResponse;
+import com.itmo.soa.contract.movie.movie.response.MoviePageResponse;
+import com.itmo.soa.contract.movie.movie.response.MovieResponse;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
@@ -27,6 +28,8 @@ import java.util.function.Supplier;
 public class MovieServiceClient {
 
     private static final int PAGE_SIZE = 100;
+    /** Сообщение клиенту; подробности — в причине исключения, она пишется в лог. */
+    private static final String UNAVAILABLE = "Movie Service недоступен";
     private static final String SORT_BY_ID = Sort.format("id", Direction.ASC);
 
     private final RestClient movieServiceRestClient;
@@ -35,12 +38,25 @@ public class MovieServiceClient {
         this.movieServiceRestClient = movieServiceRestClient;
     }
 
-    public List<Movie> findAllByMpaaRating(MpaaRating mpaaRating) {
+    public List<MovieResponse> findAllByMpaaRating(String mpaaRating) {
         return findAll(Filter.format("mpaaRating", Operator.EQ, mpaaRating));
     }
 
-    public List<Movie> findAllByGenre(MovieGenre genre) {
+    public List<MovieResponse> findAllByGenre(String genre) {
         return findAll(Filter.format("genre", Operator.EQ, genre));
+    }
+
+    /** Справочник жанров Movie Service: список жанров принадлежит ему. */
+    public List<String> findAllGenres() {
+        DictionaryResponse<String> genres = call(() -> movieServiceRestClient.get()
+                .uri("/movies/genres")
+                .retrieve()
+                .body(new ParameterizedTypeReference<DictionaryResponse<String>>() {
+                }));
+        if (genres == null) {
+            throw new DownstreamServiceUnavailableException(UNAVAILABLE, new IllegalStateException("пустой ответ"));
+        }
+        return genres.getItems();
     }
 
     /**
@@ -60,10 +76,10 @@ public class MovieServiceClient {
     }
 
     /** Проходит все страницы: size у Movie Service не больше 100. */
-    private List<Movie> findAll(String filter) {
-        List<Movie> movies = new ArrayList<>();
+    private List<MovieResponse> findAll(String filter) {
+        List<MovieResponse> movies = new ArrayList<>();
         int page = 0;
-        MoviePage current;
+        MoviePageResponse current;
         do {
             int pageNumber = page;
             current = call(() -> movieServiceRestClient.get()
@@ -74,13 +90,13 @@ public class MovieServiceClient {
                             .queryParam("size", PAGE_SIZE)
                             .build(filter, SORT_BY_ID))
                     .retrieve()
-                    .body(MoviePage.class));
+                    .body(MoviePageResponse.class));
             if (current == null) {
-                throw new MovieServiceUnavailableException("Movie Service вернул пустой ответ", null);
+                throw new DownstreamServiceUnavailableException(UNAVAILABLE, new IllegalStateException("пустой ответ"));
             }
-            movies.addAll(current.items());
+            movies.addAll(current.getItems());
             page++;
-        } while (page < current.totalPages());
+        } while (page < current.getTotalPages());
         return movies;
     }
 
@@ -96,9 +112,9 @@ public class MovieServiceClient {
         } catch (HttpClientErrorException e) {
             throw new IllegalStateException("Movie Service отклонил запрос: " + e.getResponseBodyAsString(), e);
         } catch (HttpServerErrorException e) {
-            throw new MovieServiceUnavailableException("Movie Service ответил " + e.getStatusCode(), e);
+            throw new DownstreamServiceUnavailableException(UNAVAILABLE, e);
         } catch (RestClientException e) {
-            throw new MovieServiceUnavailableException("Movie Service недоступен: " + e.getMessage(), e);
+            throw new DownstreamServiceUnavailableException(UNAVAILABLE, e);
         }
     }
 }
