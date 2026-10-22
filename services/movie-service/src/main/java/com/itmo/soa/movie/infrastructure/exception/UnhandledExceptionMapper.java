@@ -1,4 +1,4 @@
-package com.itmo.soa.movie.api.http.exception;
+package com.itmo.soa.movie.infrastructure.exception;
 
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;
