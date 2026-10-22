@@ -1,9 +1,9 @@
 package com.itmo.soa.movie.domain.movie.service;
 
-import com.itmo.soa.movie.infrastructure.storage.movie.model.Color;
-import com.itmo.soa.movie.infrastructure.storage.movie.model.Country;
-import com.itmo.soa.movie.infrastructure.storage.movie.model.MovieGenre;
-import com.itmo.soa.movie.infrastructure.storage.movie.model.MpaaRating;
+import com.itmo.soa.movie.domain.movie.model.Color;
+import com.itmo.soa.movie.domain.movie.model.Country;
+import com.itmo.soa.movie.domain.movie.model.MovieGenre;
+import com.itmo.soa.movie.domain.movie.model.MpaaRating;
 import com.itmo.soa.query.Direction;
 import com.itmo.soa.query.QueryField;
 import com.itmo.soa.query.QuerySchema;

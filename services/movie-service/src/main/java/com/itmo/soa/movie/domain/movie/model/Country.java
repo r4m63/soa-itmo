@@ -1,4 +1,4 @@
-package com.itmo.soa.movie.infrastructure.storage.movie.model;
+package com.itmo.soa.movie.domain.movie.model;
 
 public enum Country {
     RUSSIA,

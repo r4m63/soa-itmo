@@ -1,5 +1,7 @@
 package com.itmo.soa.movie.infrastructure.storage.movie.model;
 
+import com.itmo.soa.movie.domain.movie.model.Color;
+import com.itmo.soa.movie.domain.movie.model.Country;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.EnumType;

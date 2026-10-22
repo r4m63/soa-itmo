@@ -1,5 +1,7 @@
 package com.itmo.soa.movie.infrastructure.storage.movie.model;
 
+import com.itmo.soa.movie.domain.movie.model.MovieGenre;
+import com.itmo.soa.movie.domain.movie.model.MpaaRating;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
