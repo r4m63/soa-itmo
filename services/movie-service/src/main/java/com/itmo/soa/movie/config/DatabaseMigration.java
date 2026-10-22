@@ -4,13 +4,10 @@ import jakarta.annotation.Resource;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.context.Initialized;
 import jakarta.enterprise.event.Observes;
+import javax.sql.DataSource;
 import org.flywaydb.core.Flyway;
 
-import javax.sql.DataSource;
 
-/**
- * Применяет миграции из db/migration при старте приложения.
- */
 @ApplicationScoped
 public class DatabaseMigration {
 
