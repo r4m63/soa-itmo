@@ -9,11 +9,13 @@ import com.itmo.soa.movie.domain.movie.service.filters.GetMoviesPageFilter;
 import com.itmo.soa.movie.domain.movie.service.filters.SearchDictionaryFilter;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import lombok.Getter;
+import lombok.experimental.Accessors;
 
-/**
- * Фасад: только собирает команды и запросы, логики нет.
- */
+
 @ApplicationScoped
+@Getter
+@Accessors(fluent = true) // убирает из названий геттеров get/set/is/
 public class MovieService {
 
     // команды
@@ -33,32 +35,4 @@ public class MovieService {
     GetMoviesPageFilter getMoviesPage;
     @Inject
     SearchDictionaryFilter searchDictionary;
-
-    public CreateMovieAction createMovie() {
-        return createMovie;
-    }
-
-    public PatchMovieAction patchMovie() {
-        return patchMovie;
-    }
-
-    public DeleteMovieAction deleteMovie() {
-        return deleteMovie;
-    }
-
-    public DeleteMoviesByGenreAction deleteMoviesByGenre() {
-        return deleteMoviesByGenre;
-    }
-
-    public GetMovieByIdFilter getMovieById() {
-        return getMovieById;
-    }
-
-    public GetMoviesPageFilter getMoviesPage() {
-        return getMoviesPage;
-    }
-
-    public SearchDictionaryFilter searchDictionary() {
-        return searchDictionary;
-    }
 }
