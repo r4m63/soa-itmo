@@ -1,6 +1,6 @@
-package com.itmo.soa.common.query;
+package com.itmo.soa.query;
 
-import static com.itmo.soa.common.query.Operator.*;
+import static com.itmo.soa.query.Operator.*;
 
 import java.util.EnumSet;
 import java.util.Set;

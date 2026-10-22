@@ -1,4 +1,4 @@
-package com.itmo.soa.common.query;
+package com.itmo.soa.query;
 
 /**
  * @param parameter параметр запроса: {@code filter[1]}, {@code sort[0]}, {@code page}, {@code size}

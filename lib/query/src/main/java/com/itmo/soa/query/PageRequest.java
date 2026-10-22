@@ -1,4 +1,4 @@
-package com.itmo.soa.common.query;
+package com.itmo.soa.query;
 
 public record PageRequest(int page, int size) {
 

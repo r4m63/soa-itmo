@@ -1,4 +1,4 @@
-package com.itmo.soa.common.query;
+package com.itmo.soa.query;
 
 public record Sort(QueryField field, Direction direction) {
 

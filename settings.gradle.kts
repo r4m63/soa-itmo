@@ -1,10 +1,8 @@
 rootProject.name = "soa-itmo"
 
 include(
-    ":lib:contract:common",
-    ":lib:contract:movie",
-    ":lib:contract:oscar",
-    ":lib:services-common",
+    ":lib:contract",
+    ":lib:query",
     ":services:movie-service",
     ":services:oscar-service",
 )

@@ -1,4 +1,4 @@
-package com.itmo.soa.common.query;
+package com.itmo.soa.query;
 
 import java.util.ArrayList;
 import java.util.List;

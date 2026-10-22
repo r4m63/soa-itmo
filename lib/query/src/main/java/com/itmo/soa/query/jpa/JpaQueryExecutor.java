@@ -1,13 +1,13 @@
-package com.itmo.soa.common.query.jpa;
+package com.itmo.soa.query.jpa;
 
-import com.itmo.soa.common.query.Direction;
-import com.itmo.soa.common.query.FieldType;
-import com.itmo.soa.common.query.Filter;
-import com.itmo.soa.common.query.Operator;
-import com.itmo.soa.common.query.Page;
-import com.itmo.soa.common.query.Query;
-import com.itmo.soa.common.query.QueryField;
-import com.itmo.soa.common.query.Sort;
+import com.itmo.soa.query.Direction;
+import com.itmo.soa.query.FieldType;
+import com.itmo.soa.query.Filter;
+import com.itmo.soa.query.Operator;
+import com.itmo.soa.query.Page;
+import com.itmo.soa.query.Query;
+import com.itmo.soa.query.QueryField;
+import com.itmo.soa.query.Sort;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;

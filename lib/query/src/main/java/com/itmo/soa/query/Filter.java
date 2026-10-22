@@ -1,4 +1,4 @@
-package com.itmo.soa.common.query;
+package com.itmo.soa.query;
 
 /**
  * Разобранный фильтр. index — позиция параметра filter в запросе, для сообщений об ошибках.
