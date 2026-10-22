@@ -1,8 +1,8 @@
 package com.itmo.soa.oscar.api.http.oscar;
 
-import com.itmo.soa.contract.oscar.oscar.request.RedistributeOscarsPathParams;
-import com.itmo.soa.contract.oscar.oscar.response.RedistributeOscarsResponse;
-import com.itmo.soa.contract.oscar.oscar.response.RewardRRatedMoviesResponse;
+import com.itmo.soa.contract.request.oscar.RedistributeOscarsPathParams;
+import com.itmo.soa.contract.response.oscar.RedistributeOscarsResponse;
+import com.itmo.soa.contract.response.oscar.RewardRRatedMoviesResponse;
 import com.itmo.soa.oscar.domain.oscar.service.OscarService;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;

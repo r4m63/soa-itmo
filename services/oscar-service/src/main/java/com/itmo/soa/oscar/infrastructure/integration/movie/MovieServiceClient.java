@@ -1,13 +1,13 @@
 package com.itmo.soa.oscar.infrastructure.integration.movie;
 
-import com.itmo.soa.common.exception.DownstreamServiceUnavailableException;
-import com.itmo.soa.common.query.Direction;
-import com.itmo.soa.common.query.Filter;
-import com.itmo.soa.common.query.Operator;
-import com.itmo.soa.common.query.Sort;
-import com.itmo.soa.contract.common.dictionary.DictionaryResponse;
-import com.itmo.soa.contract.movie.movie.response.MoviePageResponse;
-import com.itmo.soa.contract.movie.movie.response.MovieResponse;
+import com.itmo.soa.contract.error.exception.DownstreamServiceUnavailableException;
+import com.itmo.soa.contract.response.movie.DictionaryResponse;
+import com.itmo.soa.contract.response.movie.MoviePageResponse;
+import com.itmo.soa.contract.response.movie.MovieResponse;
+import com.itmo.soa.query.Direction;
+import com.itmo.soa.query.Filter;
+import com.itmo.soa.query.Operator;
+import com.itmo.soa.query.Sort;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;

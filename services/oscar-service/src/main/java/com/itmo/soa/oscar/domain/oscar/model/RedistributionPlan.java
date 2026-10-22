@@ -1,7 +1,7 @@
 package com.itmo.soa.oscar.domain.oscar.model;
 
 
-import com.itmo.soa.common.exception.InvalidOperationException;
+import com.itmo.soa.contract.error.exception.InvalidOperationException;
 
 import java.util.ArrayList;
 import java.util.Comparator;

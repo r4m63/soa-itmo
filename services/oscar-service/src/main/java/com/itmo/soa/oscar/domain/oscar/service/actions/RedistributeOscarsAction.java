@@ -1,8 +1,8 @@
 package com.itmo.soa.oscar.domain.oscar.service.actions;
 
-import com.itmo.soa.common.exception.InvalidDataException;
-import com.itmo.soa.contract.common.error.FieldError;
-import com.itmo.soa.contract.oscar.oscar.response.RedistributeOscarsResponse;
+import com.itmo.soa.contract.error.exception.InvalidDataException;
+import com.itmo.soa.contract.error.response.FieldError;
+import com.itmo.soa.contract.response.oscar.RedistributeOscarsResponse;
 import com.itmo.soa.oscar.domain.oscar.mapper.AwardedMovieMapper;
 import com.itmo.soa.oscar.domain.oscar.model.AwardedMovie;
 import com.itmo.soa.oscar.domain.oscar.model.RedistributionPlan;

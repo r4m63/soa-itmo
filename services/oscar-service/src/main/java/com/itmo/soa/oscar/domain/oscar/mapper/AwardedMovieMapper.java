@@ -1,6 +1,6 @@
 package com.itmo.soa.oscar.domain.oscar.mapper;
 
-import com.itmo.soa.contract.movie.movie.response.MovieResponse;
+import com.itmo.soa.contract.response.movie.MovieResponse;
 import com.itmo.soa.oscar.domain.oscar.model.AwardedMovie;
 
 public final class AwardedMovieMapper {

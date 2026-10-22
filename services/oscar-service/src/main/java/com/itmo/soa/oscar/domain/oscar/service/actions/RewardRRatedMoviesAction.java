@@ -1,6 +1,6 @@
 package com.itmo.soa.oscar.domain.oscar.service.actions;
 
-import com.itmo.soa.contract.oscar.oscar.response.RewardRRatedMoviesResponse;
+import com.itmo.soa.contract.response.oscar.RewardRRatedMoviesResponse;
 import com.itmo.soa.oscar.domain.oscar.mapper.AwardedMovieMapper;
 import com.itmo.soa.oscar.domain.oscar.model.AwardedMovie;
 import com.itmo.soa.oscar.domain.oscar.model.OscarsChange;

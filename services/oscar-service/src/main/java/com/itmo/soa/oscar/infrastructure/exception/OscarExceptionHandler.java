@@ -1,9 +1,9 @@
 package com.itmo.soa.oscar.infrastructure.exception;
 
-import com.itmo.soa.common.exception.ErrorType;
-import com.itmo.soa.common.exception.ServiceException;
-import com.itmo.soa.contract.common.error.ErrorResponse;
-import com.itmo.soa.contract.common.error.ValidationErrorResponse;
+import com.itmo.soa.contract.error.ErrorType;
+import com.itmo.soa.contract.error.exception.ServiceException;
+import com.itmo.soa.contract.error.response.ErrorResponse;
+import com.itmo.soa.contract.error.response.ValidationErrorResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatusCode;
