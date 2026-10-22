@@ -12,7 +12,6 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MovieResponse {
-
     private Integer id;
     private String name;
     private CoordinatesDto coordinates;
