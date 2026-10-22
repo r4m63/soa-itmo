@@ -1,3 +1,4 @@
+import { Fragment } from "react"
 import { ArrowDownIcon, ArrowUpIcon, ArrowUpDownIcon, EllipsisVerticalIcon, TrophyIcon } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
@@ -13,6 +14,15 @@ import { enumLabel } from "@/lib/enums"
 import { formatDate } from "@/lib/format"
 
 const EMPTY = <span className="text-muted-foreground">—</span>
+
+/** Действия над фильмом: одни и те же в меню «⋮» строки и в контекстном меню по правому клику. */
+export function rowActions(actions, movie) {
+  return [
+    { label: "Подробнее", run: () => actions.onOpen(movie) },
+    { label: "Изменить", run: () => actions.onEdit(movie) },
+    { label: "Удалить", run: () => actions.onDelete(movie), destructive: true },
+  ]
+}
 
 /**
  * Колонки таблицы. meta.field — поле API: по нему колонка сортируется и фильтруется.
@@ -116,10 +126,12 @@ export function movieColumns(actions) {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-40">
-            <DropdownMenuItem onClick={() => actions.onOpen(row.original)}>Подробнее</DropdownMenuItem>
-            <DropdownMenuItem onClick={() => actions.onEdit(row.original)}>Изменить</DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem variant="destructive" onClick={() => actions.onDelete(row.original)}>Удалить</DropdownMenuItem>
+            {rowActions(actions, row.original).map(({ label, run, destructive }) => (
+              <Fragment key={label}>
+                {destructive && <DropdownMenuSeparator />}
+                <DropdownMenuItem variant={destructive ? "destructive" : "default"} onClick={run}>{label}</DropdownMenuItem>
+              </Fragment>
+            ))}
           </DropdownMenuContent>
         </DropdownMenu>
       ),

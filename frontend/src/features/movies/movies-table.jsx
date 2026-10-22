@@ -1,8 +1,15 @@
-import { useMemo } from "react"
+import { Fragment, useMemo } from "react"
 import { flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import { Columns3Icon, FilmIcon } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuSeparator,
+  ContextMenuTrigger,
+} from "@/components/ui/context-menu"
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -17,11 +24,23 @@ import { toggleSort } from "@/lib/movie-query"
 import { cn } from "@/lib/utils"
 import { ColumnFilter } from "./column-filter"
 import { FloatingFilter } from "./floating-filter"
-import { movieColumns, SortableHeader } from "./movie-columns"
+import { movieColumns, rowActions, SortableHeader } from "./movie-columns"
 
 function sanitizeVisibility(stored) {
   if (!stored || typeof stored !== "object" || Array.isArray(stored)) return {}
   return Object.fromEntries(Object.entries(stored).filter(([, visible]) => typeof visible === "boolean"))
+}
+
+/**
+ * Клик по строке открывает карточку фильма. Не срабатывает, если кликнули по кнопке в строке
+ * (у неё своё действие), по пункту меню «⋮» (React доносит клики из портала до строки)
+ * или если пользователь выделял текст.
+ */
+function openOnRowClick(event, open) {
+  if (!event.currentTarget.contains(event.target)) return
+  if (event.target.closest("button, a, input, [role=menuitem]")) return
+  if (String(window.getSelection() ?? "").length > 0) return
+  open()
 }
 
 /**
@@ -132,13 +151,29 @@ export function MoviesTable({
               ))
             ) : table.getRowModel().rows.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow key={row.id} className={cn(loading && "opacity-60")}>
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id} className={cell.column.columnDef.meta?.className}>
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </TableCell>
-                  ))}
-                </TableRow>
+                // правый клик по строке — те же действия, что в меню «⋮»
+                <ContextMenu key={row.id}>
+                  <ContextMenuTrigger asChild>
+                    <TableRow
+                      className={cn("cursor-pointer", loading && "opacity-60")}
+                      onClick={(event) => openOnRowClick(event, () => actions.onOpen(row.original))}
+                    >
+                      {row.getVisibleCells().map((cell) => (
+                        <TableCell key={cell.id} className={cell.column.columnDef.meta?.className}>
+                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  </ContextMenuTrigger>
+                  <ContextMenuContent className="w-40">
+                    {rowActions(actions, row.original).map(({ label, run, destructive }) => (
+                      <Fragment key={label}>
+                        {destructive && <ContextMenuSeparator />}
+                        <ContextMenuItem variant={destructive ? "destructive" : "default"} onSelect={run}>{label}</ContextMenuItem>
+                      </Fragment>
+                    ))}
+                  </ContextMenuContent>
+                </ContextMenu>
               ))
             ) : (
               <TableRow>
