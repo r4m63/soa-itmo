@@ -8,7 +8,8 @@ function App() {
   return (
     <TooltipProvider>
       <RouterProvider router={router} />
-      <Toaster richColors />
+      {/* тема интерфейса всегда светлая: без theme тосты брали бы тёмную тему системы */}
+      <Toaster richColors theme="light" />
     </TooltipProvider>
   )
 }
