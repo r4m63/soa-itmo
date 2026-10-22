@@ -4,6 +4,7 @@ import com.itmo.soa.contract.request.movie.CoordinatesDto;
 import com.itmo.soa.contract.request.movie.PersonDto;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.AssertTrue;
+import jakarta.validation.constraints.Null;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
@@ -13,14 +14,17 @@ import lombok.NoArgsConstructor;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-/**
- * PATCH /movies/{id}. null — поле не передано, его значение не меняется.
- * genre и screenwriter можно сбросить: Optional.empty() — передан null, Optional.of(...) — новое значение.
- */
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class UpdateMovieRequest {
+
+    @Null(message = "Поле id нельзя изменить")
+    private Object id;
+
+    @Null(message = "Поле creationDate нельзя изменить")
+    private Object creationDate;
 
     @Pattern(regexp = ".*\\S.*", message = "Название не может быть пустым")
     private String name;
@@ -39,6 +43,6 @@ public class UpdateMovieRequest {
 
     @AssertTrue(message = "Нужно передать хотя бы одно поле")
     public boolean isNotEmpty() {
-        return Stream.of(name, coordinates, oscarsCount, genre, mpaaRating, screenwriter).anyMatch(v -> v != null);
+        return Stream.of(id, creationDate, name, coordinates, oscarsCount, genre, mpaaRating, screenwriter).anyMatch(v -> v != null);
     }
 }
