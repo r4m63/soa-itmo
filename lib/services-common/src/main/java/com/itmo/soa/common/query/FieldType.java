@@ -1,9 +1,9 @@
-package com.itmo.soa.query;
+package com.itmo.soa.common.query;
+
+import static com.itmo.soa.common.query.Operator.*;
 
 import java.util.EnumSet;
 import java.util.Set;
-
-import static com.itmo.soa.query.Operator.*;
 
 public enum FieldType {
     INTEGER(EnumSet.of(EQ, NE, GT, GTE, LT, LTE)),

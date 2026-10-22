@@ -1,4 +1,4 @@
-package com.itmo.soa.query;
+package com.itmo.soa.common.query;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
