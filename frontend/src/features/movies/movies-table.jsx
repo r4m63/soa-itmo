@@ -143,8 +143,9 @@ export function MoviesTable({
             ) : (
               <TableRow>
                 <TableCell colSpan={visibleColumns}>
-                  <Empty className="py-10">
-                    <EmptyHeader>
+                  {/* по левому краю: таблица шире экрана, по центру сообщение уезжало бы за прокрутку */}
+                  <Empty className="items-start py-10 text-left">
+                    <EmptyHeader className="items-start">
                       <EmptyMedia variant="icon"><FilmIcon /></EmptyMedia>
                       <EmptyTitle>Фильмы не найдены</EmptyTitle>
                       <EmptyDescription>Измените фильтры в заголовках колонок или добавьте фильм.</EmptyDescription>
