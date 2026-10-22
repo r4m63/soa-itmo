@@ -7,23 +7,19 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { notifyError } from "@/lib/api-errors"
 import { MOVIES_WORDS, plural } from "@/lib/format"
 import { ConfirmButton } from "./confirm-button"
-import { OperationError } from "./operation-error"
 
 /** POST /oscar/movies/reward-r */
 export function RewardRCard() {
   const [running, setRunning] = useState(false)
   const [result, setResult] = useState(null)
-  const [error, setError] = useState(null)
 
   const run = async () => {
     setRunning(true)
-    setError(null)
     try {
       const { affectedMovies } = await rewardRRatedMovies()
       setResult({ affectedMovies, at: new Date() })
       toast.success(`Награждено ${affectedMovies} ${plural(affectedMovies, MOVIES_WORDS)}`)
     } catch (e) {
-      setError(e)
       notifyError(e)
     } finally {
       setRunning(false)
@@ -37,15 +33,14 @@ export function RewardRCard() {
         <CardDescription>Каждый фильм с рейтингом MPAA «R» получит ещё один Оскар.</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-3 text-sm">
-        <OperationError error={error} />
-        {result && !error && (
+        {result && (
           <p>
             Награждено <span className="font-semibold">{result.affectedMovies}</span>{" "}
             {plural(result.affectedMovies, MOVIES_WORDS)} рейтинга R
             <span className="text-muted-foreground"> · {result.at.toLocaleTimeString("ru-RU")}</span>
           </p>
         )}
-        {!result && !error && <p className="text-muted-foreground">Операцию ещё не запускали.</p>}
+        {!result && <p className="text-muted-foreground">Операцию ещё не запускали.</p>}
       </CardContent>
       <CardFooter>
         <ConfirmButton

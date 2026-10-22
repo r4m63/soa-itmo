@@ -11,7 +11,6 @@ import { ApiError, notifyError, pathErrors } from "@/lib/api-errors"
 import { enumLabel } from "@/lib/enums"
 import { MOVIES_WORDS, OSCARS_WORDS, plural } from "@/lib/format"
 import { ConfirmButton } from "./confirm-button"
-import { OperationError } from "./operation-error"
 
 /** POST /oscar/genres/redistribute-rewards/{from-genre}/{to-genre} */
 export function RedistributeCard() {
@@ -19,7 +18,6 @@ export function RedistributeCard() {
   const [to, setTo] = useState(undefined)
   const [running, setRunning] = useState(false)
   const [result, setResult] = useState(null)
-  const [error, setError] = useState(null)
   // ошибки сервиса по параметрам пути: { "from-genre": "...", "to-genre": "..." }
   const [fieldErrors, setFieldErrors] = useState({})
 
@@ -28,15 +26,14 @@ export function RedistributeCard() {
 
   const run = async () => {
     setRunning(true)
-    setError(null)
     setFieldErrors({})
     try {
       const response = await redistributeOscars(from, to)
       setResult({ ...response, from, to })
       toast.success("Оскары перераспределены")
     } catch (e) {
+      // жанры с ошибкой подсвечиваются в полях, текст ошибки — в тосте
       if (e instanceof ApiError && e.status === 400) setFieldErrors(pathErrors(e))
-      setError(e)
       notifyError(e)
     } finally {
       setRunning(false)
@@ -46,7 +43,6 @@ export function RedistributeCard() {
   const choose = (setter) => (value) => {
     setter(value)
     setFieldErrors({})
-    setError(null)
   }
 
   return (
@@ -83,8 +79,7 @@ export function RedistributeCard() {
             <FieldError>{toError}</FieldError>
           </Field>
         </div>
-        <OperationError error={error} />
-        {result && !error && (
+        {result && (
           <p>
             {result.sourceMovies} {plural(result.sourceMovies, MOVIES_WORDS)} жанра «{enumLabel("genres", result.from)}» передали{" "}
             <span className="font-semibold">{result.transferredOscars} {plural(result.transferredOscars, OSCARS_WORDS)}</span>{" "}

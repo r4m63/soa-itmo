@@ -68,10 +68,13 @@ export function useMovieList() {
       })
       .catch((error) => {
         if (cancelled) return
-        if (error instanceof ApiError && error.status === 400) {
-          setParamErrors(queryErrors(error))
-        }
-        notifyError(error)
+        const errors = error instanceof ApiError && error.status === 400 ? queryErrors(error) : {}
+        setParamErrors(errors)
+        // filter[i] и sort[i] подсвечиваются на тегах, остальные (page, size) — только в тосте
+        const details = Object.entries(errors)
+          .filter(([key]) => !/^(filter|sort)\[/.test(key))
+          .map(([key, message]) => `${key}: ${message}`)
+        notifyError(error, details)
       })
       .finally(() => !cancelled && setLoading(false))
     return () => {

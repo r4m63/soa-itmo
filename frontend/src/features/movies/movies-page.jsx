@@ -39,17 +39,8 @@ export function MoviesPage() {
     onDelete: (movie) => setDeleting(movie),
   }), [navigate])
 
-  // ошибки filter[i] и sort[i] показываются на тегах, остальные (page, size) — списком
-  const pageErrors = Object.entries(list.paramErrors).filter(([key]) => !/^(filter|sort)\[/.test(key))
-
   return (
     <div className="flex flex-col gap-4 px-4 py-4 md:py-6 lg:px-6">
-      {pageErrors.length > 0 && (
-        <ul className="text-sm text-destructive">
-          {pageErrors.map(([key, message]) => <li key={key}>{key}: {message}</li>)}
-        </ul>
-      )}
-
       <MoviesTable
         movies={list.data.items}
         loading={list.loading}

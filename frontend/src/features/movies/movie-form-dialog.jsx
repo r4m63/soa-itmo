@@ -3,7 +3,6 @@ import { toast } from "sonner"
 
 import { createMovie, patchMovie } from "@/api/movie-service"
 import { EnumCombobox } from "@/components/enum-combobox"
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import {
@@ -27,14 +26,12 @@ export function MovieFormDialog({ open, movie, onOpenChange, onSaved }) {
   const editing = movie != null
   const [form, setForm] = useState(emptyForm)
   const [errors, setErrors] = useState({})
-  const [generalErrors, setGeneralErrors] = useState([])
   const [submitting, setSubmitting] = useState(false)
 
   useEffect(() => {
     if (!open) return
     setForm(editing ? formFromMovie(movie) : emptyForm())
     setErrors({})
-    setGeneralErrors([])
   }, [open, editing, movie])
 
   const set = (key, value) => setForm((f) => ({ ...f, [key]: value }))
@@ -44,13 +41,12 @@ export function MovieFormDialog({ open, movie, onOpenChange, onSaved }) {
     event.preventDefault()
     const clientErrors = validateForm(form)
     setErrors(clientErrors)
-    setGeneralErrors([])
     if (Object.keys(clientErrors).length) return
 
     const input = toMovieInput(form)
     const patch = editing ? diffPatch(movie, input) : null
     if (editing && Object.keys(patch).length === 0) {
-      toast.info("Изменений нет")
+      toast.warning("Изменений нет")
       onOpenChange(false)
       return
     }
@@ -62,11 +58,9 @@ export function MovieFormDialog({ open, movie, onOpenChange, onSaved }) {
       onSaved(saved)
       onOpenChange(false)
     } catch (error) {
-      if (error instanceof ApiError && error.status === 400) {
-        setErrors(bodyFieldErrors(error))
-        setGeneralErrors(bodyGeneralErrors(error))
-      }
-      notifyError(error)
+      // ошибки полей подсвечиваются в форме, ошибки всего тела (пустой PATCH, битый JSON) — в тосте
+      if (error instanceof ApiError && error.status === 400) setErrors(bodyFieldErrors(error))
+      notifyError(error, bodyGeneralErrors(error))
     } finally {
       setSubmitting(false)
     }
@@ -100,13 +94,6 @@ export function MovieFormDialog({ open, movie, onOpenChange, onSaved }) {
                 : "ID и дату создания назначит сервис."}
             </DialogDescription>
           </DialogHeader>
-
-          {generalErrors.length > 0 && (
-            <Alert variant="destructive">
-              <AlertTitle>Сервис отклонил запрос</AlertTitle>
-              <AlertDescription>{generalErrors.join(". ")}</AlertDescription>
-            </Alert>
-          )}
 
           <FieldGroup>
             {text("name", "Название", { value: form.name, onChange: (e) => set("name", e.target.value) })}

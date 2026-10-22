@@ -49,10 +49,15 @@ const TITLES = {
   503: "Сервис недоступен",
 }
 
-/** Всплывающее сообщение об ошибке сервиса. */
-export function notifyError(error) {
+/**
+ * Всплывающее сообщение об ошибке сервиса — единственное место, где ошибка показывается текстом
+ * (у полей остаётся только подсветка). details — ошибки, которых нет у полей формы или таблицы.
+ * 4xx — warning: запрос можно исправить (данные, фильтры, выбор жанров); 5xx и обрыв связи — error.
+ */
+export function notifyError(error, details = []) {
   if (error instanceof ApiError) {
-    toast.error(TITLES[error.status] ?? "Ошибка сервиса", { description: error.message })
+    const notify = error.status < 500 ? toast.warning : toast.error
+    notify(TITLES[error.status] ?? "Ошибка сервиса", { description: [error.message, ...details].join(". ") })
   } else {
     toast.error("Не удалось выполнить запрос", { description: String(error?.message ?? error) })
   }
