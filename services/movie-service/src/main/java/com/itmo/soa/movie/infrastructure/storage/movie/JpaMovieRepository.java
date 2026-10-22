@@ -1,10 +1,10 @@
 package com.itmo.soa.movie.infrastructure.storage.movie;
 
-import com.itmo.soa.contract.movie.MovieGenre;
+import com.itmo.soa.common.query.Page;
+import com.itmo.soa.common.query.Query;
+import com.itmo.soa.common.query.jpa.JpaQueryExecutor;
 import com.itmo.soa.movie.infrastructure.storage.movie.model.MovieEntity;
-import com.itmo.soa.query.Page;
-import com.itmo.soa.query.Query;
-import com.itmo.soa.query.jpa.JpaQueryExecutor;
+import com.itmo.soa.movie.infrastructure.storage.movie.model.MovieGenre;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -17,14 +17,12 @@ public class JpaMovieRepository {
     @PersistenceContext(unitName = "movies")
     private EntityManager em;
 
-    /** Сохраняет новый фильм и сразу получает id от базы. */
     public MovieEntity insert(MovieEntity entity) {
         em.persist(entity);
         em.flush();
         return entity;
     }
 
-    /** Внутри транзакции возвращает управляемую сущность: изменения сохранятся при коммите. */
     public Optional<MovieEntity> findById(int id) {
         return Optional.ofNullable(em.find(MovieEntity.class, id));
     }
