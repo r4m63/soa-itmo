@@ -8,7 +8,7 @@
       </artifact>
     </deployment>
     <server-settings>
-      <option name="DOMAIN_NAME" value="domain1" />
+      <option name="DOMAIN_NAME" value="movie-service" />
       <option name="PRESERVE" value="false" />
       <option name="COMPATIBILITY" value="false" />
       <option name="VIRTUAL_SERVER" />
