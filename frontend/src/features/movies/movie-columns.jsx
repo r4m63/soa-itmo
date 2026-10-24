@@ -36,7 +36,7 @@ export function movieColumns(actions) {
       header: "Название",
       meta: { field: "name" },
       cell: ({ row }) => (
-        <Button variant="link" className="h-auto p-0 text-left font-medium text-foreground" onClick={() => actions.onOpen(row.original)}>
+        <Button variant="link" className="h-auto p-0 text-left font-medium text-foreground hover:no-underline" onClick={() => actions.onOpen(row.original)}>
           {row.original.name}
         </Button>
       ),
