@@ -142,18 +142,16 @@ public final class JpaQueryExecutor {
         return sb.toString();
     }
 
-    /** Enum сортируется по порядку объявления, а не по строке в базе. */
-    @SuppressWarnings("unchecked")
     private static Expression<?> sortExpression(CriteriaBuilder cb, Root<?> root, QueryField field) {
         Path<?> path = path(root, field.path());
         if (field.type() != FieldType.ENUM) {
             return path;
         }
-        CriteriaBuilder.SimpleCase<Object, Integer> byOrdinal = cb.selectCase((Expression<Object>) path);
+        CriteriaBuilder.Case<Integer> byOrdinal = cb.selectCase();
         for (Enum<?> constant : field.enumConstants()) {
-            byOrdinal.when(constant, constant.ordinal());
+            byOrdinal.when(cb.equal(path, constant), constant.ordinal());
         }
-        return byOrdinal.otherwise(cb.nullLiteral(Integer.class));
+        return byOrdinal;
     }
 
     private static Path<?> path(Root<?> root, String dotted) {
