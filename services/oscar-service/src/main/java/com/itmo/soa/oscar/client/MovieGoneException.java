@@ -1,4 +1,4 @@
-package com.itmo.soa.oscar.infrastructure.integration.movie;
+package com.itmo.soa.oscar.client;
 
 public class MovieGoneException extends RuntimeException {
 

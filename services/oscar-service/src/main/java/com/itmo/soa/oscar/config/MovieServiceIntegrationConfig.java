@@ -1,6 +1,5 @@
-package com.itmo.soa.oscar.config.http;
+package com.itmo.soa.oscar.config;
 
-import com.itmo.soa.oscar.config.properties.MovieServiceProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.JdkClientHttpRequestFactory;

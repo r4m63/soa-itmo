@@ -1,4 +1,4 @@
-package com.itmo.soa.oscar.infrastructure.exception;
+package com.itmo.soa.oscar.exception;
 
 import com.itmo.soa.contract.error.ErrorType;
 import com.itmo.soa.contract.error.exception.ServiceException;

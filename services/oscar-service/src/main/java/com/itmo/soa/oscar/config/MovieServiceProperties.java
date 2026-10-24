@@ -1,4 +1,4 @@
-package com.itmo.soa.oscar.config.properties;
+package com.itmo.soa.oscar.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
@@ -11,4 +11,10 @@ public record MovieServiceProperties(
         @DefaultValue("5s") Duration connectTimeout,
         @DefaultValue("30s") Duration readTimeout
 ) {
+
+    public MovieServiceProperties {
+        if (baseUrl == null || !baseUrl.startsWith("https://")) {
+            throw new IllegalArgumentException("movie-service.base-url должен начинаться с https://, получено: " + baseUrl);
+        }
+    }
 }

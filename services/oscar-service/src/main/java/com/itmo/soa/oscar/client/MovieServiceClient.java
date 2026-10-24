@@ -1,4 +1,4 @@
-package com.itmo.soa.oscar.infrastructure.integration.movie;
+package com.itmo.soa.oscar.client;
 
 import com.itmo.soa.contract.error.exception.DownstreamServiceUnavailableException;
 import com.itmo.soa.contract.response.movie.DictionaryResponse;
