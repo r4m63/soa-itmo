@@ -4,34 +4,37 @@ import { searchDictionary } from "@/api/movie-service"
 import { notifyError } from "@/lib/api-errors"
 import { enumLabel, enumValues } from "@/lib/enums"
 
-const SEARCH_DELAY_MS = 250
+const loaded = new Map()
+
+function loadDictionary(dictionary) {
+  if (!loaded.has(dictionary)) {
+    const request = searchDictionary(dictionary).then(({ items }) => items)
+    request.catch(() => loaded.delete(dictionary))
+    loaded.set(dictionary, request)
+  }
+  return loaded.get(dictionary)
+}
 
 export function useDictionarySearch(dictionary, search, enabled) {
-  const [items, setItems] = useState(() => enumValues(dictionary))
+  const [values, setValues] = useState(() => enumValues(dictionary))
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     if (!enabled) return
     let cancelled = false
-    const timer = setTimeout(async () => {
-      setLoading(true)
-      try {
-        const found = new Set((await searchDictionary(dictionary, search)).items)
-        const query = search.toLowerCase()
-        if (!cancelled) {
-          setItems(enumValues(dictionary).filter((v) => found.has(v) || enumLabel(dictionary, v).toLowerCase().includes(query)))
-        }
-      } catch (error) {
-        notifyError(error)
-      } finally {
-        if (!cancelled) setLoading(false)
-      }
-    }, SEARCH_DELAY_MS)
+    setLoading(true)
+    loadDictionary(dictionary)
+      .then((items) => !cancelled && setValues(items))
+      .catch((error) => !cancelled && notifyError(error))
+      .finally(() => !cancelled && setLoading(false))
     return () => {
       cancelled = true
-      clearTimeout(timer)
     }
-  }, [dictionary, search, enabled])
+  }, [dictionary, enabled])
 
+  const query = search.trim().toLowerCase()
+  const items = query
+    ? values.filter((v) => v.toLowerCase().includes(query) || enumLabel(dictionary, v).toLowerCase().includes(query))
+    : values
   return { items, loading }
 }
