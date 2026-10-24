@@ -16,8 +16,6 @@ export function RedistributeCard() {
   const [from, setFrom] = useState(undefined)
   const [to, setTo] = useState(undefined)
   const [running, setRunning] = useState(false)
-  const [result, setResult] = useState(null)
-  // ошибки сервиса по параметрам пути: { "from-genre": "...", "to-genre": "..." }
   const [fieldErrors, setFieldErrors] = useState({})
 
   const sameGenre = from && to && from === to
@@ -27,9 +25,12 @@ export function RedistributeCard() {
     setRunning(true)
     setFieldErrors({})
     try {
-      const response = await redistributeOscars(from, to)
-      setResult({ ...response, from, to })
-      toast.success("Оскары перераспределены")
+      const { sourceMovies, targetMovies, transferredOscars } = await redistributeOscars(from, to)
+      toast.success("Оскары перераспределены", {
+        description: `${sourceMovies} ${plural(sourceMovies, MOVIES_WORDS)} жанра «${enumLabel("genres", from)}» передали `
+          + `${transferredOscars} ${plural(transferredOscars, OSCARS_WORDS)} `
+          + `${targetMovies} ${plural(targetMovies, MOVIES_WORDS)} жанра «${enumLabel("genres", to)}».`,
+      })
     } catch (e) {
       if (e instanceof ApiError && e.status === 400) setFieldErrors(pathErrors(e))
       notifyError(e)
@@ -51,7 +52,7 @@ export function RedistributeCard() {
           У фильмов исходного жанра изымаются все Оскары сверх одного и поровну делятся между фильмами целевого жанра.
         </CardDescription>
       </CardHeader>
-      <CardContent className="flex flex-col gap-4 text-sm">
+      <CardContent className="flex flex-1 flex-col gap-4 text-sm">
         <div className="grid items-start gap-3 sm:grid-cols-[1fr_auto_1fr]">
           <Field data-invalid={!!fieldErrors["from-genre"] || undefined}>
             <FieldLabel htmlFor="from-genre">Из жанра</FieldLabel>
@@ -77,13 +78,6 @@ export function RedistributeCard() {
             <FieldError>{toError}</FieldError>
           </Field>
         </div>
-        {result && (
-          <p>
-            {result.sourceMovies} {plural(result.sourceMovies, MOVIES_WORDS)} жанра «{enumLabel("genres", result.from)}» передали{" "}
-            <span className="font-semibold">{result.transferredOscars} {plural(result.transferredOscars, OSCARS_WORDS)}</span>{" "}
-            {result.targetMovies} {plural(result.targetMovies, MOVIES_WORDS)} жанра «{enumLabel("genres", result.to)}».
-          </p>
-        )}
       </CardContent>
       <CardFooter>
         <ConfirmButton

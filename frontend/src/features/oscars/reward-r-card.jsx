@@ -10,13 +10,11 @@ import { ConfirmButton } from "./confirm-button"
 
 export function RewardRCard() {
   const [running, setRunning] = useState(false)
-  const [result, setResult] = useState(null)
 
   const run = async () => {
     setRunning(true)
     try {
       const { affectedMovies } = await rewardRRatedMovies()
-      setResult({ affectedMovies, at: new Date() })
       toast.success(`Награждено ${affectedMovies} ${plural(affectedMovies, MOVIES_WORDS)}`)
     } catch (e) {
       notifyError(e)
@@ -31,16 +29,7 @@ export function RewardRCard() {
         <CardTitle className="flex items-center gap-2"><AwardIcon className="size-5" />Наградить фильмы рейтинга R</CardTitle>
         <CardDescription>Каждый фильм с рейтингом MPAA «R» получит ещё один Оскар.</CardDescription>
       </CardHeader>
-      <CardContent className="flex flex-col gap-3 text-sm">
-        {result && (
-          <p>
-            Награждено <span className="font-semibold">{result.affectedMovies}</span>{" "}
-            {plural(result.affectedMovies, MOVIES_WORDS)} рейтинга R
-            <span className="text-muted-foreground"> · {result.at.toLocaleTimeString("ru-RU")}</span>
-          </p>
-        )}
-        {!result && <p className="text-muted-foreground">Операцию ещё не запускали.</p>}
-      </CardContent>
+      <CardContent className="flex-1" />
       <CardFooter>
         <ConfirmButton
           title="Наградить фильмы рейтинга R?"
