@@ -2,7 +2,13 @@ package com.itmo.soa.query;
 
 import java.util.Arrays;
 import java.util.Optional;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.Accessors;
 
+@Getter
+@Accessors(fluent = true)
+@RequiredArgsConstructor
 public enum Operator {
     EQ("eq"),
     NE("ne"),
@@ -17,14 +23,6 @@ public enum Operator {
     NOT_NULL("notNull");
 
     private final String token;
-
-    Operator(String token) {
-        this.token = token;
-    }
-
-    public String token() {
-        return token;
-    }
 
     public boolean requiresValue() {
         return this != IS_NULL && this != NOT_NULL;

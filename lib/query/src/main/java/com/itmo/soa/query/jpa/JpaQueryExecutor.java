@@ -21,23 +21,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
-/**
- * Выполняет {@link Query} над JPA-сущностью: условия, сортировка, страница и общее количество.
- *
- * <p>Семантика сравнения:
- * <ul>
- *     <li>contains / startsWith / endsWith — без учёта регистра, остальные сравнения строк — с учётом;</li>
- *     <li>gt / gte / lt / lte и сортировка для enum — по порядку объявления, не по строке в базе;</li>
- *     <li>если значение поля null, проходят только isNull и ne.</li>
- * </ul>
- */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class JpaQueryExecutor {
 
     private static final char LIKE_ESCAPE = '\\';
-
-    private JpaQueryExecutor() {
-    }
 
     public static <T> Page<T> execute(EntityManager em, Class<T> entityType, Query query) {
         CriteriaBuilder cb = em.getCriteriaBuilder();

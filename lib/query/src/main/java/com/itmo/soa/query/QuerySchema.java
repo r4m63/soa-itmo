@@ -5,16 +5,21 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
-/**
- * Описание коллекции: какие поля можно фильтровать и сортировать, сортировка и размер страницы по умолчанию.
- */
+@Accessors(fluent = true)
 public final class QuerySchema {
 
     private final Map<String, QueryField> fields;
+    @Getter
     private final List<Sort> defaultSort;
     private final Sort tieBreaker;
+    @Getter
     private final int defaultPageSize;
+    @Getter
     private final int maxPageSize;
 
     private QuerySchema(Builder b) {
@@ -33,23 +38,11 @@ public final class QuerySchema {
         return Optional.ofNullable(fields.get(name));
     }
 
-    public List<Sort> defaultSort() {
-        return defaultSort;
-    }
-
-    /** Добавляется в конец любой сортировки, чтобы порядок страниц был стабильным. */
     public Optional<Sort> tieBreaker() {
         return Optional.ofNullable(tieBreaker);
     }
 
-    public int defaultPageSize() {
-        return defaultPageSize;
-    }
-
-    public int maxPageSize() {
-        return maxPageSize;
-    }
-
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static final class Builder {
 
         private final Map<String, QueryField> fields = new LinkedHashMap<>();
@@ -57,9 +50,6 @@ public final class QuerySchema {
         private Sort tieBreaker;
         private int defaultPageSize = 20;
         private int maxPageSize = 100;
-
-        private Builder() {
-        }
 
         public Builder field(QueryField field) {
             if (fields.putIfAbsent(field.name(), field) != null) {

@@ -4,22 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
 
-/**
- * Разбирает параметры filter, sort, page и size по схеме.
- * Проверяет все параметры и бросает {@link QueryValidationException} со списком всех ошибок сразу.
- */
+@RequiredArgsConstructor
 public final class QueryParser {
 
     private final QuerySchema schema;
 
-    public QueryParser(QuerySchema schema) {
-        this.schema = schema;
-    }
-
-    /**
-     * page и size принимаются строками, чтобы на нечисловое значение ответить 400 с понятным текстом.
-     */
     public Query parse(List<String> filters, List<String> sorts, String page, String size) {
         List<QueryError> errors = new ArrayList<>();
 
