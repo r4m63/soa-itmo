@@ -7,7 +7,7 @@ import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetT
 import { Skeleton } from "@/components/ui/skeleton"
 import { ApiError, notifyError } from "@/lib/api-errors"
 import { enumLabel } from "@/lib/enums"
-import { formatDate, OSCARS_WORDS, plural } from "@/lib/format"
+import { formatDate } from "@/lib/format"
 
 export function MovieDetailsSheet({ movieId, onOpenChange, onEdit, onDelete }) {
   const [movie, setMovie] = useState(null)
@@ -42,8 +42,6 @@ export function MovieDetailsSheet({ movieId, onOpenChange, onEdit, onDelete }) {
           {notFound && <p className="text-muted-foreground">Фильм удалён или ещё не создан.</p>}
           {movie && (
             <>
-              <p className="leading-relaxed">{describeMovie(movie)}</p>
-              <Separator />
               <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-2">
                 <Item label="Дата создания" value={formatDate(movie.creationDate)} />
                 <Item label="Координаты" value={`X ${movie.coordinates.x}, Y ${movie.coordinates.y}`} />
@@ -82,25 +80,4 @@ function Item({ label, value }) {
       <dd>{value}</dd>
     </>
   )
-}
-
-/** Описание фильма одним абзацем. */
-export function describeMovie(movie) {
-  const genre = movie.genre ? enumLabel("genres", movie.genre).toLowerCase() : "фильм без указанного жанра"
-  const parts = [
-    `«${movie.name}» — ${genre} с рейтингом ${enumLabel("mpaa-ratings", movie.mpaaRating)}, добавлен ${formatDate(movie.creationDate)}.`,
-    `${movie.oscarsCount} ${plural(movie.oscarsCount, OSCARS_WORDS)}.`,
-    `Координаты: (${movie.coordinates.x}; ${movie.coordinates.y}).`,
-  ]
-  const sw = movie.screenwriter
-  if (sw) {
-    const details = [
-      sw.passportID && `паспорт ${sw.passportID}`,
-      sw.hairColor && `цвет волос — ${enumLabel("colors", sw.hairColor).toLowerCase()}`,
-    ].filter(Boolean)
-    parts.push(`Сценарист: ${sw.name} (${enumLabel("countries", sw.nationality)})${details.length ? ", " + details.join(", ") : ""}.`)
-  } else {
-    parts.push("Сценарист не указан.")
-  }
-  return parts.join(" ")
 }
