@@ -8,7 +8,6 @@ import com.itmo.soa.query.Direction;
 import com.itmo.soa.query.QueryField;
 import com.itmo.soa.query.QuerySchema;
 
-
 public final class MovieQuerySchema {
 
     public static final QuerySchema MOVIES = QuerySchema.builder()

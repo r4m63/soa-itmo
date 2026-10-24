@@ -1,21 +1,11 @@
 package com.itmo.soa.oscar.domain.oscar.model;
 
-
 import com.itmo.soa.contract.error.exception.InvalidOperationException;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-/**
- * Перераспределение Оскаров между жанрами. Чистый расчёт, без обращений к Movie Service.
- *
- * <ul>
- *     <li>у каждого фильма исходного жанра изымаются все награды сверх одной (oscarsCount не может быть меньше 1);</li>
- *     <li>изъятое делится поровну между фильмами целевого жанра;</li>
- *     <li>остаток от деления получают по одной награде фильмы с наименьшими id.</li>
- * </ul>
- */
 public record RedistributionPlan(List<OscarsChange> changes, int sourceMovies, int targetMovies,
                                  long transferredOscars) {
 

@@ -11,7 +11,6 @@ public enum FieldType {
     DATE(EnumSet.of(EQ, NE, GT, GTE, LT, LTE)),
     STRING(EnumSet.of(EQ, NE, GT, GTE, LT, LTE, CONTAINS, STARTS_WITH, ENDS_WITH)),
     ENUM(EnumSet.of(EQ, NE, GT, GTE, LT, LTE)),
-    /** Вложенный объект целиком: фильтруется только на null. */
     OBJECT(EnumSet.noneOf(Operator.class));
 
     private final Set<Operator> operators;

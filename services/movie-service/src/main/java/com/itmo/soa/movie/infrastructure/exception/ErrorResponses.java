@@ -9,9 +9,6 @@ import jakarta.ws.rs.core.Response;
 import java.time.Instant;
 import java.util.List;
 
-/**
- * Тела ошибок в формате спецификации: Error и ValidationError.
- */
 final class ErrorResponses {
 
     private ErrorResponses() {

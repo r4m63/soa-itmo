@@ -13,15 +13,11 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.Instant;
 
-/**
- * Ошибки в формате спецификации: бизнес-ошибки по реестру ErrorType, ошибки Spring MVC со своим статусом, остальное — 500.
- */
 @RestControllerAdvice
 public class OscarExceptionHandler {
 
     private static final Logger log = LoggerFactory.getLogger(OscarExceptionHandler.class);
 
-    /** Все бизнес-ошибки: HTTP-статус из реестра ErrorType, тело — Error или ValidationError (если есть errors). */
     @ExceptionHandler(ServiceException.class)
     public ResponseEntity<?> service(ServiceException e) {
         HttpStatusCode status = HttpStatusCode.valueOf(e.type().httpStatus());
@@ -34,7 +30,6 @@ public class OscarExceptionHandler {
         return error(status, e.getMessage());
     }
 
-    /** Ошибки самого Spring MVC (нет пути, не тот метод) сохраняют свой статус, остальное — 500. */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> unhandled(Exception e) {
         if (e instanceof org.springframework.web.ErrorResponse springError) {

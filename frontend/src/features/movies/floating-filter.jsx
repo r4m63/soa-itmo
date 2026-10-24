@@ -9,10 +9,8 @@ import { describeFilter, field, fieldFilters, filterValueLabel, replaceFieldFilt
 
 const APPLY_DELAY_MS = 400
 
-/** Оператор быстрого поиска: для строк — вхождение, для остального — точное совпадение. */
 const QUICK_OPERATOR = { string: "contains", integer: "eq", long: "eq", date: "eq", enum: "eq" }
 
-/** Разбор введённого текста в значение фильтра: { value } — применить, { invalid } — ошибка ввода. */
 const NUMBER_INPUT = {
   inputMode: "numeric",
   placeholder: "Поиск",
@@ -28,11 +26,6 @@ const QUICK_INPUTS = {
   long: NUMBER_INPUT,
 }
 
-/**
- * Быстрый фильтр во второй строке заголовка (floating filter из AG Grid).
- * Работает с теми же filters, что и фильтр колонки: пока у поля одно условие с оператором быстрого поиска,
- * его можно править здесь; если условий больше — показывается их сводка только для чтения.
- */
 export function FloatingFilter({ fieldKey, filters, onApply }) {
   const meta = field(fieldKey)
   const quickOperator = QUICK_OPERATOR[meta.type]
@@ -99,13 +92,11 @@ export function FloatingFilter({ fieldKey, filters, onApply }) {
   )
 }
 
-/** Поле ввода с отложенным применением: фильтр меняется, когда пользователь перестал печатать. */
 function QuickInput({ meta, value, onApply }) {
   const { parse, ...inputProps } = QUICK_INPUTS[meta.type]
   const [text, setText] = useState(value)
   const parsed = parse(text)
 
-  // значение поменялось снаружи (фильтр колонки, чип, «Сбросить все»); то, что пользователь ещё печатает, не трогаем
   useEffect(() => setText((current) => (parse(current).value === value ? current : value)), [value])
 
   useEffect(() => {

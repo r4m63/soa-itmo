@@ -1,6 +1,3 @@
-// Локальный Swagger UI для docs/*.yaml: `npm run swagger` → http://localhost:8765
-// Список спек строится из docs/*.yaml при каждой загрузке страницы,
-// при сохранении файлов в docs/ страница перезагружается сама.
 const fs = require("fs");
 const path = require("path");
 

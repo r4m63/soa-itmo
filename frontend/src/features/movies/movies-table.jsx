@@ -31,11 +31,6 @@ function sanitizeVisibility(stored) {
   return Object.fromEntries(Object.entries(stored).filter(([, visible]) => typeof visible === "boolean"))
 }
 
-/**
- * Клик по строке открывает карточку фильма. Не срабатывает, если кликнули по кнопке в строке
- * (у неё своё действие), по пункту меню «⋮» (React доносит клики из портала до строки)
- * или если пользователь выделял текст.
- */
 function openOnRowClick(event, open) {
   if (!event.currentTarget.contains(event.target)) return
   if (event.target.closest("button, a, input, [role=menuitem]")) return
@@ -43,18 +38,10 @@ function openOnRowClick(event, open) {
   open()
 }
 
-/**
- * Таблица фильмов. Сортировка, фильтры и пагинация серверные: таблица только меняет sorts и filters,
- * данные приходят готовыми. В заголовке каждой колонки — сортировка и фильтр по её полю,
- * во второй строке заголовка — быстрый поиск по значению.
- * Над таблицей панель: слева toolbarStart (теги фильтров и сортировок) от самого верха,
- * справа две строки кнопок, прижатые к низу: сверху toolbarActions, снизу toolbarEnd и меню «Колонки».
- */
 export function MoviesTable({
   movies, loading, sorts, onSortsChange, filters, filterErrors, onFiltersChange, actions, emptyAction,
   toolbarStart, toolbarActions, toolbarEnd,
 }) {
-  // скрытые колонки тоже запоминаются; неизвестные id просто не на что применить
   const [columnVisibility, setColumnVisibility] = useStoredState("movies:columns", {}, sanitizeVisibility)
   const columns = useMemo(() => movieColumns(actions), [actions])
 
@@ -92,7 +79,6 @@ export function MoviesTable({
                     key={column.id}
                     checked={column.getIsVisible()}
                     onCheckedChange={(value) => column.toggleVisibility(!!value)}
-                    // меню остаётся открытым, чтобы можно было переключить несколько колонок подряд
                     onSelect={(e) => e.preventDefault()}
                   >
                     {column.columnDef.header}
@@ -151,7 +137,6 @@ export function MoviesTable({
               ))
             ) : table.getRowModel().rows.length ? (
               table.getRowModel().rows.map((row) => (
-                // правый клик по строке — те же действия, что в меню «⋮»
                 <ContextMenu key={row.id}>
                   <ContextMenuTrigger asChild>
                     <TableRow
@@ -178,7 +163,6 @@ export function MoviesTable({
             ) : (
               <TableRow>
                 <TableCell colSpan={visibleColumns}>
-                  {/* по левому краю: таблица шире экрана, по центру сообщение уезжало бы за прокрутку */}
                   <Empty className="items-start py-10 text-left">
                     <EmptyHeader className="items-start">
                       <EmptyMedia variant="icon"><FilmIcon /></EmptyMedia>

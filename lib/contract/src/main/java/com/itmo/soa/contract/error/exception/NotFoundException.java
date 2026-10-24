@@ -4,9 +4,6 @@ import com.itmo.soa.contract.error.ErrorType;
 
 import java.util.List;
 
-/**
- * Запрошенного ресурса нет.
- */
 public class NotFoundException extends ServiceException {
 
     public NotFoundException(String message) {

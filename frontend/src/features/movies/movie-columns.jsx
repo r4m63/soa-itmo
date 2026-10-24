@@ -15,7 +15,6 @@ import { formatDate } from "@/lib/format"
 
 const EMPTY = <span className="text-muted-foreground">—</span>
 
-/** Действия над фильмом: одни и те же в меню «⋮» строки и в контекстном меню по правому клику. */
 export function rowActions(actions, movie) {
   return [
     { label: "Подробнее", run: () => actions.onOpen(movie) },
@@ -24,10 +23,6 @@ export function rowActions(actions, movie) {
   ]
 }
 
-/**
- * Колонки таблицы. meta.field — поле API: по нему колонка сортируется и фильтруется.
- * actions: { onOpen, onEdit, onDelete }.
- */
 export function movieColumns(actions) {
   return [
     {
@@ -139,7 +134,6 @@ export function movieColumns(actions) {
   ]
 }
 
-/** Заголовок с сортировкой: стрелка направления и номер приоритета при сортировке по нескольким полям. */
 export function SortableHeader({ label, field, sorts, onToggle }) {
   const index = sorts.findIndex((s) => s.field === field)
   const sort = sorts[index]

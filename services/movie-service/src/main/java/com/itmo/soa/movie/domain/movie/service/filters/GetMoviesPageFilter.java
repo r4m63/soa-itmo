@@ -23,7 +23,6 @@ public class GetMoviesPageFilter {
     @Inject
     MovieQueryRepository movieQueryRepository;
 
-    /** Неверные параметры — InvalidDataException со всеми ошибками filter[i], sort[i], page, size. */
     public Page<Movie> execute(List<String> filters, List<String> sorts, String page, String size) {
         Query query;
         try {

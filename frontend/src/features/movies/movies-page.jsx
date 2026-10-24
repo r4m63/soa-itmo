@@ -12,12 +12,10 @@ import { MoviePagination } from "./movie-pagination"
 import { MoviesTable } from "./movies-table"
 import { useMovieList } from "./use-movie-list"
 
-/** Раздел «Фильмы»: все операции Movie Service. */
 export function MoviesPage() {
   const list = useMovieList()
   const [formOpen, setFormOpen] = useState(false)
   const [editing, setEditing] = useState(null)
-  // открытая карточка — часть адреса: /movies/42
   const navigate = useNavigate()
   const movieIdParam = useMatch("/movies/:movieId")?.params.movieId
   const openedId = movieIdParam === undefined ? null : Number(movieIdParam)
@@ -85,7 +83,6 @@ export function MoviesPage() {
         onSizeChange={list.setSize}
       />
 
-      {/* полный запрос; переносится по границам параметров (после &), длинное значение — где угодно */}
       <code className="rounded-md bg-muted px-2 py-1 text-xs leading-relaxed text-muted-foreground [overflow-wrap:anywhere]">
         GET /movies?
         {decodeURIComponent(list.requestQuery).split("&").map((param, i) => (

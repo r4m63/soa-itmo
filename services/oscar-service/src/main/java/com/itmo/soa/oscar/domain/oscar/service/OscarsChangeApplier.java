@@ -11,10 +11,6 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.List;
 
-/**
- * Применяет изменения наград в Movie Service. Общей транзакции между сервисами нет,
- * поэтому при сбое уже сделанные изменения откатываются обратными PATCH.
- */
 @Component
 public class OscarsChangeApplier {
 
@@ -26,10 +22,6 @@ public class OscarsChangeApplier {
         this.movieServiceClient = movieServiceClient;
     }
 
-    /**
-     * @param skipGoneMovies true — удалённый во время операции фильм пропускается; false — всё откатывается
-     * @return сколько изменений применено
-     */
     public int apply(List<OscarsChange> changes, boolean skipGoneMovies) {
         Deque<OscarsChange> applied = new ArrayDeque<>();
         try {

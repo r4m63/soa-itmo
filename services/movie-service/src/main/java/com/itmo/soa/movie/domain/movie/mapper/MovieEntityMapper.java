@@ -9,10 +9,6 @@ import com.itmo.soa.movie.infrastructure.storage.movie.model.CoordinatesEmbeddab
 import com.itmo.soa.movie.infrastructure.storage.movie.model.MovieEntity;
 import com.itmo.soa.movie.infrastructure.storage.movie.model.ScreenwriterEmbeddable;
 
-
-/**
- * MovieEntity ⇄ Movie. Лежит в domain: infrastructure о доменной модели не знает.
- */
 public final class MovieEntityMapper {
 
     private MovieEntityMapper() {
@@ -39,7 +35,6 @@ public final class MovieEntityMapper {
         return entity;
     }
 
-    /** Переносит изменяемые поля; id и creationDate не трогает. */
     public static void copyTo(Movie movie, MovieEntity entity) {
         entity.setName(movie.name().value());
         entity.setCoordinates(toEmbeddable(movie.coordinates()));
@@ -50,7 +45,6 @@ public final class MovieEntityMapper {
     }
 
     private static Person toModel(ScreenwriterEmbeddable screenwriter) {
-        // имя сценариста обязательно: пустой embeddable означает «сценариста нет»
         if (screenwriter == null || screenwriter.getName() == null) {
             return null;
         }

@@ -8,9 +8,6 @@ import jakarta.ws.rs.ext.Provider;
 
 import java.util.List;
 
-/**
- * JSON-B не смог прочитать тело в DTO: битый JSON, неверный тип, неизвестное значение enum или лишнее поле.
- */
 @Provider
 public class ProcessingExceptionMapper implements ExceptionMapper<ProcessingException> {
 

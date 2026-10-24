@@ -11,9 +11,6 @@ import org.glassfish.jersey.server.ParamException;
 
 import java.util.List;
 
-/**
- * Ошибки самого JAX-RS (нет пути, не тот метод, не тот Content-Type) — тот же статус, но в формате спецификации.
- */
 @Provider
 public class WebApplicationExceptionMapper implements ExceptionMapper<WebApplicationException> {
 
@@ -22,14 +19,12 @@ public class WebApplicationExceptionMapper implements ExceptionMapper<WebApplica
 
     @Override
     public Response toResponse(WebApplicationException e) {
-        // параметр пути не привёлся к типу DTO («abc» в int id): JAX-RS отвечает 404, по спецификации — 400
         if (e instanceof ParamException.PathParamException param) {
             String name = param.getParameterName();
             return ErrorResponses.validation("Некорректные параметры запроса", List.of(FieldError.path(name,
                     uriInfo.getPathParameters().getFirst(name), name + " должен быть положительным целым числом")));
         }
         Response.StatusType status = e.getResponse().getStatusInfo();
-        // тело не удалось прочитать вовсе: его нет (400) или оно не JSON (415); по спецификации это 400 ValidationError
         if (status.getStatusCode() == 400) {
             return ErrorResponses.validation("Некорректное тело запроса",
                     List.of(FieldError.body(null, null, "Тело запроса обязательно")));

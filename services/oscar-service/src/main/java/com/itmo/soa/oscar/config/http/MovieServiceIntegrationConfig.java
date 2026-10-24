@@ -11,10 +11,6 @@ import java.net.http.HttpClient;
 @Configuration
 public class MovieServiceIntegrationConfig {
 
-    /**
-     * HTTPS-клиент к Movie Service. Сертификат Payara №1 должен лежать в truststore этой JVM
-     * (cacerts.jks домена Payara №2) — тогда системный SSLContext ему доверяет.
-     */
     @Bean
     public RestClient movieServiceRestClient(MovieServiceProperties properties) {
         HttpClient httpClient = HttpClient.newBuilder()

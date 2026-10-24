@@ -18,10 +18,6 @@ import { Input } from "@/components/ui/input"
 import { ApiError, bodyFieldErrors, bodyGeneralErrors, notifyError } from "@/lib/api-errors"
 import { diffPatch, emptyForm, formFromMovie, toMovieInput, validateForm } from "./movie-form"
 
-/**
- * Создание (movie = null) и изменение фильма.
- * Ошибки: свои проверки до отправки и ошибки 400 сервиса — на тех же полях.
- */
 export function MovieFormDialog({ open, movie, onOpenChange, onSaved }) {
   const editing = movie != null
   const [form, setForm] = useState(emptyForm)
@@ -58,7 +54,6 @@ export function MovieFormDialog({ open, movie, onOpenChange, onSaved }) {
       onSaved(saved)
       onOpenChange(false)
     } catch (error) {
-      // ошибки полей подсвечиваются в форме, ошибки всего тела (пустой PATCH, битый JSON) — в тосте
       if (error instanceof ApiError && error.status === 400) setErrors(bodyFieldErrors(error))
       notifyError(error, bodyGeneralErrors(error))
     } finally {

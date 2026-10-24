@@ -1,4 +1,3 @@
-// Значения enum из спецификаций и подписи для интерфейса.
 
 export const DICTIONARIES = {
   genres: {
@@ -42,7 +41,6 @@ export const DICTIONARIES = {
   },
 }
 
-/** Значения в порядке объявления — этот порядок используют gt/lt и сортировка. */
 export function enumValues(dictionary) {
   return Object.keys(DICTIONARIES[dictionary].labels)
 }

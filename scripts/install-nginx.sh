@@ -1,13 +1,4 @@
 #!/bin/sh
-# Собирает nginx из исходников и ставит его в ~/.local без root (FreeBSD).
-# Раскладка как у helios-container: всё в ~/.local/nginx, команда-обёртка
-# в ~/.local/bin/nginx, PATH блоком в ~/.profile (оригинал в profile.before).
-#
-#   sh install-nginx.sh [--port PORT] [--jobs N] [--sources DIR]
-#   sh install-nginx.sh uninstall --yes
-#
-# --sources DIR: взять nginx-$NGINX_VERSION.tar.gz и pcre2-$PCRE2_VERSION.tar.gz
-# из каталога вместо скачивания (если у сервера нет доступа в интернет).
 set -eu
 
 NGINX_VERSION=1.30.5
@@ -52,7 +43,6 @@ verify() {
     [ "$(sha256 -q "$1")" = "$2" ] || die "SHA-256 не совпадает: $1"
 }
 
-# Печатает .profile без нашего блока; код 1, если маркеры не парные.
 strip_profile() {
     awk -v b="$begin" -v e="$end" '
         $0 == b { skip = 1; nb++; next }
@@ -173,8 +163,6 @@ install_nginx() {
         "$make_cmd" install
     )
     : >"$owner"
-    # Стандартный конфиг слушает 80-й порт, без root его не открыть.
-    # Свой конфиг пишем только при первой установке, чтобы не затереть правки.
     [ "$fresh_conf" = 1 ] && write_conf
 
     mkdir -p "$bin"
@@ -222,7 +210,6 @@ case "${1:-}" in
     install) shift ;;
 esac
 
-# Порт по умолчанию зависит от uid, чтобы реже пересекаться с соседями по серверу.
 port=$((20000 + $(id -u) % 20000))
 jobs=$(sysctl -n hw.ncpu 2>/dev/null || echo 2)
 sources=

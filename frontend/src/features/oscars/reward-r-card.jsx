@@ -8,7 +8,6 @@ import { notifyError } from "@/lib/api-errors"
 import { MOVIES_WORDS, plural } from "@/lib/format"
 import { ConfirmButton } from "./confirm-button"
 
-/** POST /oscar/movies/reward-r */
 export function RewardRCard() {
   const [running, setRunning] = useState(false)
   const [result, setResult] = useState(null)

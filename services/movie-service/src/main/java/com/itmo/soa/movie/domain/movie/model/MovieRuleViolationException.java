@@ -1,9 +1,5 @@
 package com.itmo.soa.movie.domain.movie.model;
 
-/**
- * Нарушено ограничение предметной области. field — поле модели (name, screenwriter.passportID).
- * Через API не возникает: тот же вход раньше отклоняют аннотации DTO контракта.
- */
 public class MovieRuleViolationException extends RuntimeException {
 
     private final String field;

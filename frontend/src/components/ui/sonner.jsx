@@ -38,7 +38,6 @@ const Toaster = ({
       }
       toastOptions={{
         classNames: {
-          // без select-none перетаскивание за текст выделяет его, и sonner не даёт смахнуть тост
           toast: "cn-toast select-none",
         },
       }}

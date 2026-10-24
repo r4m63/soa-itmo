@@ -7,7 +7,6 @@ import jakarta.enterprise.event.Observes;
 import javax.sql.DataSource;
 import org.flywaydb.core.Flyway;
 
-
 @ApplicationScoped
 public class DatabaseMigration {
 

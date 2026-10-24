@@ -6,7 +6,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { MOVIES_WORDS, plural } from "@/lib/format"
 import { PAGE_SIZES } from "@/lib/movie-query"
 
-/** page — с 0, как в API; пользователю показывается с 1. */
 export function MoviePagination({ page, size, totalElements, totalPages, onPageChange, onSizeChange }) {
   const last = Math.max(totalPages - 1, 0)
   return (

@@ -4,9 +4,6 @@ import com.itmo.soa.oscar.domain.oscar.service.actions.RedistributeOscarsAction;
 import com.itmo.soa.oscar.domain.oscar.service.actions.RewardRRatedMoviesAction;
 import org.springframework.stereotype.Service;
 
-/**
- * Фасад: только собирает команды, логики нет.
- */
 @Service
 public class OscarService {
 

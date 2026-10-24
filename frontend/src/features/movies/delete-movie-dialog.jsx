@@ -14,7 +14,6 @@ import {
 } from "@/components/ui/alert-dialog"
 import { notifyError } from "@/lib/api-errors"
 
-/** Подтверждение DELETE /movies/{id}. */
 export function DeleteMovieDialog({ movie, onOpenChange, onDeleted }) {
   const [deleting, setDeleting] = useState(false)
 

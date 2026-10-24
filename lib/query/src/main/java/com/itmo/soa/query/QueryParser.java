@@ -135,7 +135,6 @@ public final class QueryParser {
                 return page;
             }
         } catch (NumberFormatException ignored) {
-            // ниже — общее сообщение
         }
         errors.add(new QueryError("page", raw, "Значение должно быть целым числом не меньше 0"));
         return null;
@@ -151,7 +150,6 @@ public final class QueryParser {
                 return size;
             }
         } catch (NumberFormatException ignored) {
-            // ниже — общее сообщение
         }
         errors.add(new QueryError("size", raw, "Значение должно быть от 1 до " + schema.maxPageSize()));
         return null;

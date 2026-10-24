@@ -17,7 +17,6 @@ import { notifyError } from "@/lib/api-errors"
 import { enumLabel } from "@/lib/enums"
 import { MOVIES_WORDS, plural } from "@/lib/format"
 
-/** DELETE /movies/by-genre/{genre}: выбор жанра и показ числа удалённых фильмов. */
 export function DeleteByGenreDialog({ open, onOpenChange, onDeleted }) {
   const [genre, setGenre] = useState(undefined)
   const [error, setError] = useState(null)

@@ -3,7 +3,6 @@ spring:
     name: oscar-service
 
 movie-service:
-  # Movie Service на Payara №1, только HTTPS
   base-url: ${MOVIE_SERVICE_URL:https://localhost:8181}
   connect-timeout: 5s
   read-timeout: 30s

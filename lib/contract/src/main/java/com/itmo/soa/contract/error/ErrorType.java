@@ -2,7 +2,6 @@ package com.itmo.soa.contract.error;
 
 import com.itmo.soa.contract.error.exception.ServiceException;
 
-
 public enum ErrorType {
 
     INVALID_DATA(400),

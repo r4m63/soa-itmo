@@ -9,17 +9,11 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { maskDate, parseMaskedDate, toMaskedDate } from "@/lib/format"
 import { cn } from "@/lib/utils"
 
-/**
- * Дата: ввод с маской ДД/ММ/ГГГГ или выбор в календаре (shadcn Date Picker with input).
- * value и onChange — дата в формате API "YYYY-MM-DD" или "" (не задана).
- * onChange вызывается, когда дата введена полностью и существует, либо поле очищено.
- */
 export function DatePicker({ value, onChange, invalid = false, className, "aria-label": ariaLabel }) {
   const [open, setOpen] = useState(false)
   const [text, setText] = useState(() => toMaskedDate(value))
   const textInvalid = text.length === 10 && !parseMaskedDate(text)
 
-  // значение поменялось снаружи; недописанную дату пользователя не трогаем
   useEffect(() => setText((current) => (parseMaskedDate(current) === value ? current : toMaskedDate(value))), [value])
 
   const type = (raw) => {

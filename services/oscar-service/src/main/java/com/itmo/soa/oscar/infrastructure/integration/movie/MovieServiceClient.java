@@ -21,14 +21,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
-/**
- * HTTP-клиент Movie Service. Использует только GET /movies (с фильтром) и PATCH /movies/{id}.
- */
 @Component
 public class MovieServiceClient {
 
     private static final int PAGE_SIZE = 100;
-    /** Сообщение клиенту; подробности — в причине исключения, она пишется в лог. */
     private static final String UNAVAILABLE = "Movie Service недоступен";
     private static final String SORT_BY_ID = Sort.format("id", Direction.ASC);
 
@@ -46,7 +42,6 @@ public class MovieServiceClient {
         return findAll(Filter.format("genre", Operator.EQ, genre));
     }
 
-    /** Справочник жанров Movie Service: список жанров принадлежит ему. */
     public List<String> findAllGenres() {
         DictionaryResponse<String> genres = call(() -> movieServiceRestClient.get()
                 .uri("/movies/genres")
@@ -59,9 +54,6 @@ public class MovieServiceClient {
         return genres.getItems();
     }
 
-    /**
-     * @throws MovieGoneException если фильма уже нет
-     */
     public void setOscarsCount(int movieId, int oscarsCount) {
         try {
             call(() -> movieServiceRestClient.patch()
@@ -75,7 +67,6 @@ public class MovieServiceClient {
         }
     }
 
-    /** Проходит все страницы: size у Movie Service не больше 100. */
     private List<MovieResponse> findAll(String filter) {
         List<MovieResponse> movies = new ArrayList<>();
         int page = 0;
@@ -100,10 +91,6 @@ public class MovieServiceClient {
         return movies;
     }
 
-    /**
-     * Нет соединения, таймаут, 5xx или нечитаемый ответ — сервис недоступен.
-     * 4xx — ошибка в нашем запросе: пробрасывается как есть (404 обрабатывает вызывающий код).
-     */
     private static <T> T call(Supplier<T> request) {
         try {
             return request.get();

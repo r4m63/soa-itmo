@@ -11,7 +11,6 @@ import {
 } from "@/components/ui/alert-dialog"
 import { Button } from "@/components/ui/button"
 
-/** Кнопка операции с подтверждением: операции Oscar Service меняют данные многих фильмов. */
 export function ConfirmButton({ title, description, confirmLabel, disabled, onConfirm, children }) {
   return (
     <AlertDialog>

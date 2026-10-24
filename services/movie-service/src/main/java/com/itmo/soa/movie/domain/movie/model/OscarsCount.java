@@ -1,6 +1,5 @@
 package com.itmo.soa.movie.domain.movie.model;
 
-/** Число Оскаров фильма: больше 0. */
 public record OscarsCount(int value) {
 
     public OscarsCount {

@@ -25,7 +25,6 @@ function validFilter(f) {
   return VALUE_FORMATS[meta.type]?.test(f.value) ?? true
 }
 
-/** Сохранённое состояние из localStorage: то, что больше не подходит под спеку, отбрасывается. */
 function sanitizeQuery(stored) {
   const sorts = Array.isArray(stored?.sorts)
     ? stored.sorts.filter((s, i, all) => field(s?.field)?.sortable && ["asc", "desc"].includes(s.direction)
@@ -39,17 +38,11 @@ function sanitizeQuery(stored) {
   }
 }
 
-/**
- * Состояние таблицы фильмов: filter, sort, page, size → GET /movies.
- * Смена фильтров или размера страницы возвращает на первую страницу.
- * filter, sort, page и size хранятся в localStorage — переживают переход на другую страницу и перезагрузку.
- */
 export function useMovieList() {
   const [query, setQuery] = useStoredState("movies:query", INITIAL_QUERY, sanitizeQuery)
   const { filters, sorts, page, size } = query
   const [data, setData] = useState(EMPTY_PAGE)
   const [loading, setLoading] = useState(true)
-  // ошибки 400 по параметрам: { "filter[1]": "...", "sort[0]": "...", "size": "..." }
   const [paramErrors, setParamErrors] = useState({})
   const [reloadKey, setReloadKey] = useState(0)
 
@@ -61,7 +54,6 @@ export function useMovieList() {
         if (cancelled) return
         setData(result)
         setParamErrors({})
-        // сохранённой страницы больше нет (фильмов стало меньше) — переходим на последнюю
         if (result.totalPages > 0 && page >= result.totalPages) {
           setQuery((q) => ({ ...q, page: result.totalPages - 1 }))
         }
@@ -70,7 +62,6 @@ export function useMovieList() {
         if (cancelled) return
         const errors = error instanceof ApiError && error.status === 400 ? queryErrors(error) : {}
         setParamErrors(errors)
-        // filter[i] и sort[i] подсвечиваются на тегах, остальные (page, size) — только в тосте
         const details = Object.entries(errors)
           .filter(([key]) => !/^(filter|sort)\[/.test(key))
           .map(([key, message]) => `${key}: ${message}`)

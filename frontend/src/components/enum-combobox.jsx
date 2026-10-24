@@ -8,11 +8,6 @@ import { useDictionarySearch } from "@/hooks/use-dictionary-search"
 import { enumLabel } from "@/lib/enums"
 import { cn } from "@/lib/utils"
 
-/**
- * Выбор значения enum с поиском на стороне Movie Service (GET /movies/{dictionary}?search=).
- * value: undefined — ничего не выбрано; null — выбрано «нет значения» (только при nullable).
- * clearLabel — пункт, который сбрасывает выбор обратно в undefined (например, «Все» в быстром фильтре).
- */
 export function EnumCombobox({
   dictionary,
   value,

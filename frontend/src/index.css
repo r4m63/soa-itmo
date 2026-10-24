@@ -129,8 +129,6 @@
     }
 }
 
-/* Всё, что нажимается: кнопки, триггеры списков, пункты меню и вариантов.
-   Вне @layer — чтобы перебить cursor-default из компонентов shadcn. */
 button:not(:disabled),
 [role="button"]:not([aria-disabled="true"]):not([aria-roledescription="sortable"]),
 [role="menuitem"]:not([data-disabled]),

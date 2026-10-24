@@ -16,7 +16,6 @@ import { OperatorIcon } from "@/components/operator-icon"
 import { describeFilter, field, filterValueLabel, requiresValue } from "@/lib/movie-query"
 import { cn } from "@/lib/utils"
 
-/** Активные фильтры тегами: каждый можно убрать, ошибка сервиса (filter[i]) — красным с подсказкой. */
 export function ActiveFilters({ filters, errors, onChange }) {
   if (filters.length === 0) return null
   return (
@@ -38,14 +37,9 @@ const SCREEN_READER_INSTRUCTIONS = {
   draggable: "Нажмите пробел, чтобы взять сортировку, стрелками поменяйте её приоритет, пробелом отпустите, Escape — отмена.",
 }
 
-/**
- * Активные сортировки тегами в порядке приоритета. Теги можно перетаскивать — так меняется очередность sort.
- * Каждую сортировку можно убрать; ошибка сервиса (sort[i]) — красным.
- */
 export function ActiveSorts({ sorts, errors, onChange }) {
   const [activeId, setActiveId] = useState(null)
   const sensors = useSensors(
-    // перетаскивание начинается после сдвига — клик по крестику остаётся кликом
     useSensor(PointerSensor, { activationConstraint: { distance: 4 } }),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
   )
@@ -53,7 +47,6 @@ export function ActiveSorts({ sorts, errors, onChange }) {
   if (sorts.length === 0) return null
 
   const ids = sorts.map((s) => s.field)
-  // текст тега — для подписи и aria-label, направление на экране показывает иконка
   const tagText = (sort) => `${field(sort.field).label} ${sort.direction === "asc" ? "по возрастанию" : "по убыванию"}`
   const tagProps = (sort) => ({ label: field(sort.field).label, icon: sort.direction === "asc" ? ArrowUpIcon : ArrowDownIcon })
   const onDragEnd = ({ active, over }) => {
@@ -86,7 +79,6 @@ export function ActiveSorts({ sorts, errors, onChange }) {
             />
           ))}
         </SortableContext>
-        {/* за курсором едет копия тега в отдельном слое — без перестроения строки и CSS-переходов */}
         <DragOverlay dropAnimation={null}>
           {activeIndex >= 0 && (
             <Tag
@@ -109,7 +101,6 @@ function SortableTag({ id, priority, ...tag }) {
       {...tag}
       ref={setNodeRef}
       style={{ transform: CSS.Translate.toString(transform), transition }}
-      // transition-all у Badge анимировал бы transform — тег отставал бы от курсора (особенно в Safari)
       className={cn("cursor-grab touch-none transition-none", isDragging && "opacity-40")}
       handleProps={{ ...attributes, ...listeners, "aria-label": `Перетащить: ${tag.text}` }}
       prefix={<TagPrefix priority={priority} />}
@@ -126,7 +117,6 @@ function TagPrefix({ priority }) {
   )
 }
 
-/** «Оскары [≥] 2»: поле, иконка оператора, значение. */
 function FilterLabel({ filter }) {
   return (
     <>
@@ -147,7 +137,6 @@ function TagRow({ icon: Icon, label, onReset, children }) {
   )
 }
 
-/** text — полная подпись (для aria-label), label + icon — что показать на экране, если подпись короче текста. */
 function Tag({ ref, text, label, icon: Icon, error, onRemove, prefix, handleProps, className, style }) {
   return (
     <Badge
@@ -166,7 +155,6 @@ function Tag({ ref, text, label, icon: Icon, error, onRemove, prefix, handleProp
         className="cursor-pointer rounded-sm p-0.5 hover:bg-foreground/10"
         aria-label={`Убрать: ${text}`}
         onClick={onRemove}
-        // крестик не должен начинать перетаскивание
         onPointerDown={(e) => e.stopPropagation()}
         onKeyDown={(e) => e.stopPropagation()}
       >

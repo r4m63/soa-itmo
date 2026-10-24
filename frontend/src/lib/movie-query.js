@@ -1,9 +1,6 @@
 import { enumLabel } from "./enums"
 import { formatDate } from "./format"
 
-// Модель filter/sort/page/size для GET /movies — как в таблицах спецификации.
-
-/** Поля коллекции: тип, nullable, можно ли сортировать, справочник для enum. */
 export const MOVIE_FIELDS = [
   { key: "id", label: "ID", type: "integer", sortable: true },
   { key: "name", label: "Название", type: "string", sortable: true },
@@ -20,7 +17,6 @@ export const MOVIE_FIELDS = [
   { key: "screenwriter.nationality", label: "Национальность", type: "enum", dictionary: "countries", nullable: true, sortable: true },
 ]
 
-/** Названия операторов словами: подписи в списках и текст для скринридера. Иконки — components/operator-icon. */
 export const OPERATORS = {
   eq: "равно",
   ne: "не равно",
@@ -62,17 +58,14 @@ export function requiresValue(operator) {
   return operator !== "isNull" && operator !== "notNull"
 }
 
-/** { field, operator, value } → "field;operator;value" или "field;operator". */
 export function filterToParam({ field, operator, value }) {
   return requiresValue(operator) ? `${field};${operator};${value ?? ""}` : `${field};${operator}`
 }
 
-/** { field, direction } → "field;asc". */
 export function sortToParam({ field, direction }) {
   return `${field};${direction}`
 }
 
-/** Состояние таблицы → query-параметры GET /movies. page — с 0, как в API. */
 export function buildMovieListParams({ filters, sorts, page, size }) {
   const params = new URLSearchParams()
   filters.forEach((f) => params.append("filter", filterToParam(f)))
@@ -82,17 +75,14 @@ export function buildMovieListParams({ filters, sorts, page, size }) {
   return params
 }
 
-/** Фильтры одного поля с их позициями в общем списке (позиция нужна для ошибок filter[i]). */
 export function fieldFilters(filters, key) {
   return filters.map((f, index) => ({ ...f, index })).filter((f) => f.field === key)
 }
 
-/** Заменяет фильтры поля новыми; фильтры других полей и их порядок не меняются. */
 export function replaceFieldFilters(filters, key, next) {
   return [...filters.filter((f) => f.field !== key), ...next.map((f) => ({ ...f, field: key }))]
 }
 
-/** Клик по заголовку: нет → asc → desc → нет. Новое поле добавляется в конец (меньший приоритет). */
 export function toggleSort(sorts, key) {
   const current = sorts.find((s) => s.field === key)
   if (!current) return [...sorts, { field: key, direction: "asc" }]
@@ -102,7 +92,6 @@ export function toggleSort(sorts, key) {
   return sorts.filter((s) => s.field !== key)
 }
 
-/** Значение фильтра так, как его видит пользователь: подпись enum, дата по-русски. */
 export function filterValueLabel(filter) {
   const f = field(filter.field)
   if (f.type === "enum") return enumLabel(f.dictionary, filter.value)
@@ -110,7 +99,6 @@ export function filterValueLabel(filter) {
   return filter.value
 }
 
-/** Фильтр словами — для aria-label и подсказок: «Оскары больше или равно 2», «Жанр: пусто». */
 export function describeFilter(filter) {
   const f = field(filter.field)
   const op = OPERATORS[filter.operator]

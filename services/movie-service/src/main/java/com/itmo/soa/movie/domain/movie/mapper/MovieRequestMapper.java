@@ -22,10 +22,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * Запросы контракта → доменная модель. Здесь семантика PATCH (null — поле не передано,
- * Optional.empty() — сбросить) и перевод строк справочников в enum: неизвестные значения — все ошибки сразу.
- */
 public final class MovieRequestMapper {
 
     private static final String INVALID_BODY = "Некорректное тело запроса";
@@ -44,7 +40,6 @@ public final class MovieRequestMapper {
                 new OscarsCount(request.getOscarsCount()), genre, mpaaRating, screenwriter, clock);
     }
 
-    /** Изменяет только переданные поля; при неизвестных значениях справочников фильм не меняется. */
     public static void applyPatch(Movie movie, UpdateMovieRequest patch) {
         List<FieldError> errors = new ArrayList<>();
         MovieGenre genre = patch.getGenre() == null ? null
@@ -78,7 +73,6 @@ public final class MovieRequestMapper {
         }
     }
 
-    /** Жанр из параметра пути DELETE /movies/by-genre/{genre}. */
     public static MovieGenre genreFromPath(String genre) {
         List<FieldError> errors = new ArrayList<>();
         MovieGenre value = parse(MovieGenre.class, genre, FieldError.PATH, "genre", errors);
@@ -99,7 +93,6 @@ public final class MovieRequestMapper {
         return errors.isEmpty() ? new Person(dto.getName(), dto.getPassportID(), hairColor, nationality) : null;
     }
 
-    /** null — значения нет. Неизвестное имя — ошибка в errors и null. */
     private static <E extends Enum<E>> E parse(Class<E> type, String value, String location, String field,
                                                List<FieldError> errors) {
         if (value == null) {

@@ -7,13 +7,6 @@ import java.util.EnumSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-/**
- * Поле, доступное для filter/sort.
- *
- * @param name         имя в API: {@code screenwriter.name}
- * @param path         путь к атрибуту сущности, по умолчанию совпадает с name
- * @param presencePath для OBJECT: обязательный атрибут вложенного объекта, по которому проверяется null
- */
 public record QueryField(
         String name,
         FieldType type,
@@ -44,7 +37,6 @@ public record QueryField(
         return new QueryField(name, FieldType.ENUM, enumType, false, true, name, null);
     }
 
-    /** Nullable-объект: доступны только isNull/notNull, сортировки нет. */
     public static QueryField object(String name, String presencePath) {
         return new QueryField(name, FieldType.OBJECT, null, true, false, name, presencePath);
     }
@@ -64,16 +56,10 @@ public record QueryField(
         return result;
     }
 
-    /** Значения enum в порядке объявления. */
     public Enum<?>[] enumConstants() {
         return enumType == null ? new Enum<?>[0] : enumType.getEnumConstants();
     }
 
-    /**
-     * Разбирает строковое значение фильтра.
-     *
-     * @throws IllegalArgumentException с сообщением для клиента
-     */
     public Object parseValue(String raw) {
         return switch (type) {
             case INTEGER -> {

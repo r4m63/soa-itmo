@@ -12,7 +12,6 @@ import jakarta.data.repository.Update;
 
 import java.util.Optional;
 
-
 @Repository(dataStore = "movies")
 public interface JpaMovieRepository extends DataRepository<MovieEntity, Integer> {
 

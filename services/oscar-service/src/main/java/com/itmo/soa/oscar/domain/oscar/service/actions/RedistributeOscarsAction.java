@@ -24,9 +24,6 @@ public class RedistributeOscarsAction {
         this.oscarsChangeApplier = oscarsChangeApplier;
     }
 
-    /**
-     * Сначала всё проверяется и считается, потом применяется: 400 и 409 — до первого изменения.
-     */
     public RedistributeOscarsResponse execute(String from, String to) {
         List<String> genres = movieServiceClient.findAllGenres();
         List<FieldError> errors = new ArrayList<>();

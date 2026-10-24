@@ -23,7 +23,6 @@ public class RewardRRatedMoviesAction {
         this.oscarsChangeApplier = oscarsChangeApplier;
     }
 
-    /** +1 Оскар каждому фильму рейтинга R. Удалённые во время операции фильмы не считаются. */
     public RewardRRatedMoviesResponse execute() {
         List<OscarsChange> changes = movieServiceClient.findAllByMpaaRating(R_RATING).stream()
                 .map(AwardedMovieMapper::toModel)

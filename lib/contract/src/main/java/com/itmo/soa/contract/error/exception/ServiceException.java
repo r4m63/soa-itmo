@@ -5,9 +5,6 @@ import com.itmo.soa.contract.error.response.FieldError;
 
 import java.util.List;
 
-/**
- * Бизнес-ошибка сервиса. Сообщение уходит клиенту в поле message, errors — только у {@link ErrorType#INVALID_DATA}.
- */
 public abstract class ServiceException extends RuntimeException {
 
     private final ErrorType type;

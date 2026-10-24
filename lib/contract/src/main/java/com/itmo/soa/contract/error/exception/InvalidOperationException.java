@@ -4,9 +4,6 @@ import com.itmo.soa.contract.error.ErrorType;
 
 import java.util.List;
 
-/**
- * Операция невозможна в текущем состоянии данных.
- */
 public class InvalidOperationException extends ServiceException {
 
     public InvalidOperationException(String message) {

@@ -5,20 +5,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Проверенный запрос к коллекции.
- */
 public record Query(List<Filter> filters, List<Sort> sorts, PageRequest page, QuerySchema schema) {
 
-    /**
-     * Фильтры, сгруппированные по правилам API: внутри группы — OR, между группами — AND.
-     * <ul>
-     *     <li>одинаковые field и operator — одна группа: несколько жанров через eq;</li>
-     *     <li>isNull попадает в группу eq того же поля: «драмы или без жанра»;</li>
-     *     <li>каждый ne — отдельная группа: исключить несколько значений;</li>
-     *     <li>остальное — разные группы: диапазон gte + lte.</li>
-     * </ul>
-     */
     public List<List<Filter>> filterGroups() {
         Map<String, List<Filter>> groups = new LinkedHashMap<>();
         for (Filter filter : filters) {
@@ -27,7 +15,6 @@ public record Query(List<Filter> filters, List<Sort> sorts, PageRequest page, Qu
         return groups.values().stream().map(List::copyOf).toList();
     }
 
-    /** Сортировка из запроса или по умолчанию, плюс tie-breaker в конце. */
     public List<Sort> effectiveSort() {
         List<Sort> result = new ArrayList<>(sorts.isEmpty() ? schema.defaultSort() : sorts);
         schema.tieBreaker()

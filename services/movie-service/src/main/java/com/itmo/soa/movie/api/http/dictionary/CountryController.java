@@ -11,7 +11,6 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 
-
 @Path("/movies/countries")
 @RequestScoped
 @Produces(MediaType.APPLICATION_JSON)

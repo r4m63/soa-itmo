@@ -7,7 +7,6 @@ import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 
 const APP_NAME = "Кинотека"
 
-/** Каркас всех страниц: сайдбар, шапка с заголовком текущего маршрута (handle.title) и сама страница. */
 export function AppLayout() {
   const title = useMatches().findLast((match) => match.handle?.title)?.handle.title
 

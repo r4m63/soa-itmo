@@ -6,9 +6,6 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 
-/**
- * Разворачивается WAR-ом в Payara (SpringBootServletInitializer); main — для локального запуска.
- */
 @SpringBootApplication
 @ConfigurationPropertiesScan
 public class OscarServiceApplication extends SpringBootServletInitializer {

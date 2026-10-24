@@ -5,9 +5,6 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
 
-/**
- * Все бизнес-ошибки: HTTP-статус из реестра ErrorType, тело — Error или ValidationError (если есть errors).
- */
 @Provider
 public class ServiceExceptionMapper implements ExceptionMapper<ServiceException> {
 

@@ -13,7 +13,6 @@ import {
 import { OPERATORS } from "@/lib/movie-query"
 import { cn } from "@/lib/utils"
 
-/** Иконки lucide для операторов filter. Готовых ≥ и ≤ в lucide нет — они собраны из двух иконок. */
 const ICONS = {
   eq: [EqualIcon],
   ne: [EqualNotIcon],

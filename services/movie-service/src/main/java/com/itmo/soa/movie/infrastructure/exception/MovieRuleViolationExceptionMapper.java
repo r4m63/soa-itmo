@@ -8,10 +8,6 @@ import jakarta.ws.rs.ext.Provider;
 
 import java.util.List;
 
-/**
- * Нарушено ограничение предметной области → 400 с ошибкой поля тела.
- * Обычно до домена не доходит: тот же вход раньше отклоняют аннотации DTO контракта.
- */
 @Provider
 public class MovieRuleViolationExceptionMapper implements ExceptionMapper<MovieRuleViolationException> {
 

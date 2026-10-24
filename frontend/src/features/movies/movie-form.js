@@ -1,4 +1,3 @@
-// Модель формы фильма: значения полей — строки (как в input), ключи ошибок — пути полей из API.
 
 const INT_MIN = -2147483648
 const INT_MAX = 2147483647
@@ -33,7 +32,6 @@ export function formFromMovie(movie) {
   }
 }
 
-/** Те же ограничения, что проверяет Movie Service. → { "coordinates.x": "...", ... } */
 export function validateForm(form) {
   const errors = {}
   if (!form.name.trim()) errors.name = "Название не может быть пустым"
@@ -50,7 +48,6 @@ export function validateForm(form) {
   return errors
 }
 
-/** Форма → MovieInput (тело POST /movies). */
 export function toMovieInput(form) {
   const sw = form.screenwriter
   return {
@@ -65,7 +62,6 @@ export function toMovieInput(form) {
   }
 }
 
-/** Только изменённые поля — тело PATCH /movies/{id}. coordinates и screenwriter отправляются целиком. */
 export function diffPatch(movie, input) {
   const original = toMovieInput(formFromMovie(movie))
   return Object.fromEntries(

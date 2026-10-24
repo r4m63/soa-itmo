@@ -3,11 +3,6 @@ package com.itmo.soa.movie.domain.movie.model;
 import java.time.Clock;
 import java.time.LocalDate;
 
-/**
- * Агрегат «Фильм». Меняется только своими методами, каждый держит ограничения задания:
- * name, coordinates, oscarsCount, mpaaRating обязательны, creationDate ставит сам агрегат и больше не меняет.
- * id назначает хранилище.
- */
 public final class Movie {
 
     private final Integer id;
@@ -24,7 +19,6 @@ public final class Movie {
         this.creationDate = required("creationDate", creationDate);
     }
 
-    /** Новый фильм. Дата создания — сегодняшняя по clock. genre и screenwriter могут быть null. */
     public static Movie create(MovieName name, Coordinates coordinates, OscarsCount oscarsCount, MovieGenre genre,
                                MpaaRating mpaaRating, Person screenwriter, Clock clock) {
         Movie movie = new Movie(null, LocalDate.now(clock));
@@ -37,7 +31,6 @@ public final class Movie {
         return movie;
     }
 
-    /** Уже сохранённый фильм. */
     public static Movie restore(Integer id, LocalDate creationDate, MovieName name, Coordinates coordinates,
                                 OscarsCount oscarsCount, MovieGenre genre, MpaaRating mpaaRating, Person screenwriter) {
         Movie movie = new Movie(id, creationDate);
@@ -62,7 +55,6 @@ public final class Movie {
         this.oscarsCount = required("oscarsCount", oscarsCount);
     }
 
-    /** null — фильм без жанра. */
     public void changeGenre(MovieGenre genre) {
         this.genre = genre;
     }

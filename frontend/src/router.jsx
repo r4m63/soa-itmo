@@ -15,7 +15,6 @@ export const router = createBrowserRouter([
         path: "movies",
         element: <MoviesPage />,
         handle: { title: "Фильмы" },
-        // карточка фильма открывается поверх списка: /movies/42 — ссылкой можно поделиться
         children: [{ path: ":movieId" }],
       },
       { path: "oscars", element: <OscarsPage />, handle: { title: "Оскары" } },

@@ -12,13 +12,11 @@ import jakarta.inject.Inject;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 
-
 @ApplicationScoped
 @Getter
-@Accessors(fluent = true) // убирает из названий геттеров get/set/is/
+@Accessors(fluent = true)
 public class MovieService {
 
-    // команды
     @Inject
     CreateMovieAction createMovie;
     @Inject
@@ -28,7 +26,6 @@ public class MovieService {
     @Inject
     DeleteMoviesByGenreAction deleteMoviesByGenre;
 
-    // запросы
     @Inject
     GetMovieByIdFilter getMovieById;
     @Inject

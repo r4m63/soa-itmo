@@ -9,7 +9,6 @@ import { ApiError, notifyError } from "@/lib/api-errors"
 import { enumLabel } from "@/lib/enums"
 import { formatDate, OSCARS_WORDS, plural } from "@/lib/format"
 
-/** Карточка фильма: свежие данные из GET /movies/{id}, описание текстом и все поля. */
 export function MovieDetailsSheet({ movieId, onOpenChange, onEdit, onDelete }) {
   const [movie, setMovie] = useState(null)
   const [notFound, setNotFound] = useState(false)

@@ -16,12 +16,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-/**
- * Нарушения Jakarta Validation в DTO запроса → 400 ValidationError.
- * Поле с @PathParam / @QueryParam — ошибка параметра, иначе — тела: field = путь в JSON (coordinates.x).
- * Ограничение на самом теле или на методе DTO (пустой PATCH) — ошибка всего тела, field = null.
- * Одинаковые ошибки схлопываются: у поля может быть несколько ограничений с общим сообщением.
- */
 @Provider
 public class ConstraintViolationExceptionMapper implements ExceptionMapper<ConstraintViolationException> {
 
@@ -52,7 +46,6 @@ public class ConstraintViolationExceptionMapper implements ExceptionMapper<Const
         return FieldError.body(String.join(".", path), rejected, violation.getMessage());
     }
 
-    /** Имена свойств после параметра метода: create.input.coordinates.x → [coordinates, x]. */
     private static List<String> properties(ConstraintViolation<?> violation) {
         List<String> names = new ArrayList<>();
         for (Path.Node node : violation.getPropertyPath()) {

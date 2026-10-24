@@ -6,10 +6,6 @@ import { enumLabel, enumValues } from "@/lib/enums"
 
 const SEARCH_DELAY_MS = 250
 
-/**
- * Значения справочника по поиску: GET /movies/{dictionary}?search= (сервис ищет по кодам: DRAMA)
- * плюс совпадения по подписям интерфейса («драма»), которых сервис не знает. Порядок — как в enum.
- */
 export function useDictionarySearch(dictionary, search, enabled) {
   const [items, setItems] = useState(() => enumValues(dictionary))
   const [loading, setLoading] = useState(false)

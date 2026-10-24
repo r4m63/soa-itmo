@@ -1,6 +1,5 @@
 package com.itmo.soa.movie.domain.movie.model;
 
-/** Сценарист: имя не пустое, passportID — null или не короче 5 символов, nationality обязательна. */
 public record Person(String name, String passportID, Color hairColor, Country nationality) {
 
     private static final int MIN_PASSPORT_ID_LENGTH = 5;

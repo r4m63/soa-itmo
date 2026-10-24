@@ -62,7 +62,6 @@ public final class JpaQueryExecutor {
         return Page.of(items, query.page(), total);
     }
 
-    /** Условие WHERE: группы через AND, фильтры внутри группы через OR. */
     private static Predicate where(CriteriaBuilder cb, Root<?> root, Query query) {
         List<Predicate> groups = new ArrayList<>();
         for (List<Filter> group : query.filterGroups()) {
@@ -115,7 +114,6 @@ public final class JpaQueryExecutor {
         };
     }
 
-    /** Сравнение enum по порядку объявления превращается в IN по подходящим значениям. */
     private static Predicate enumComparison(CriteriaBuilder cb, Path<?> path, QueryField field, Enum<?> value,
                                             Operator operator) {
         int ordinal = value.ordinal();

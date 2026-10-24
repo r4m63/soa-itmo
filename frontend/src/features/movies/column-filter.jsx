@@ -15,16 +15,12 @@ import { enumLabel } from "@/lib/enums"
 import { field, fieldFilters, OPERATORS, operatorsFor, replaceFieldFilters, requiresValue } from "@/lib/movie-query"
 import { cn } from "@/lib/utils"
 
-/** Операторы набора значений enum: отмеченные галочки → eq через «или», «Пусто» → isNull. */
 const SET_OPERATORS = ["eq", "isNull"]
 
-/** Новое условие: оператор пользователь выбирает сам. */
 const EMPTY_CONDITION = { operator: "", value: "" }
 
-/** Изменения применяются сами: ввод — после паузы, остальное — почти сразу. */
 const APPLY_DELAY_MS = 400
 
-/** Готово ли условие к отправке: выбран оператор и, если нужно, введено значение нужного типа. */
 function conditionState(meta, c) {
   if (!c.operator) return "pending"
   if (!requiresValue(c.operator)) return "ready"
@@ -34,15 +30,10 @@ function conditionState(meta, c) {
   return "ready"
 }
 
-/** Условие в виде, в котором оно уходит в filters. */
 function normalize({ operator, value }) {
   return requiresValue(operator) ? { operator, value: String(value).trim() } : { operator }
 }
 
-/**
- * Фильтр колонки (как в AG Grid): кнопка в заголовке и условия, подходящие под тип поля.
- * filters — все фильтры таблицы, errors — ошибки сервиса { "filter[i]": "..." }.
- */
 export function ColumnFilter({ fieldKey, filters, errors, onApply }) {
   const meta = field(fieldKey)
   const isEnum = meta.type === "enum"
@@ -52,7 +43,6 @@ export function ColumnFilter({ fieldKey, filters, errors, onApply }) {
   const [open, setOpen] = useState(false)
   const [draft, setDraft] = useState([])
 
-  // недописанные строки не отправляются, остальные применяются автоматически
   const ready = JSON.stringify(draft.filter((c) => conditionState(meta, c) === "ready").map(normalize))
   const current = JSON.stringify(applied.map(normalize))
 
@@ -61,7 +51,6 @@ export function ColumnFilter({ fieldKey, filters, errors, onApply }) {
       const existing = applied.map(({ operator, value }) => ({ operator, value }))
       setDraft(existing.length || isEnum ? existing : [EMPTY_CONDITION])
     } else if (ready !== current) {
-      // закрыли раньше, чем сработала задержка, — применяем сразу
       onApply(replaceFieldFilters(filters, fieldKey, JSON.parse(ready)))
     }
     setOpen(next)
@@ -145,7 +134,6 @@ export function ColumnFilter({ fieldKey, filters, errors, onApply }) {
   )
 }
 
-/** Список значений enum с галочками и поиском через справочник сервиса. */
 function EnumSetFilter({ meta, draft, setDraft }) {
   const [search, setSearch] = useState("")
   const { items } = useDictionarySearch(meta.dictionary, search, true)

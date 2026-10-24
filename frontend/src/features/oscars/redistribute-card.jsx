@@ -12,7 +12,6 @@ import { enumLabel } from "@/lib/enums"
 import { MOVIES_WORDS, OSCARS_WORDS, plural } from "@/lib/format"
 import { ConfirmButton } from "./confirm-button"
 
-/** POST /oscar/genres/redistribute-rewards/{from-genre}/{to-genre} */
 export function RedistributeCard() {
   const [from, setFrom] = useState(undefined)
   const [to, setTo] = useState(undefined)
@@ -32,7 +31,6 @@ export function RedistributeCard() {
       setResult({ ...response, from, to })
       toast.success("Оскары перераспределены")
     } catch (e) {
-      // жанры с ошибкой подсвечиваются в полях, текст ошибки — в тосте
       if (e instanceof ApiError && e.status === 400) setFieldErrors(pathErrors(e))
       notifyError(e)
     } finally {
