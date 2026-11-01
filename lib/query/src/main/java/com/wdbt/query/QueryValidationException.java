@@ -1,4 +1,4 @@
-package com.itmo.soa.query;
+package com.wdbt.query;
 
 import java.util.List;
 import lombok.Getter;

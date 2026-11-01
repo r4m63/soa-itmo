@@ -14,6 +14,7 @@ spring-framework = "7.0.9"
 slf4j = "2.0.18"
 spring-boot = "4.1.1"
 spring-dependency-management = "1.1.7"
+swagger-ui = "5.34.0"
 
 [libraries]
 jakartaee-api = { module = "jakarta.platform:jakarta.jakartaee-api", version.ref = "jakartaee" }
@@ -26,11 +27,14 @@ junit-jupiter = { module = "org.junit.jupiter:junit-jupiter" }
 junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher" }
 jersey-server = { module = "org.glassfish.jersey.core:jersey-server", version.ref = "jersey" }
 spring-web = { module = "org.springframework:spring-web", version.ref = "spring-framework" }
+spring-webmvc = { module = "org.springframework:spring-webmvc", version.ref = "spring-framework" }
+spring-test = { module = "org.springframework:spring-test", version.ref = "spring-framework" }
 slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
 jakarta-ws-rs-api = { module = "jakarta.ws.rs:jakarta.ws.rs-api", version.ref = "jakarta-ws-rs" }
 postgresql = { module = "org.postgresql:postgresql", version.ref = "postgresql" }
 flyway-core = { module = "org.flywaydb:flyway-core", version.ref = "flyway" }
 flyway-postgresql = { module = "org.flywaydb:flyway-database-postgresql", version.ref = "flyway" }
+swagger-ui = { module = "org.webjars:swagger-ui", version.ref = "swagger-ui" }
 
 [plugins]
 spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }

@@ -1,13 +1,13 @@
-package com.itmo.soa.query.jpa;
+package com.wdbt.query.jpa;
 
-import com.itmo.soa.query.Direction;
-import com.itmo.soa.query.FieldType;
-import com.itmo.soa.query.Filter;
-import com.itmo.soa.query.Operator;
-import com.itmo.soa.query.Page;
-import com.itmo.soa.query.Query;
-import com.itmo.soa.query.QueryField;
-import com.itmo.soa.query.Sort;
+import com.wdbt.query.Direction;
+import com.wdbt.query.FieldType;
+import com.wdbt.query.Filter;
+import com.wdbt.query.Operator;
+import com.wdbt.query.Page;
+import com.wdbt.query.Query;
+import com.wdbt.query.QueryField;
+import com.wdbt.query.Sort;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;

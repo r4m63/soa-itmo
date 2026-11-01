@@ -1,4 +1,4 @@
-package com.itmo.soa.query;
+package com.wdbt.query;
 
 import java.util.ArrayList;
 import java.util.List;

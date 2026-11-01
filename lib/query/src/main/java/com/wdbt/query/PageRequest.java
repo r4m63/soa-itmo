@@ -1,4 +1,4 @@
-package com.itmo.soa.query;
+package com.wdbt.query;
 
 public record PageRequest(int page, int size) {
 

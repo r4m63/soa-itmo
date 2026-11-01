@@ -1,6 +1,6 @@
-package com.itmo.soa.query;
+package com.wdbt.query;
 
-import static com.itmo.soa.query.Operator.*;
+import static com.wdbt.query.Operator.*;
 
 import java.util.EnumSet;
 import java.util.Set;
@@ -13,6 +13,7 @@ import lombok.experimental.Accessors;
 @Accessors(fluent = true)
 @RequiredArgsConstructor
 public enum FieldType {
+    AUTO(EnumSet.noneOf(Operator.class)),
     INTEGER(EnumSet.of(EQ, NE, GT, GTE, LT, LTE)),
     LONG(EnumSet.of(EQ, NE, GT, GTE, LT, LTE)),
     DATE(EnumSet.of(EQ, NE, GT, GTE, LT, LTE)),

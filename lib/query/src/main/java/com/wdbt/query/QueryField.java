@@ -1,8 +1,9 @@
-package com.itmo.soa.query;
+package com.wdbt.query;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -14,38 +15,51 @@ public record QueryField(
         boolean nullable,
         boolean sortable,
         String path,
-        String presencePath
+        String presencePath,
+        Set<Operator> operators
 ) {
 
+    public QueryField {
+        operators = operators.isEmpty()
+                ? Set.of()
+                : Collections.unmodifiableSet(EnumSet.copyOf(operators));
+    }
+
     public static QueryField integer(String name) {
-        return new QueryField(name, FieldType.INTEGER, null, false, true, name, null);
+        return of(name, FieldType.INTEGER, null);
     }
 
     public static QueryField longNumber(String name) {
-        return new QueryField(name, FieldType.LONG, null, false, true, name, null);
+        return of(name, FieldType.LONG, null);
     }
 
     public static QueryField date(String name) {
-        return new QueryField(name, FieldType.DATE, null, false, true, name, null);
+        return of(name, FieldType.DATE, null);
     }
 
     public static QueryField string(String name) {
-        return new QueryField(name, FieldType.STRING, null, false, true, name, null);
+        return of(name, FieldType.STRING, null);
     }
 
     public static QueryField enumeration(String name, Class<? extends Enum<?>> enumType) {
-        return new QueryField(name, FieldType.ENUM, enumType, false, true, name, null);
+        return of(name, FieldType.ENUM, enumType);
     }
 
     public static QueryField object(String name, String presencePath) {
-        return new QueryField(name, FieldType.OBJECT, null, true, false, name, presencePath);
+        return new QueryField(name, FieldType.OBJECT, null, true, false, name, presencePath,
+                defaultOperators(FieldType.OBJECT, true));
+    }
+
+    private static QueryField of(String name, FieldType type, Class<? extends Enum<?>> enumType) {
+        return new QueryField(name, type, enumType, false, true, name, null, defaultOperators(type, false));
     }
 
     public QueryField asNullable() {
-        return new QueryField(name, type, enumType, true, sortable, path, presencePath);
+        return new QueryField(name, type, enumType, true, sortable, path, presencePath,
+                defaultOperators(type, true));
     }
 
-    public Set<Operator> operators() {
+    private static Set<Operator> defaultOperators(FieldType type, boolean nullable) {
         EnumSet<Operator> result = type.operators().isEmpty()
                 ? EnumSet.noneOf(Operator.class)
                 : EnumSet.copyOf(type.operators());
@@ -90,6 +104,7 @@ public record QueryField(
                     .orElseThrow(() -> new IllegalArgumentException(
                             "Допустимые значения для " + name + ": " + enumNames()));
             case OBJECT -> throw new IllegalArgumentException("Поле " + name + " не сравнивается со значением");
+            case AUTO -> throw new IllegalStateException("AUTO должен быть заменён при регистрации поля " + name);
         };
     }
 

@@ -1,4 +1,4 @@
-package com.itmo.soa.query;
+package com.wdbt.query;
 
 public record Filter(QueryField field, Operator operator, Object value, int index) {
 
