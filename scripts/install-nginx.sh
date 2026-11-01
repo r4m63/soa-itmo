@@ -121,6 +121,7 @@ install_nginx() {
     fi
     make_cmd=make
     command -v gmake >/dev/null 2>&1 && make_cmd=gmake
+    export MAKE="$make_cmd"
 
     umask 077
     mkdir -p "$HOME/.local"
