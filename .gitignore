@@ -41,3 +41,9 @@ node_modules/
 
 ### Payara (локальный дистрибутив) ###
 payara7/
+
+### Локальные файлы разработки ###
+.DS_Store
+.agents/
+.local/
+frontend/.env.helios
