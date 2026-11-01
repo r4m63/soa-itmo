@@ -1,7 +1,7 @@
 import path from 'node:path'
 import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
-import { defineConfig } from 'vite'
+import { defineConfig, loadEnv } from 'vite'
 
 function service(target) {
   return {
@@ -17,7 +17,8 @@ function service(target) {
   }
 }
 
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
+  base: loadEnv(mode, import.meta.dirname).VITE_BASE ?? '/',
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
@@ -30,4 +31,4 @@ export default defineConfig({
       '/api/oscar-service': service(process.env.OSCAR_SERVICE_URL ?? 'https://localhost:10081'),
     },
   },
-})
+}))

@@ -1,0 +1,11 @@
+RewriteEngine On
+RewriteBase /~s409659/soa/
+
+RewriteRule ^api/ api.php [L]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^ index.html [L]
+
+<Files "*.crt">
+    Require all denied
+</Files>

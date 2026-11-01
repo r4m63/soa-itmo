@@ -1,11 +1,15 @@
 import { ApiError } from "@/lib/api-errors"
 
+const OVERRIDDEN_METHODS = import.meta.env.VITE_METHOD_OVERRIDE === "true" ? ["PATCH", "DELETE"] : []
+
 export async function request(baseUrl, method, path, body) {
+  const override = OVERRIDDEN_METHODS.includes(method)
   const response = await fetch(baseUrl + path, {
-    method,
+    method: override ? "POST" : method,
     headers: {
       Accept: "application/json",
       ...(body !== undefined && { "Content-Type": "application/json" }),
+      ...(override && { "X-HTTP-Method-Override": method }),
     },
     body: body !== undefined ? JSON.stringify(body) : undefined,
   })

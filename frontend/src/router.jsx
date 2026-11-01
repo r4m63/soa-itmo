@@ -21,4 +21,4 @@ export const router = createBrowserRouter([
       { path: "*", element: <NotFoundPage />, handle: { title: "Страница не найдена" } },
     ],
   },
-])
+], { basename: import.meta.env.BASE_URL })
