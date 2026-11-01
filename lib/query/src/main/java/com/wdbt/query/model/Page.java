@@ -1,4 +1,4 @@
-package com.wdbt.query;
+package com.wdbt.query.model;
 
 import java.util.List;
 import java.util.function.Function;

@@ -10,7 +10,6 @@ import com.itmo.soa.contract.response.movie.MovieResponse;
 import com.itmo.soa.movie.api.http.movie.mapper.MovieRequestMapper;
 import com.itmo.soa.movie.api.http.movie.mapper.MovieResponseMapper;
 import com.itmo.soa.movie.domain.movie.service.MovieService;
-import com.wdbt.query.contract.MoviePageQuery;
 import com.wdbt.query.jaxrs.QueryParameters;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
@@ -39,8 +38,7 @@ public class MovieController {
 
     @GET
     public MoviePageResponse list(@BeanParam QueryParameters query) {
-        MoviePageQuery pageQuery = new MoviePageQuery(query.filters(), query.sorts(), query.page(), query.size());
-        return MovieResponseMapper.toResponse(movieService.getMoviesPage().execute(pageQuery));
+        return MovieResponseMapper.toResponse(movieService.getMoviesPage().execute(query));
     }
 
     @POST

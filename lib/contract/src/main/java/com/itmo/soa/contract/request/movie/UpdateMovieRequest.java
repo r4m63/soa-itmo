@@ -1,7 +1,5 @@
 package com.itmo.soa.contract.request.movie;
 
-import com.itmo.soa.contract.request.movie.CoordinatesDto;
-import com.itmo.soa.contract.request.movie.PersonDto;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.Null;
@@ -34,8 +32,15 @@ public class UpdateMovieRequest {
     @Positive(message = "Значение должно быть больше 0")
     private Integer oscarsCount;
 
-    private Optional<String> genre;
+    private Optional<@Pattern(
+            regexp = "ACTION|DRAMA|COMEDY|MUSICAL|HORROR",
+            message = "Допустимые значения: ACTION, DRAMA, COMEDY, MUSICAL, HORROR"
+    ) String> genre;
 
+    @Pattern(
+            regexp = "G|PG|PG_13|R|NC_17",
+            message = "Допустимые значения: G, PG, PG_13, R, NC_17"
+    )
     private String mpaaRating;
 
     private Optional<@Valid PersonDto> screenwriter;

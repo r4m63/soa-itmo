@@ -16,8 +16,10 @@ dependencies {
     testCompileOnly(libs.jakartaee.api)
     testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter)
+    testImplementation(libs.hibernate.validator)
     testRuntimeOnly(libs.junit.platform.launcher)
     testRuntimeOnly(libs.postgresql)
+    testRuntimeOnly(libs.expressly)
 }
 
 tasks.test {

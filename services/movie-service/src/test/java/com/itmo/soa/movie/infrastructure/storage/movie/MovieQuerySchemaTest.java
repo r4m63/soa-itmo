@@ -1,12 +1,10 @@
 package com.itmo.soa.movie.infrastructure.storage.movie;
 
-import com.itmo.soa.movie.infrastructure.storage.movie.entity.MovieEntity;
-import com.wdbt.query.Direction;
-import com.wdbt.query.FieldType;
-import com.wdbt.query.Query;
-import com.wdbt.query.QueryRegistry;
-import com.wdbt.query.QuerySchema;
-import com.wdbt.query.QueryService;
+import com.wdbt.query.model.Direction;
+import com.wdbt.query.model.Query;
+import com.wdbt.query.parser.QueryParser;
+import com.wdbt.query.schema.FieldType;
+import com.wdbt.query.schema.QuerySchema;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -17,11 +15,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class MovieQuerySchemaTest {
 
-    private final QueryService queries = QueryService.forEntities(MovieEntity.class);
-    private final QuerySchema schema = QueryRegistry.of(MovieEntity.class).schema(MovieEntity.class);
+    private final QuerySchema schema = MovieQuerySchema.MOVIES;
+    private final QueryParser queries = new QueryParser(schema);
 
     @Test
-    void exposesAllMovieFieldsFromAnnotations() {
+    void exposesAllMovieFieldsFromProgrammaticSchema() {
         List<String> fields = List.of(
                 "id", "name", "coordinates.x", "coordinates.y", "creationDate", "oscarsCount",
                 "genre", "mpaaRating", "screenwriter", "screenwriter.name", "screenwriter.passportID",
@@ -45,7 +43,7 @@ class MovieQuerySchemaTest {
         assertTrue(schema.field("screenwriter.nationality").orElseThrow().nullable());
         assertFalse(schema.field("name").orElseThrow().nullable());
 
-        Query query = queries.parse(MovieEntity.class, List.of(), List.of(), null, null);
+        Query query = queries.parse(List.of(), List.of(), null, null);
         assertEquals(0, query.page().page());
         assertEquals(20, query.page().size());
         assertEquals(100, schema.maxPageSize());

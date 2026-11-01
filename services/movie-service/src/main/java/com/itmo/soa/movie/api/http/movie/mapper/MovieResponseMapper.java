@@ -5,7 +5,7 @@ import com.itmo.soa.contract.request.movie.PersonDto;
 import com.itmo.soa.contract.response.movie.MoviePageResponse;
 import com.itmo.soa.contract.response.movie.MovieResponse;
 import com.itmo.soa.movie.domain.movie.model.Movie;
-import com.wdbt.query.Page;
+import com.wdbt.query.model.Page;
 
 public final class MovieResponseMapper {
 

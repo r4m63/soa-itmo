@@ -1,5 +1,13 @@
-package com.wdbt.query;
+package com.wdbt.query.parser;
 
+import com.wdbt.query.model.Direction;
+import com.wdbt.query.model.Filter;
+import com.wdbt.query.model.Operator;
+import com.wdbt.query.model.PageRequest;
+import com.wdbt.query.model.Query;
+import com.wdbt.query.model.Sort;
+import com.wdbt.query.schema.QueryField;
+import com.wdbt.query.schema.QuerySchema;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;

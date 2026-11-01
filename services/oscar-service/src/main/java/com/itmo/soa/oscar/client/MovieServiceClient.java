@@ -4,10 +4,10 @@ import com.itmo.soa.contract.error.exception.DownstreamServiceUnavailableExcepti
 import com.itmo.soa.contract.response.movie.DictionaryResponse;
 import com.itmo.soa.contract.response.movie.MoviePageResponse;
 import com.itmo.soa.contract.response.movie.MovieResponse;
-import com.wdbt.query.Direction;
-import com.wdbt.query.Filter;
-import com.wdbt.query.Operator;
-import com.wdbt.query.Sort;
+import com.wdbt.query.model.Direction;
+import com.wdbt.query.model.Filter;
+import com.wdbt.query.model.Operator;
+import com.wdbt.query.model.Sort;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;

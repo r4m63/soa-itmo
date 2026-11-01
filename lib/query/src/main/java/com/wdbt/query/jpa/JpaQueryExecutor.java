@@ -1,13 +1,13 @@
 package com.wdbt.query.jpa;
 
-import com.wdbt.query.Direction;
-import com.wdbt.query.FieldType;
-import com.wdbt.query.Filter;
-import com.wdbt.query.Operator;
-import com.wdbt.query.Page;
-import com.wdbt.query.Query;
-import com.wdbt.query.QueryField;
-import com.wdbt.query.Sort;
+import com.wdbt.query.model.Direction;
+import com.wdbt.query.model.Filter;
+import com.wdbt.query.model.Operator;
+import com.wdbt.query.model.Page;
+import com.wdbt.query.model.Query;
+import com.wdbt.query.model.Sort;
+import com.wdbt.query.schema.FieldType;
+import com.wdbt.query.schema.QueryField;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;

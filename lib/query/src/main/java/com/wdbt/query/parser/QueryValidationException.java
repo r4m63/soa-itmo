@@ -1,4 +1,4 @@
-package com.wdbt.query;
+package com.wdbt.query.parser;
 
 import java.util.List;
 import lombok.Getter;

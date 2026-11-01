@@ -19,8 +19,16 @@ public class PersonDto {
     @Size(min = 5, message = "Длина должна быть не меньше 5 символов")
     private String passportID;
 
+    @Pattern(
+            regexp = "RED|BLUE|ORANGE|WHITE",
+            message = "Допустимые значения: RED, BLUE, ORANGE, WHITE"
+    )
     private String hairColor;
 
     @NotNull(message = "Поле обязательно")
+    @Pattern(
+            regexp = "RUSSIA|UNITED_KINGDOM|FRANCE|SPAIN|NORTH_KOREA",
+            message = "Допустимые значения: RUSSIA, UNITED_KINGDOM, FRANCE, SPAIN, NORTH_KOREA"
+    )
     private String nationality;
 }

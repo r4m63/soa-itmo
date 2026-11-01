@@ -1,5 +1,6 @@
-package com.wdbt.query;
+package com.wdbt.query.schema;
 
+import com.wdbt.query.model.Operator;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.Arrays;
@@ -104,7 +105,6 @@ public record QueryField(
                     .orElseThrow(() -> new IllegalArgumentException(
                             "Допустимые значения для " + name + ": " + enumNames()));
             case OBJECT -> throw new IllegalArgumentException("Поле " + name + " не сравнивается со значением");
-            case AUTO -> throw new IllegalStateException("AUTO должен быть заменён при регистрации поля " + name);
         };
     }
 

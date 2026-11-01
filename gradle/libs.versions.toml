@@ -15,6 +15,8 @@ slf4j = "2.0.18"
 spring-boot = "4.1.1"
 spring-dependency-management = "1.1.7"
 swagger-ui = "5.34.0"
+hibernate-validator = "9.0.1.Final"
+expressly = "6.0.0"
 
 [libraries]
 jakartaee-api = { module = "jakarta.platform:jakarta.jakartaee-api", version.ref = "jakartaee" }
@@ -35,6 +37,8 @@ postgresql = { module = "org.postgresql:postgresql", version.ref = "postgresql" 
 flyway-core = { module = "org.flywaydb:flyway-core", version.ref = "flyway" }
 flyway-postgresql = { module = "org.flywaydb:flyway-database-postgresql", version.ref = "flyway" }
 swagger-ui = { module = "org.webjars:swagger-ui", version.ref = "swagger-ui" }
+hibernate-validator = { module = "org.hibernate.validator:hibernate-validator", version.ref = "hibernate-validator" }
+expressly = { module = "org.glassfish.expressly:expressly", version.ref = "expressly" }
 
 [plugins]
 spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }

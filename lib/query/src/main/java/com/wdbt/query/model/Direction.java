@@ -1,4 +1,4 @@
-package com.wdbt.query;
+package com.wdbt.query.model;
 
 import java.util.Arrays;
 import java.util.Optional;

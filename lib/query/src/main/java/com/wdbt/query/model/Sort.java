@@ -1,4 +1,6 @@
-package com.wdbt.query;
+package com.wdbt.query.model;
+
+import com.wdbt.query.schema.QueryField;
 
 public record Sort(QueryField field, Direction direction) {
 

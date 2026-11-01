@@ -1,5 +1,6 @@
-package com.wdbt.query;
+package com.wdbt.query.model;
 
+import com.wdbt.query.schema.QuerySchema;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
