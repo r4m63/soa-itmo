@@ -1,18 +1,17 @@
-package com.itmo.soa.movie.domain.movie.mapper;
+package com.itmo.soa.movie.infrastructure.storage.movie.mapper;
 
 import com.itmo.soa.movie.domain.movie.model.Coordinates;
 import com.itmo.soa.movie.domain.movie.model.Movie;
 import com.itmo.soa.movie.domain.movie.model.MovieName;
 import com.itmo.soa.movie.domain.movie.model.OscarsCount;
 import com.itmo.soa.movie.domain.movie.model.Person;
-import com.itmo.soa.movie.infrastructure.storage.movie.model.CoordinatesEmbeddable;
-import com.itmo.soa.movie.infrastructure.storage.movie.model.MovieEntity;
-import com.itmo.soa.movie.infrastructure.storage.movie.model.ScreenwriterEmbeddable;
+import com.itmo.soa.movie.infrastructure.storage.movie.entity.CoordinatesEmbeddable;
+import com.itmo.soa.movie.infrastructure.storage.movie.entity.MovieEntity;
+import com.itmo.soa.movie.infrastructure.storage.movie.entity.ScreenwriterEmbeddable;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
 public final class MovieEntityMapper {
-
-    private MovieEntityMapper() {
-    }
 
     public static Movie toModel(MovieEntity entity) {
         CoordinatesEmbeddable coordinates = entity.getCoordinates();

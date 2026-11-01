@@ -1,7 +1,7 @@
 package com.itmo.soa.movie.domain.movie.service.actions;
 
-import com.itmo.soa.movie.domain.movie.mapper.MovieRequestMapper;
-import com.itmo.soa.movie.infrastructure.storage.movie.JpaMovieRepository;
+import com.itmo.soa.movie.domain.movie.model.MovieGenre;
+import com.itmo.soa.movie.domain.movie.service.MovieRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -10,10 +10,10 @@ import jakarta.transaction.Transactional;
 public class DeleteMoviesByGenreAction {
 
     @Inject
-    JpaMovieRepository movieRepository;
+    MovieRepository movieRepository;
 
     @Transactional
-    public int execute(String genre) {
-        return movieRepository.deleteByGenre(MovieRequestMapper.genreFromPath(genre));
+    public int execute(MovieGenre genre) {
+        return movieRepository.deleteByGenre(genre);
     }
 }

@@ -1,6 +1,5 @@
 package com.itmo.soa.movie.domain.movie.model;
 
-import java.time.Clock;
 import java.time.LocalDate;
 
 public final class Movie {
@@ -20,8 +19,8 @@ public final class Movie {
     }
 
     public static Movie create(MovieName name, Coordinates coordinates, OscarsCount oscarsCount, MovieGenre genre,
-                               MpaaRating mpaaRating, Person screenwriter, Clock clock) {
-        Movie movie = new Movie(null, LocalDate.now(clock));
+                               MpaaRating mpaaRating, Person screenwriter) {
+        Movie movie = new Movie(null, LocalDate.now());
         movie.rename(name);
         movie.moveTo(coordinates);
         movie.changeOscars(oscarsCount);

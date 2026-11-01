@@ -1,28 +1,21 @@
 package com.itmo.soa.movie.domain.movie.service.actions;
 
-import com.itmo.soa.contract.request.movie.CreateMovieRequest;
-import com.itmo.soa.movie.domain.movie.mapper.MovieEntityMapper;
-import com.itmo.soa.movie.domain.movie.mapper.MovieRequestMapper;
 import com.itmo.soa.movie.domain.movie.model.Movie;
-import com.itmo.soa.movie.infrastructure.storage.movie.JpaMovieRepository;
+import com.itmo.soa.movie.domain.movie.service.MovieRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-
-import java.time.Clock;
 
 @ApplicationScoped
 public class CreateMovieAction {
 
     @Inject
-    JpaMovieRepository movieRepository;
-
-    @Inject
-    Clock clock;
+    MovieRepository movieRepository;
 
     @Transactional
-    public Movie execute(CreateMovieRequest input) {
-        Movie movie = MovieRequestMapper.toNewMovie(input, clock);
-        return MovieEntityMapper.toModel(movieRepository.insert(MovieEntityMapper.toNewEntity(movie)));
+    public Movie execute(CreateMovieCommand command) {
+        Movie movie = Movie.create(command.name(), command.coordinates(), command.oscarsCount(),
+                command.genre(), command.mpaaRating(), command.screenwriter());
+        return movieRepository.insert(movie);
     }
 }

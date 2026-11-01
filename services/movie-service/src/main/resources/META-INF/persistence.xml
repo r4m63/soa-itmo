@@ -5,9 +5,9 @@
              version="3.2">
     <persistence-unit name="movies" transaction-type="JTA">
         <jta-data-source>jdbc/movies</jta-data-source>
-        <class>com.itmo.soa.movie.infrastructure.storage.movie.model.MovieEntity</class>
-        <class>com.itmo.soa.movie.infrastructure.storage.movie.model.CoordinatesEmbeddable</class>
-        <class>com.itmo.soa.movie.infrastructure.storage.movie.model.ScreenwriterEmbeddable</class>
+        <class>com.itmo.soa.movie.infrastructure.storage.movie.entity.MovieEntity</class>
+        <class>com.itmo.soa.movie.infrastructure.storage.movie.entity.CoordinatesEmbeddable</class>
+        <class>com.itmo.soa.movie.infrastructure.storage.movie.entity.ScreenwriterEmbeddable</class>
         <exclude-unlisted-classes>true</exclude-unlisted-classes>
         <properties>
             <property name="jakarta.persistence.schema-generation.database.action" value="none"/>

@@ -1,7 +1,7 @@
-package com.itmo.soa.movie.api.http.dictionary;
+package com.itmo.soa.movie.api.http.movie.dictionary;
 
 import com.itmo.soa.contract.response.movie.DictionaryResponse;
-import com.itmo.soa.movie.domain.movie.model.MovieGenre;
+import com.itmo.soa.movie.domain.movie.model.MpaaRating;
 import com.itmo.soa.movie.domain.movie.service.MovieService;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
@@ -11,16 +11,16 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 
-@Path("/movies/genres")
+@Path("/movies/mpaa-ratings")
 @RequestScoped
 @Produces(MediaType.APPLICATION_JSON)
-public class GenreController {
+public class MpaaRatingController {
 
     @Inject
     MovieService movieService;
 
     @GET
-    public DictionaryResponse<MovieGenre> search(@QueryParam("search") String search) {
-        return new DictionaryResponse<>(movieService.searchDictionary().execute(MovieGenre.class, search));
+    public DictionaryResponse<MpaaRating> search(@QueryParam("search") String search) {
+        return new DictionaryResponse<>(movieService.searchDictionary().execute(MpaaRating.class, search));
     }
 }

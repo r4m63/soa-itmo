@@ -1,4 +1,4 @@
-package com.itmo.soa.movie.domain.movie.mapper;
+package com.itmo.soa.movie.api.http.movie.mapper;
 
 import com.itmo.soa.contract.error.exception.InvalidDataException;
 import com.itmo.soa.contract.error.response.FieldError;
@@ -6,20 +6,21 @@ import com.itmo.soa.contract.request.movie.CoordinatesDto;
 import com.itmo.soa.contract.request.movie.CreateMovieRequest;
 import com.itmo.soa.contract.request.movie.PersonDto;
 import com.itmo.soa.contract.request.movie.UpdateMovieRequest;
+import com.itmo.soa.movie.domain.movie.service.actions.CreateMovieCommand;
+import com.itmo.soa.movie.domain.movie.service.actions.PatchMovieCommand;
 import com.itmo.soa.movie.domain.movie.model.Color;
 import com.itmo.soa.movie.domain.movie.model.Coordinates;
 import com.itmo.soa.movie.domain.movie.model.Country;
-import com.itmo.soa.movie.domain.movie.model.Movie;
 import com.itmo.soa.movie.domain.movie.model.MovieGenre;
 import com.itmo.soa.movie.domain.movie.model.MovieName;
 import com.itmo.soa.movie.domain.movie.model.MpaaRating;
 import com.itmo.soa.movie.domain.movie.model.OscarsCount;
 import com.itmo.soa.movie.domain.movie.model.Person;
 
-import java.time.Clock;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public final class MovieRequestMapper {
@@ -30,17 +31,17 @@ public final class MovieRequestMapper {
     private MovieRequestMapper() {
     }
 
-    public static Movie toNewMovie(CreateMovieRequest request, Clock clock) {
+    public static CreateMovieCommand toCommand(CreateMovieRequest request) {
         List<FieldError> errors = new ArrayList<>();
         MovieGenre genre = parse(MovieGenre.class, request.getGenre(), FieldError.BODY, "genre", errors);
         MpaaRating mpaaRating = parse(MpaaRating.class, request.getMpaaRating(), FieldError.BODY, "mpaaRating", errors);
         Person screenwriter = toPerson(request.getScreenwriter(), errors);
         throwIfAny(INVALID_BODY, errors);
-        return Movie.create(new MovieName(request.getName()), toCoordinates(request.getCoordinates()),
-                new OscarsCount(request.getOscarsCount()), genre, mpaaRating, screenwriter, clock);
+        return new CreateMovieCommand(new MovieName(request.getName()), toCoordinates(request.getCoordinates()),
+                new OscarsCount(request.getOscarsCount()), genre, mpaaRating, screenwriter);
     }
 
-    public static void applyPatch(Movie movie, UpdateMovieRequest patch) {
+    public static PatchMovieCommand toCommand(UpdateMovieRequest patch) {
         List<FieldError> errors = new ArrayList<>();
         MovieGenre genre = patch.getGenre() == null ? null
                 : parse(MovieGenre.class, patch.getGenre().orElse(null), FieldError.BODY, "genre", errors);
@@ -49,28 +50,12 @@ public final class MovieRequestMapper {
                 : toPerson(patch.getScreenwriter().orElse(null), errors);
         throwIfAny(INVALID_BODY, errors);
 
-        if (patch.getName() != null) {
-            movie.rename(new MovieName(patch.getName()));
-        }
-        if (patch.getCoordinates() != null) {
-            movie.moveTo(toCoordinates(patch.getCoordinates()));
-        }
-        if (patch.getOscarsCount() != null) {
-            movie.changeOscars(new OscarsCount(patch.getOscarsCount()));
-        }
-        if (patch.getGenre() != null) {
-            movie.changeGenre(genre);
-        }
-        if (mpaaRating != null) {
-            movie.rate(mpaaRating);
-        }
-        if (patch.getScreenwriter() != null) {
-            if (screenwriter == null) {
-                movie.removeScreenwriter();
-            } else {
-                movie.assignScreenwriter(screenwriter);
-            }
-        }
+        MovieName name = patch.getName() == null ? null : new MovieName(patch.getName());
+        Coordinates coordinates = patch.getCoordinates() == null ? null : toCoordinates(patch.getCoordinates());
+        OscarsCount oscarsCount = patch.getOscarsCount() == null ? null : new OscarsCount(patch.getOscarsCount());
+        Optional<MovieGenre> genreChange = patch.getGenre() == null ? null : Optional.ofNullable(genre);
+        Optional<Person> screenwriterChange = patch.getScreenwriter() == null ? null : Optional.ofNullable(screenwriter);
+        return new PatchMovieCommand(name, coordinates, oscarsCount, genreChange, mpaaRating, screenwriterChange);
     }
 
     public static MovieGenre genreFromPath(String genre) {

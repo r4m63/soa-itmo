@@ -1,11 +1,11 @@
-package com.itmo.soa.movie.domain.movie.mapper;
+package com.itmo.soa.movie.api.http.movie.mapper;
 
 import com.itmo.soa.contract.request.movie.CoordinatesDto;
 import com.itmo.soa.contract.request.movie.PersonDto;
 import com.itmo.soa.contract.response.movie.MoviePageResponse;
 import com.itmo.soa.contract.response.movie.MovieResponse;
 import com.itmo.soa.movie.domain.movie.model.Movie;
-import com.itmo.soa.query.Page;
+import com.wdbt.query.Page;
 
 public final class MovieResponseMapper {
 

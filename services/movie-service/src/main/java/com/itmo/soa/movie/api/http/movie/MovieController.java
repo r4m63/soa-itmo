@@ -7,8 +7,11 @@ import com.itmo.soa.contract.request.movie.UpdateMovieRequest;
 import com.itmo.soa.contract.response.movie.DeleteMoviesByGenreResponse;
 import com.itmo.soa.contract.response.movie.MoviePageResponse;
 import com.itmo.soa.contract.response.movie.MovieResponse;
-import com.itmo.soa.movie.domain.movie.mapper.MovieResponseMapper;
+import com.itmo.soa.movie.api.http.movie.mapper.MovieRequestMapper;
+import com.itmo.soa.movie.api.http.movie.mapper.MovieResponseMapper;
 import com.itmo.soa.movie.domain.movie.service.MovieService;
+import com.wdbt.query.contract.MoviePageQuery;
+import com.wdbt.query.jaxrs.QueryParameters;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
@@ -20,12 +23,10 @@ import jakarta.ws.rs.PATCH;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
 import java.net.URI;
-import java.util.List;
 
 @Path("/movies")
 @RequestScoped
@@ -37,16 +38,15 @@ public class MovieController {
     MovieService movieService;
 
     @GET
-    public MoviePageResponse list(@QueryParam("filter") List<String> filter,
-                          @QueryParam("sort") List<String> sort,
-                          @QueryParam("page") String page,
-                          @QueryParam("size") String size) {
-        return MovieResponseMapper.toResponse(movieService.getMoviesPage().execute(filter, sort, page, size));
+    public MoviePageResponse list(@BeanParam QueryParameters query) {
+        MoviePageQuery pageQuery = new MoviePageQuery(query.filters(), query.sorts(), query.page(), query.size());
+        return MovieResponseMapper.toResponse(movieService.getMoviesPage().execute(pageQuery));
     }
 
     @POST
     public Response create(@Valid CreateMovieRequest input) {
-        MovieResponse created = MovieResponseMapper.toResponse(movieService.createMovie().execute(input));
+        MovieResponse created = MovieResponseMapper.toResponse(
+                movieService.createMovie().execute(MovieRequestMapper.toCommand(input)));
         return Response.created(URI.create("/movies/" + created.getId())).entity(created).build();
     }
 
@@ -59,7 +59,8 @@ public class MovieController {
     @PATCH
     @Path("{id}")
     public MovieResponse patch(@Valid @BeanParam MovieIdPathParams params, @Valid UpdateMovieRequest patch) {
-        return MovieResponseMapper.toResponse(movieService.patchMovie().execute(params.getId(), patch));
+        return MovieResponseMapper.toResponse(
+                movieService.patchMovie().execute(params.getId(), MovieRequestMapper.toCommand(patch)));
     }
 
     @DELETE
@@ -72,6 +73,7 @@ public class MovieController {
     @DELETE
     @Path("by-genre/{genre}")
     public DeleteMoviesByGenreResponse deleteByGenre(@BeanParam MovieGenrePathParams params) {
-        return new DeleteMoviesByGenreResponse(movieService.deleteMoviesByGenre().execute(params.getGenre()));
+        return new DeleteMoviesByGenreResponse(
+                movieService.deleteMoviesByGenre().execute(MovieRequestMapper.genreFromPath(params.getGenre())));
     }
 }
