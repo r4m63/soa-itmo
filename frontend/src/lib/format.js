@@ -1,5 +1,10 @@
 const dateFormat = new Intl.DateTimeFormat("ru-RU", { day: "numeric", month: "long", year: "numeric" })
 
+export function truncateText(value, maxLength = 40) {
+  const characters = Array.from(value)
+  return characters.length > maxLength ? `${characters.slice(0, maxLength).join("")}…` : value
+}
+
 export function formatDate(isoDate) {
   if (!isoDate) return "—"
   const [y, m, d] = isoDate.split("-").map(Number)

@@ -10,6 +10,7 @@ import {
 import { CSS } from "@dnd-kit/utilities"
 import { ArrowDownIcon, ArrowDownUpIcon, ArrowUpIcon, GripVerticalIcon, ListFilterIcon, XIcon } from "lucide-react"
 
+import { TruncatedText } from "@/components/truncated-text"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { OperatorIcon } from "@/components/operator-icon"
@@ -122,7 +123,7 @@ function FilterLabel({ filter }) {
     <>
       {field(filter.field).label}
       <OperatorIcon operator={filter.operator} className="size-3" />
-      {requiresValue(filter.operator) && filterValueLabel(filter)}
+      {requiresValue(filter.operator) && <TruncatedText value={filterValueLabel(filter)} />}
     </>
   )
 }

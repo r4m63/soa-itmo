@@ -4,6 +4,7 @@ import { SearchIcon } from "lucide-react"
 import { DatePicker } from "@/components/date-picker"
 import { EnumCombobox } from "@/components/enum-combobox"
 import { OperatorIcon } from "@/components/operator-icon"
+import { TruncatedText } from "@/components/truncated-text"
 import { Input } from "@/components/ui/input"
 import { describeFilter, field, fieldFilters, filterValueLabel, replaceFieldFilters, requiresValue } from "@/lib/movie-query"
 
@@ -47,7 +48,7 @@ export function FloatingFilter({ fieldKey, filters, onApply }) {
         {applied.map((f) => (
           <span key={f.index} className="inline-flex items-center gap-0.5">
             <OperatorIcon operator={f.operator} className="size-3" />
-            {requiresValue(f.operator) && filterValueLabel(f)}
+            {requiresValue(f.operator) && <TruncatedText value={filterValueLabel(f)} />}
           </span>
         ))}
       </div>

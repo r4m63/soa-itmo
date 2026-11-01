@@ -27,7 +27,7 @@ export function RewardRCard() {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2"><AwardIcon className="size-5" />Наградить фильмы рейтинга R</CardTitle>
-        <CardDescription>Каждый фильм с рейтингом MPAA «R» получит ещё один Оскар.</CardDescription>
+        <CardDescription>Каждый фильм с рейтингом MPAA "R" получит ещё один Оскар.</CardDescription>
       </CardHeader>
       <CardContent className="flex-1" />
       <CardFooter>

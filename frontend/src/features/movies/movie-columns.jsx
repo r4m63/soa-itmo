@@ -1,6 +1,7 @@
 import { Fragment } from "react"
 import { ArrowDownIcon, ArrowUpIcon, ArrowUpDownIcon, EllipsisVerticalIcon, TrophyIcon } from "lucide-react"
 
+import { TruncatedText } from "@/components/truncated-text"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -37,7 +38,7 @@ export function movieColumns(actions) {
       meta: { field: "name" },
       cell: ({ row }) => (
         <Button variant="link" className="h-auto p-0 text-left font-medium text-foreground hover:no-underline" onClick={() => actions.onOpen(row.original)}>
-          {row.original.name}
+          <TruncatedText value={row.original.name} />
         </Button>
       ),
     },
@@ -88,13 +89,17 @@ export function movieColumns(actions) {
       id: "screenwriter.name",
       header: "Сценарист",
       meta: { field: "screenwriter.name" },
-      cell: ({ row }) => row.original.screenwriter?.name ?? EMPTY,
+      cell: ({ row }) => row.original.screenwriter?.name
+        ? <TruncatedText value={row.original.screenwriter.name} />
+        : EMPTY,
     },
     {
       id: "screenwriter.passportID",
       header: "Паспорт",
       meta: { field: "screenwriter.passportID" },
-      cell: ({ row }) => row.original.screenwriter?.passportID ?? EMPTY,
+      cell: ({ row }) => row.original.screenwriter?.passportID
+        ? <TruncatedText value={row.original.screenwriter.passportID} />
+        : EMPTY,
     },
     {
       id: "screenwriter.hairColor",

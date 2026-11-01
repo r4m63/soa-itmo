@@ -27,9 +27,9 @@ export function RedistributeCard() {
     try {
       const { sourceMovies, targetMovies, transferredOscars } = await redistributeOscars(from, to)
       toast.success("Оскары перераспределены", {
-        description: `${sourceMovies} ${plural(sourceMovies, MOVIES_WORDS)} жанра «${enumLabel("genres", from)}» передали `
+        description: `${sourceMovies} ${plural(sourceMovies, MOVIES_WORDS)} жанра "${enumLabel("genres", from)}" передали `
           + `${transferredOscars} ${plural(transferredOscars, OSCARS_WORDS)} `
-          + `${targetMovies} ${plural(targetMovies, MOVIES_WORDS)} жанра «${enumLabel("genres", to)}».`,
+          + `${targetMovies} ${plural(targetMovies, MOVIES_WORDS)} жанра "${enumLabel("genres", to)}".`,
       })
     } catch (e) {
       if (e instanceof ApiError && e.status === 400) setFieldErrors(pathErrors(e))
@@ -83,7 +83,7 @@ export function RedistributeCard() {
         <ConfirmButton
           title="Перераспределить Оскары?"
           description={from && to
-            ? `Оскары фильмов жанра «${enumLabel("genres", from)}» сверх одного перейдут фильмам жанра «${enumLabel("genres", to)}».`
+            ? `Оскары фильмов жанра "${enumLabel("genres", from)}" сверх одного перейдут фильмам жанра "${enumLabel("genres", to)}".`
             : ""}
           confirmLabel="Перераспределить"
           disabled={running || !from || !to || sameGenre}

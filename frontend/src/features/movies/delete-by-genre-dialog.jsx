@@ -38,7 +38,7 @@ export function DeleteByGenreDialog({ open, onOpenChange, onDeleted }) {
     try {
       const { deletedCount } = await deleteMoviesByGenre(genre)
       toast.success(`Удалено ${deletedCount} ${plural(deletedCount, MOVIES_WORDS)}`, {
-        description: `Жанр «${enumLabel("genres", genre)}»`,
+        description: `Жанр "${enumLabel("genres", genre)}"`,
       })
       onDeleted()
       onOpenChange(false)

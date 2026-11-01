@@ -13,6 +13,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 import { notifyError } from "@/lib/api-errors"
+import { truncateText } from "@/lib/format"
 
 export function DeleteMovieDialog({ movie, onOpenChange, onDeleted }) {
   const [deleting, setDeleting] = useState(false)
@@ -22,7 +23,7 @@ export function DeleteMovieDialog({ movie, onOpenChange, onDeleted }) {
     setDeleting(true)
     try {
       await deleteMovie(movie.id)
-      toast.success("Фильм удалён", { description: movie.name })
+      toast.success("Фильм удалён", { description: truncateText(movie.name) })
       onDeleted(movie)
       onOpenChange(false)
     } catch (error) {
@@ -38,7 +39,7 @@ export function DeleteMovieDialog({ movie, onOpenChange, onDeleted }) {
         <AlertDialogHeader>
           <AlertDialogTitle>Удалить фильм?</AlertDialogTitle>
           <AlertDialogDescription>
-            «{movie?.name}» (ID {movie?.id}) будет удалён без возможности восстановления.
+            "{truncateText(movie?.name ?? "")}" (ID {movie?.id}) будет удалён без возможности восстановления.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

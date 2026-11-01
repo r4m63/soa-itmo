@@ -16,6 +16,7 @@ import {
 import { Field, FieldError, FieldGroup, FieldLabel, FieldLegend, FieldSet } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { ApiError, bodyFieldErrors, bodyGeneralErrors, notifyError } from "@/lib/api-errors"
+import { truncateText } from "@/lib/format"
 import { diffPatch, emptyForm, formFromMovie, toMovieInput, validateForm } from "./movie-form"
 
 export function MovieFormDialog({ open, movie, onOpenChange, onSaved }) {
@@ -50,7 +51,7 @@ export function MovieFormDialog({ open, movie, onOpenChange, onSaved }) {
     setSubmitting(true)
     try {
       const saved = editing ? await patchMovie(movie.id, patch) : await createMovie(input)
-      toast.success(editing ? "Фильм изменён" : "Фильм добавлен", { description: saved.name })
+      toast.success(editing ? "Фильм изменён" : "Фильм добавлен", { description: truncateText(saved.name) })
       onSaved(saved)
       onOpenChange(false)
     } catch (error) {
