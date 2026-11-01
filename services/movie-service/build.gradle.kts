@@ -13,6 +13,7 @@ dependencies {
     implementation(libs.flyway.core)
     implementation(libs.flyway.postgresql)
 
+    testCompileOnly(libs.jakartaee.api)
     testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter)
     testRuntimeOnly(libs.junit.platform.launcher)
@@ -37,4 +38,16 @@ tasks.register<Test>("seed") {
     testLogging {
         showStandardStreams = true
     }
+}
+
+tasks.register<Exec>("deploy-movie-service") {
+    description = "Собирает WAR и обновляет movie-service на helios"
+    group = "deployment"
+    val war = tasks.war.get().archiveFile.get().asFile
+    dependsOn(tasks.war)
+    commandLine(
+        "sh", "-c",
+        """scp "$1" se:soa/ && echo "cd ~/soa && payara --port 24048 deploy --force=true --name movie-service $2" | ssh se bash -l""",
+        "sh", war.path, war.name,
+    )
 }
