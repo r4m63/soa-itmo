@@ -1,4 +1,4 @@
-package com.itmo.soa.movie.domain.movie.service.actions;
+package com.itmo.soa.movie.domain.movie.service;
 
 import com.itmo.soa.movie.domain.movie.model.Coordinates;
 import com.itmo.soa.movie.domain.movie.model.MovieGenre;
@@ -7,18 +7,12 @@ import com.itmo.soa.movie.domain.movie.model.MpaaRating;
 import com.itmo.soa.movie.domain.movie.model.OscarsCount;
 import com.itmo.soa.movie.domain.movie.model.Person;
 
-import java.util.Optional;
-
-/**
- * Для genre и screenwriter null означает «поле не передано»,
- * а Optional.empty() — «очистить значение».
- */
-public record PatchMovieCommand(
+public record CreateMovieCommand(
         MovieName name,
         Coordinates coordinates,
         OscarsCount oscarsCount,
-        Optional<MovieGenre> genre,
+        MovieGenre genre,
         MpaaRating mpaaRating,
-        Optional<Person> screenwriter
+        Person screenwriter
 ) {
 }

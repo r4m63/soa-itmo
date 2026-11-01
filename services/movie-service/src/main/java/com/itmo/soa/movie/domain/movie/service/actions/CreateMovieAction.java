@@ -1,6 +1,7 @@
 package com.itmo.soa.movie.domain.movie.service.actions;
 
 import com.itmo.soa.movie.domain.movie.model.Movie;
+import com.itmo.soa.movie.domain.movie.service.CreateMovieCommand;
 import com.itmo.soa.movie.domain.movie.service.MovieRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
