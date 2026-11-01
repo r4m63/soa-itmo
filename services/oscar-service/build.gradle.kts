@@ -19,3 +19,15 @@ tasks.bootWar {
 tasks.war {
     archiveClassifier = ""
 }
+
+tasks.register<Exec>("deploy-oscar-service") {
+    description = "Собирает WAR и обновляет oscar-service на helios"
+    group = "deployment"
+    val war = tasks.war.get().archiveFile.get().asFile
+    dependsOn(tasks.war)
+    commandLine(
+        "sh", "-c",
+        """scp "$1" se:soa/ && echo "cd ~/soa && payara --port 24148 deploy --force=true --name oscar-service $2" | ssh se bash -l""",
+        "sh", war.path, war.name,
+    )
+}
