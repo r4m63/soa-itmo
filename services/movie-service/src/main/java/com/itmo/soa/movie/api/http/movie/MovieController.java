@@ -7,21 +7,14 @@ import com.itmo.soa.contract.request.movie.UpdateMovieRequest;
 import com.itmo.soa.contract.response.movie.DeleteMoviesByGenreResponse;
 import com.itmo.soa.contract.response.movie.MoviePageResponse;
 import com.itmo.soa.contract.response.movie.MovieResponse;
-import com.itmo.soa.movie.api.http.movie.mapper.MovieRequestMapper;
 import com.itmo.soa.movie.api.http.movie.mapper.MovieResponseMapper;
+import com.itmo.soa.movie.domain.movie.service.MovieRequestMapper;
 import com.itmo.soa.movie.domain.movie.service.MovieService;
 import com.wdbt.query.jaxrs.QueryParameters;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
-import jakarta.ws.rs.BeanParam;
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.DELETE;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.PATCH;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
@@ -44,7 +37,7 @@ public class MovieController {
     @POST
     public Response create(@Valid CreateMovieRequest input) {
         MovieResponse created = MovieResponseMapper.toResponse(
-                movieService.createMovie().execute(MovieRequestMapper.toCommand(input)));
+                movieService.createMovie().execute(input));
         return Response.created(URI.create("/movies/" + created.getId())).entity(created).build();
     }
 
@@ -58,7 +51,7 @@ public class MovieController {
     @Path("{id}")
     public MovieResponse patch(@Valid @BeanParam MovieIdPathParams params, @Valid UpdateMovieRequest patch) {
         return MovieResponseMapper.toResponse(
-                movieService.patchMovie().execute(params.getId(), MovieRequestMapper.toCommand(patch)));
+                movieService.patchMovie().execute(params.getId(), patch));
     }
 
     @DELETE

@@ -1,5 +1,6 @@
+# перенаправление и база урла
 RewriteEngine On
-RewriteBase /~s409659/soa/
+RewriteBase /~t409659/soa/
 
 RewriteRule ^api/ api.php [L]
 

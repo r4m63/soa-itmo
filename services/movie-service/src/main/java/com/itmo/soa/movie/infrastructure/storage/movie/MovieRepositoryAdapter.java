@@ -3,8 +3,8 @@ package com.itmo.soa.movie.infrastructure.storage.movie;
 import com.itmo.soa.movie.domain.movie.model.Movie;
 import com.itmo.soa.movie.domain.movie.model.MovieGenre;
 import com.itmo.soa.movie.domain.movie.service.MovieRepository;
-import com.itmo.soa.movie.infrastructure.storage.movie.mapper.MovieEntityMapper;
 import com.itmo.soa.movie.infrastructure.storage.movie.entity.MovieEntity;
+import com.itmo.soa.movie.infrastructure.storage.movie.mapper.MovieEntityMapper;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 

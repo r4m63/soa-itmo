@@ -2,8 +2,8 @@ package com.itmo.soa.movie.domain.movie.service.filters;
 
 import com.itmo.soa.movie.domain.movie.model.Movie;
 import com.itmo.soa.movie.infrastructure.storage.movie.JpaMovieQueryRepository;
-import com.wdbt.query.model.Page;
 import com.wdbt.query.jaxrs.QueryParameters;
+import com.wdbt.query.model.Page;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 

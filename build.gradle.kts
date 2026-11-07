@@ -61,18 +61,18 @@ tasks.register<Exec>("swagger") {
 }
 
 tasks.register<Exec>("deploy-openapi") {
-    description = "Публикует спецификации docs/*.yaml в Swagger UI на se.ifmo.ru/~s409659/swagger/"
+    description = "Публикует спецификации docs/*.yaml в Swagger UI на se.ifmo.ru/~t409659/swagger/"
     group = "deployment"
     val specs = fileTree("docs") { include("*.yaml") }.files.map { it.path }.sorted()
-    commandLine(listOf("scp") + specs + "se:/home/studs/s409659/public_html/swagger/")
+    commandLine(listOf("scp") + specs + "se:/home/teachers/t409659/public_html/swagger/")
 }
 
 tasks.register<Exec>("deploy-frontend") {
-    description = "Собирает фронтенд и публикует его на se.ifmo.ru/~s409659/soa/"
+    description = "Собирает фронтенд и публикует его на se.ifmo.ru/~t409659/soa/"
     group = "deployment"
     workingDir = file("frontend")
-    val publicDir = "/home/studs/s409659/public_html/soa"
-    val domains = "~/soa/payara7/glassfish/domains"
+    val publicDir = "/home/teachers/t409659/public_html/soa"
+    val domains = "~/payara7/glassfish/domains"
     val remote = listOf(
         "rm -rf $publicDir",
         "mkdir $publicDir",

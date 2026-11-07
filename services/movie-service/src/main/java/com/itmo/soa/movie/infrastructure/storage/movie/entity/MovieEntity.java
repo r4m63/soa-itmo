@@ -2,16 +2,7 @@ package com.itmo.soa.movie.infrastructure.storage.movie.entity;
 
 import com.itmo.soa.movie.domain.movie.model.MovieGenre;
 import com.itmo.soa.movie.domain.movie.model.MpaaRating;
-import jakarta.persistence.Column;
-import jakarta.persistence.Embedded;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.SequenceGenerator;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,8 +18,7 @@ import java.time.LocalDate;
 public class MovieEntity {
 
     @Id
-    @SequenceGenerator(name = "movies_id", sequenceName = "movies_id_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "movies_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     @Setter(AccessLevel.NONE)
     private Integer id;

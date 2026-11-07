@@ -1,0 +1,498 @@
+@movieBaseUrl = https://localhost:8181
+@oscarBaseUrl = https://localhost:10081
+
+### Movie 01. searchGenres: все значения
+GET {{movieBaseUrl}}/movies/genres
+Accept: application/json
+
+> {%
+client.test("200 и полный список жанров", function () {
+    client.assert(response.status === 200, "Ожидался статус 200");
+    client.assert(JSON.stringify(response.body.items) === JSON.stringify(["ACTION", "DRAMA", "COMEDY", "MUSICAL", "HORROR"]), "Неожиданный список жанров");
+});
+%}
+
+### Movie 02. searchGenres: регистронезависимый contains-поиск
+GET {{movieBaseUrl}}/movies/genres?search=dra
+Accept: application/json
+
+> {%
+client.test("Найден только DRAMA", function () {
+    client.assert(response.status === 200, "Ожидался статус 200");
+    client.assert(JSON.stringify(response.body.items) === JSON.stringify(["DRAMA"]), "Ожидался только DRAMA");
+});
+%}
+
+### Movie 03. searchMpaaRatings: все значения
+GET {{movieBaseUrl}}/movies/mpaa-ratings
+Accept: application/json
+
+> {%
+client.test("200 и полный список MPAA", function () {
+    client.assert(response.status === 200, "Ожидался статус 200");
+    client.assert(JSON.stringify(response.body.items) === JSON.stringify(["G", "PG", "PG_13", "R", "NC_17"]), "Неожиданный список MPAA");
+});
+%}
+
+### Movie 04. searchMpaaRatings: поиск pg
+GET {{movieBaseUrl}}/movies/mpaa-ratings?search=pg
+Accept: application/json
+
+> {%
+client.test("Найдены PG и PG_13", function () {
+    client.assert(response.status === 200, "Ожидался статус 200");
+    client.assert(JSON.stringify(response.body.items) === JSON.stringify(["PG", "PG_13"]), "Ожидались PG и PG_13");
+});
+%}
+
+### Movie 05. searchColors: все значения
+GET {{movieBaseUrl}}/movies/colors
+Accept: application/json
+
+> {%
+client.test("200 и полный список цветов", function () {
+    client.assert(response.status === 200, "Ожидался статус 200");
+    client.assert(JSON.stringify(response.body.items) === JSON.stringify(["RED", "BLUE", "ORANGE", "WHITE"]), "Неожиданный список цветов");
+});
+%}
+
+### Movie 06. searchColors: поиск r
+GET {{movieBaseUrl}}/movies/colors?search=r
+Accept: application/json
+
+> {%
+client.test("Найдены RED и ORANGE", function () {
+    client.assert(response.status === 200, "Ожидался статус 200");
+    client.assert(JSON.stringify(response.body.items) === JSON.stringify(["RED", "ORANGE"]), "Ожидались RED и ORANGE");
+});
+%}
+
+### Movie 07. searchCountries: все значения
+GET {{movieBaseUrl}}/movies/countries
+Accept: application/json
+
+> {%
+client.test("200 и полный список стран", function () {
+    client.assert(response.status === 200, "Ожидался статус 200");
+    client.assert(JSON.stringify(response.body.items) === JSON.stringify(["RUSSIA", "UNITED_KINGDOM", "FRANCE", "SPAIN", "NORTH_KOREA"]), "Неожиданный список стран");
+});
+%}
+
+### Movie 08. searchCountries: поиск king
+GET {{movieBaseUrl}}/movies/countries?search=king
+Accept: application/json
+
+> {%
+client.test("Найдена только UNITED_KINGDOM", function () {
+    client.assert(response.status === 200, "Ожидался статус 200");
+    client.assert(JSON.stringify(response.body.items) === JSON.stringify(["UNITED_KINGDOM"]), "Ожидалась UNITED_KINGDOM");
+});
+%}
+
+### Movie 09. listMovies: пагинация по умолчанию
+GET {{movieBaseUrl}}/movies
+Accept: application/json
+
+> {%
+client.test("200 и схема MoviePage", function () {
+    client.assert(response.status === 200, "Ожидался статус 200");
+    client.assert(Array.isArray(response.body.items), "items должен быть массивом");
+    client.assert(response.body.page === 0, "page по умолчанию должен быть 0");
+    client.assert(response.body.size === 20, "size по умолчанию должен быть 20");
+    client.assert(Number.isInteger(response.body.totalElements), "totalElements должен быть числом");
+    client.assert(Number.isInteger(response.body.totalPages), "totalPages должен быть числом");
+});
+%}
+
+### Movie 10. listMovies: OR-фильтры, сортировка и пагинация
+GET {{movieBaseUrl}}/movies?filter=oscarsCount;gte;1&filter=name;contains;HTTP&sort=id;desc&page=0&size=5
+Accept: application/json
+
+> {%
+client.test("200 и применённые параметры запроса", function () {
+    client.assert(response.status === 200, "Ожидался статус 200");
+    client.assert(response.body.page === 0 && response.body.size === 5, "Неверные page или size");
+    client.assert(response.body.items.length <= 5, "Размер страницы превышен");
+    client.assert(response.body.items.every(function (movie) {
+        return movie.oscarsCount >= 1 || movie.name.includes("HTTP");
+    }), "Нарушено OR-условие фильтров");
+});
+%}
+
+### Movie 11. createMovie: полный MovieInput, сохранить ID для CRUD
+POST {{movieBaseUrl}}/movies
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "HTTP Client Movie",
+  "coordinates": {"x": 51, "y": -120},
+  "oscarsCount": 4,
+  "genre": "DRAMA",
+  "mpaaRating": "R",
+  "screenwriter": {
+    "name": "HTTP Author",
+    "passportID": "ABC123456",
+    "hairColor": "WHITE",
+    "nationality": "UNITED_KINGDOM"
+  }
+}
+
+> {%
+client.test("201, Movie и Location", function () {
+    client.assert(response.status === 201, "Ожидался статус 201");
+    client.assert(Number.isInteger(response.body.id) && response.body.id > 0, "Сервис не вернул положительный id");
+    client.assert(response.body.name === "HTTP Client Movie", "Неверное имя созданного фильма");
+    client.assert(response.body.creationDate, "Отсутствует creationDate");
+    client.assert(response.headers.valueOf("Location").endsWith("/movies/" + response.body.id), "Неверный Location");
+});
+if (response.status === 201) {
+    client.global.set("movieId", response.body.id);
+}
+%}
+
+### Movie 12. getMovieById: получить созданный фильм
+GET {{movieBaseUrl}}/movies/{{movieId}}
+Accept: application/json
+
+> {%
+client.test("200 и точный ID", function () {
+    client.assert(response.status === 200, "Ожидался статус 200");
+    client.assert(response.body.id === client.global.get("movieId"), "Возвращён другой фильм");
+    client.assert(response.body.name === "HTTP Client Movie", "Неожиданное имя фильма");
+});
+%}
+
+### Movie 13. updateMovie: изменить все редактируемые поля
+PATCH {{movieBaseUrl}}/movies/{{movieId}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "HTTP Client Movie Updated",
+  "coordinates": {"x": 10, "y": 20},
+  "oscarsCount": 6,
+  "genre": "COMEDY",
+  "mpaaRating": "PG_13",
+  "screenwriter": {
+    "name": "Updated Author",
+    "passportID": "XYZ98765",
+    "hairColor": "RED",
+    "nationality": "FRANCE"
+  }
+}
+
+> {%
+client.test("200 и все поля обновлены", function () {
+    client.assert(response.status === 200, "Ожидался статус 200");
+    client.assert(response.body.name === "HTTP Client Movie Updated", "name не обновлён");
+    client.assert(response.body.coordinates.x === 10 && response.body.coordinates.y === 20, "coordinates не обновлены");
+    client.assert(response.body.oscarsCount === 6, "oscarsCount не обновлён");
+    client.assert(response.body.genre === "COMEDY" && response.body.mpaaRating === "PG_13", "genre или mpaaRating не обновлены");
+    client.assert(response.body.screenwriter.passportID === "XYZ98765", "screenwriter не обновлён");
+});
+%}
+
+### Movie 14. updateMovie: сбросить nullable-поля
+PATCH {{movieBaseUrl}}/movies/{{movieId}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "genre": null,
+  "screenwriter": null
+}
+
+> {%
+client.test("200, genre и screenwriter очищены", function () {
+    client.assert(response.status === 200, "Ожидался статус 200");
+    client.assert(response.body.genre == null, "genre не очищен");
+    client.assert(response.body.screenwriter == null, "screenwriter не очищен");
+});
+%}
+
+### Movie 15. updateMovie: пример ReadOnlyFields
+PATCH {{movieBaseUrl}}/movies/{{movieId}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "id": 5,
+  "creationDate": "2026-01-01"
+}
+
+> {%
+client.test("400 и обе ошибки read-only полей", function () {
+    client.assert(response.status === 400, "Ожидался статус 400");
+    const fields = response.body.errors.map(function (error) { return error.field; }).sort();
+    client.assert(JSON.stringify(fields) === JSON.stringify(["creationDate", "id"]), "Ожидались ошибки creationDate и id");
+});
+%}
+
+### Movie 16. updateMovie: пустой MoviePatch
+PATCH {{movieBaseUrl}}/movies/{{movieId}}
+Content-Type: application/json
+Accept: application/json
+
+{}
+
+> {%
+client.test("400 для пустого MoviePatch", function () {
+    client.assert(response.status === 400, "Ожидался статус 400");
+    client.assert(Array.isArray(response.body.errors) && response.body.errors.length > 0, "Отсутствуют ошибки валидации");
+});
+%}
+
+### Movie 17. createMovie: точный пример InvalidMovieFields
+POST {{movieBaseUrl}}/movies
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "",
+  "coordinates": {"x": 1, "y": 2},
+  "oscarsCount": 0,
+  "mpaaRating": "PG13",
+  "screenwriter": {
+    "name": "Author",
+    "passportID": "AB12",
+    "nationality": "FRANCE"
+  }
+}
+
+> {%
+client.test("400 и одновременно все четыре ошибки", function () {
+    client.assert(response.status === 400, "Ожидался статус 400");
+    client.assert(response.body.message === "Некорректное тело запроса", "Неверное message");
+    const fields = response.body.errors.map(function (error) { return error.field; }).sort();
+    client.assert(JSON.stringify(fields) === JSON.stringify(["mpaaRating", "name", "oscarsCount", "screenwriter.passportID"]), "Набор ошибок не совпадает с InvalidMovieFields");
+});
+%}
+
+### Movie 18. deleteMovie: удалить созданный фильм
+DELETE {{movieBaseUrl}}/movies/{{movieId}}
+Accept: application/json
+
+> {%
+client.test("204 после удаления", function () {
+    client.assert(response.status === 204, "Ожидался статус 204");
+});
+%}
+
+### Movie 19. getMovieById: удалённый фильм возвращает 404
+GET {{movieBaseUrl}}/movies/{{movieId}}
+Accept: application/json
+
+> {%
+client.test("404 и схема Error", function () {
+    client.assert(response.status === 404, "Ожидался статус 404");
+    client.assert(response.body.message && response.body.timestamp, "Отсутствует message или timestamp");
+});
+%}
+
+### Movie 20. getMovieById: нечисловой ID
+GET {{movieBaseUrl}}/movies/abc
+Accept: application/json
+
+> {%
+client.test("400 для нечислового ID", function () {
+    client.assert(response.status === 400, "Ожидался статус 400");
+    client.assert(response.body.errors[0].field === "id", "Ожидалась ошибка поля id");
+});
+%}
+
+### Movie 21. getMovieById: несуществующий максимальный int32 ID
+GET {{movieBaseUrl}}/movies/2147483647
+Accept: application/json
+
+> {%
+client.test("404 для несуществующего ID", function () {
+    client.assert(response.status === 404, "Ожидался статус 404");
+});
+%}
+
+### Movie 22. deleteMovie: неположительный ID
+DELETE {{movieBaseUrl}}/movies/0
+Accept: application/json
+
+> {%
+client.test("400 для нулевого ID", function () {
+    client.assert(response.status === 400, "Ожидался статус 400");
+    client.assert(response.body.errors[0].field === "id", "Ожидалась ошибка поля id");
+});
+%}
+
+### Movie 23. deleteMovie: несуществующий ID
+DELETE {{movieBaseUrl}}/movies/2147483647
+Accept: application/json
+
+> {%
+client.test("404 при удалении несуществующего фильма", function () {
+    client.assert(response.status === 404, "Ожидался статус 404");
+});
+%}
+
+### Movie 24. Подготовка deleteMoviesByGenre: создать фильм ACTION
+POST {{movieBaseUrl}}/movies
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "HTTP Delete By Genre",
+  "coordinates": {"x": 7, "y": 35},
+  "oscarsCount": 1,
+  "genre": "ACTION",
+  "mpaaRating": "PG"
+}
+
+> {%
+client.test("201: фильм ACTION создан", function () {
+    client.assert(response.status === 201, "Ожидался статус 201");
+});
+%}
+
+### Movie 25. deleteMoviesByGenre: ВНИМАНИЕ, удаляет все ACTION
+DELETE {{movieBaseUrl}}/movies/by-genre/ACTION
+Accept: application/json
+
+> {%
+client.test("200 и DeletionResult", function () {
+    client.assert(response.status === 200, "Ожидался статус 200");
+    client.assert(Number.isInteger(response.body.deletedCount) && response.body.deletedCount >= 1, "deletedCount должен быть не меньше 1");
+});
+%}
+
+### Movie 26. deleteMoviesByGenre: неизвестный жанр
+DELETE {{movieBaseUrl}}/movies/by-genre/THRILLER
+Accept: application/json
+
+> {%
+client.test("400 и ошибка path-параметра genre", function () {
+    client.assert(response.status === 400, "Ожидался статус 400");
+    client.assert(response.body.errors[0].location === "path", "Ожидалась path-ошибка");
+    client.assert(response.body.errors[0].field === "genre", "Ожидалась ошибка genre");
+});
+%}
+
+### Movie 27. listMovies: одновременно пять ошибок query-параметров
+GET {{movieBaseUrl}}/movies?filter=oscarsCount;gte;abc&filter=budget;eq;100&filter=mpaaRating;contains;PG&sort=rating;asc&size=500
+Accept: application/json
+
+> {%
+client.test("400 и пять ошибок запроса", function () {
+    client.assert(response.status === 400, "Ожидался статус 400");
+    const fields = response.body.errors.map(function (error) { return error.field; });
+    client.assert(JSON.stringify(fields) === JSON.stringify(["filter[0]", "filter[1]", "filter[2]", "sort[0]", "size"]), "Неожиданный набор query-ошибок");
+});
+%}
+
+### Oscar 01. Подготовка: исходный фильм DRAMA с рейтингом R
+POST {{movieBaseUrl}}/movies
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "HTTP Oscar Source",
+  "coordinates": {"x": 1, "y": 1},
+  "oscarsCount": 4,
+  "genre": "DRAMA",
+  "mpaaRating": "R"
+}
+
+> {%
+client.test("201: исходный фильм создан", function () {
+    client.assert(response.status === 201, "Ожидался статус 201");
+});
+if (response.status === 201) {
+    client.global.set("oscarSourceId", response.body.id);
+}
+%}
+
+### Oscar 02. Подготовка: целевой фильм MUSICAL
+POST {{movieBaseUrl}}/movies
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "HTTP Oscar Target",
+  "coordinates": {"x": 2, "y": 2},
+  "oscarsCount": 1,
+  "genre": "MUSICAL",
+  "mpaaRating": "PG"
+}
+
+> {%
+client.test("201: целевой фильм создан", function () {
+    client.assert(response.status === 201, "Ожидался статус 201");
+});
+if (response.status === 201) {
+    client.global.set("oscarTargetId", response.body.id);
+}
+%}
+
+### Oscar 03. rewardRRatedMovies: ВНИМАНИЕ, изменяет все фильмы R
+POST {{oscarBaseUrl}}/oscar/movies/reward-r
+Accept: application/json
+
+> {%
+client.test("200 и BulkOperationResult", function () {
+    client.assert(response.status === 200, "Ожидался статус 200");
+    client.assert(Number.isInteger(response.body.affectedMovies) && response.body.affectedMovies >= 1, "affectedMovies должен быть не меньше 1");
+});
+%}
+
+### Oscar 04. redistributeOscarRewards: ВНИМАНИЕ, изменяет DRAMA и MUSICAL
+POST {{oscarBaseUrl}}/oscar/genres/redistribute-rewards/DRAMA/MUSICAL
+Accept: application/json
+
+> {%
+client.test("200 и RedistributionResult", function () {
+    client.assert(response.status === 200, "Ожидался статус 200");
+    client.assert(Number.isInteger(response.body.sourceMovies) && response.body.sourceMovies >= 1, "sourceMovies должен быть не меньше 1");
+    client.assert(Number.isInteger(response.body.targetMovies) && response.body.targetMovies >= 1, "targetMovies должен быть не меньше 1");
+    client.assert(Number.isInteger(response.body.transferredOscars) && response.body.transferredOscars >= 0, "transferredOscars должен быть неотрицательным");
+});
+%}
+
+### Oscar 05. Очистка: удалить исходный фильм
+DELETE {{movieBaseUrl}}/movies/{{oscarSourceId}}
+Accept: application/json
+
+> {%
+client.test("204: исходный фильм удалён", function () {
+    client.assert(response.status === 204, "Ожидался статус 204");
+});
+%}
+
+### Oscar 06. Очистка: удалить целевой фильм
+DELETE {{movieBaseUrl}}/movies/{{oscarTargetId}}
+Accept: application/json
+
+> {%
+client.test("204: целевой фильм удалён", function () {
+    client.assert(response.status === 204, "Ожидался статус 204");
+});
+%}
+
+### Oscar 07. redistributeOscarRewards: оба жанра неизвестны
+POST {{oscarBaseUrl}}/oscar/genres/redistribute-rewards/THRILLER/INVALID
+Accept: application/json
+
+> {%
+client.test("400 и обе ошибки path-параметров", function () {
+    client.assert(response.status === 400, "Ожидался статус 400");
+    const fields = response.body.errors.map(function (error) { return error.field; }).sort();
+    client.assert(JSON.stringify(fields) === JSON.stringify(["from-genre", "to-genre"]), "Ожидались ошибки from-genre и to-genre");
+});
+%}
+
+### Oscar 08. redistributeOscarRewards: одинаковые жанры
+POST {{oscarBaseUrl}}/oscar/genres/redistribute-rewards/DRAMA/DRAMA
+Accept: application/json
+
+> {%
+client.test("400 для одинаковых жанров", function () {
+    client.assert(response.status === 400, "Ожидался статус 400");
+    client.assert(response.body.errors[0].field === "to-genre", "Ожидалась ошибка to-genre");
+});
+%}

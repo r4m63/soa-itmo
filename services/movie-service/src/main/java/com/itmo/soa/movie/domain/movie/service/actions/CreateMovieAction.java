@@ -1,8 +1,9 @@
 package com.itmo.soa.movie.domain.movie.service.actions;
 
+import com.itmo.soa.contract.request.movie.CreateMovieRequest;
 import com.itmo.soa.movie.domain.movie.model.Movie;
-import com.itmo.soa.movie.domain.movie.service.CreateMovieCommand;
 import com.itmo.soa.movie.domain.movie.service.MovieRepository;
+import com.itmo.soa.movie.domain.movie.service.MovieRequestMapper;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -14,9 +15,7 @@ public class CreateMovieAction {
     MovieRepository movieRepository;
 
     @Transactional
-    public Movie execute(CreateMovieCommand command) {
-        Movie movie = Movie.create(command.name(), command.coordinates(), command.oscarsCount(),
-                command.genre(), command.mpaaRating(), command.screenwriter());
-        return movieRepository.insert(movie);
+    public Movie execute(CreateMovieRequest request) {
+        return movieRepository.insert(MovieRequestMapper.toMovie(request));
     }
 }

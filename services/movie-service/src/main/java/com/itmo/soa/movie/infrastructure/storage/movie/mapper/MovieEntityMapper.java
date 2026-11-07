@@ -1,10 +1,6 @@
 package com.itmo.soa.movie.infrastructure.storage.movie.mapper;
 
-import com.itmo.soa.movie.domain.movie.model.Coordinates;
-import com.itmo.soa.movie.domain.movie.model.Movie;
-import com.itmo.soa.movie.domain.movie.model.MovieName;
-import com.itmo.soa.movie.domain.movie.model.OscarsCount;
-import com.itmo.soa.movie.domain.movie.model.Person;
+import com.itmo.soa.movie.domain.movie.model.*;
 import com.itmo.soa.movie.infrastructure.storage.movie.entity.CoordinatesEmbeddable;
 import com.itmo.soa.movie.infrastructure.storage.movie.entity.MovieEntity;
 import com.itmo.soa.movie.infrastructure.storage.movie.entity.ScreenwriterEmbeddable;

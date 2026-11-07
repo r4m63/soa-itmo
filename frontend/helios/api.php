@@ -1,6 +1,6 @@
 <?php
 
-const BACKENDS = [
+$backends = [
     'movie-service' => 'https://localhost:24081',
     'oscar-service' => 'https://localhost:24181',
 ];
@@ -13,28 +13,31 @@ function fail(int $status, string $message): never
     exit;
 }
 
-if (!preg_match('#/api/(movie-service|oscar-service)(/.*)$#', $_SERVER['REQUEST_URI'], $match)) {
+if (!preg_match('#/api/(movie-service|oscar-service)(/[^?]*)?(?:\?(.*))?$#', $_SERVER['REQUEST_URI'], $match)) {
     fail(404, 'Неизвестный сервис');
 }
-[, $service, $path] = $match;
 
-$method = $_SERVER['REQUEST_METHOD'];
-$override = strtoupper($_SERVER['HTTP_X_HTTP_METHOD_OVERRIDE'] ?? '');
-if ($method === 'POST' && in_array($override, ['PATCH', 'DELETE'], true)) {
-    $method = $override;
+$service = $match[1];
+$path = $match[2] ?? '';
+if ($path === '') {
+    $path = '/';
 }
-
-$headers = [];
-foreach (['CONTENT_TYPE' => 'Content-Type', 'HTTP_ACCEPT' => 'Accept'] as $key => $name) {
-    if (isset($_SERVER[$key])) {
-        $headers[] = "$name: {$_SERVER[$key]}";
-    }
+if (isset($match[3])) {
+    $path .= '?' . $match[3];
+}
+$method = $_SERVER['REQUEST_METHOD'];
+// helios блокирует прямой PATCH до php, поэтому фронт отправляет POST с этим хедером
+// подмену разрешаем только для POST и только на PATCH/DELETE, ?? '' покрывает отсутствие заголовка
+if ($method === 'POST' && in_array($_SERVER['HTTP_X_HTTP_METHOD_OVERRIDE'] ?? '', ['PATCH', 'DELETE'], true)) {
+    // до сервиса должен дойти настоящий PATCH/DELETE, чтобы сработал нужный endpoint
+    $method = $_SERVER['HTTP_X_HTTP_METHOD_OVERRIDE'];
 }
 
 $context = stream_context_create([
     'http' => [
         'method' => $method,
-        'header' => $headers,
+        'header' => isset($_SERVER['CONTENT_TYPE']) ? 'Content-Type: ' . $_SERVER['CONTENT_TYPE'] : '',
+        // сырое тело входящего запроса
         'content' => file_get_contents('php://input'),
         'ignore_errors' => true,
         'timeout' => 30,
@@ -47,14 +50,14 @@ $context = stream_context_create([
     ],
 ]);
 
-$body = @file_get_contents(BACKENDS[$service] . $path, false, $context);
+$body = @file_get_contents($backends[$service] . $path, false, $context);
 if ($body === false) {
     fail(503, "Сервис $service недоступен");
 }
 
 foreach ($http_response_header as $index => $line) {
     if ($index === 0) {
-        http_response_code((int) explode(' ', $line)[1]);
+        http_response_code((int)explode(' ', $line)[1]);
     } elseif (stripos($line, 'Content-Type:') === 0) {
         header($line);
     }

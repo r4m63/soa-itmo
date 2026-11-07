@@ -2,13 +2,7 @@ package com.itmo.soa.movie.infrastructure.storage.movie;
 
 import com.itmo.soa.movie.domain.movie.model.MovieGenre;
 import com.itmo.soa.movie.infrastructure.storage.movie.entity.MovieEntity;
-import jakarta.data.repository.By;
-import jakarta.data.repository.DataRepository;
-import jakarta.data.repository.Delete;
-import jakarta.data.repository.Find;
-import jakarta.data.repository.Insert;
-import jakarta.data.repository.Repository;
-import jakarta.data.repository.Update;
+import jakarta.data.repository.*;
 
 import java.util.Optional;
 

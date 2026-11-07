@@ -49,7 +49,7 @@ tasks.register<Exec>("deploy-movie-service") {
     dependsOn(tasks.war)
     commandLine(
         "sh", "-c",
-        """scp "$1" se:soa/ && echo "cd ~/soa && payara --port 24048 deploy --force=true --name movie-service $2" | ssh se bash -l""",
+        """scp "$1" se: && echo "cd ~ && payara --port 24048 deploy --force=true --name movie-service $2 && rm -- $2" | ssh se bash -l""",
         "sh", war.path, war.name,
     )
 }
